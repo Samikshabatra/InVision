@@ -1,0 +1,2435 @@
+[
+  {
+    "store_id": "tira-f0-b",
+    "name": "TIRA",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 0,
+    "images": [
+      "1st Left/20260709_161853.jpg",
+      "1st Left/20260709_161854.jpg",
+      "1st Left/20260709_161855.jpg"
+    ],
+    "brand_tokens": [
+      "TIRA",
+      "GAT",
+      "TME",
+      "BATHBODY",
+      "FENTY",
+      "DEWY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "TIRA",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 0,
+    "row_length": 14
+  },
+  {
+    "store_id": "swarovski-f0-b",
+    "name": "SWAROVSKI",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 1,
+    "images": [
+      "1st Left/20260709_161735.jpg",
+      "1st Left/20260709_161742.jpg",
+      "1st Left/20260709_161752.jpg",
+      "1st Left/20260709_161759.jpg",
+      "1st Left/20260709_161812.jpg",
+      "1st Left/20260709_161820.jpg",
+      "1st Left/20260709_161827.jpg",
+      "1st Left/20260709_161836.jpg"
+    ],
+    "brand_tokens": [
+      "SWAROVSKI",
+      "SUNGLASS",
+      "HUT",
+      "SWAROVSKIDOE",
+      "SWAROVSK",
+      "FOREVERYYOU"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SWAROVSKI",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 1,
+    "row_length": 14
+  },
+  {
+    "store_id": "ethos-f0-b",
+    "name": "ETHOS",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 2,
+    "images": [
+      "1st Left/20260709_161708.jpg",
+      "1st Left/20260709_161721.jpg"
+    ],
+    "brand_tokens": [
+      "ETHOS",
+      "ORIGEM",
+      "PATIEN",
+      "OMEGA",
+      "AADCKNZ",
+      "THANK"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ETHOS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 2,
+    "row_length": 14
+  },
+  {
+    "store_id": "origem-f0-b",
+    "name": "ORIGEM",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 3,
+    "images": [
+      "1st Left/20260709_161625.jpg",
+      "1st Left/20260709_161649.jpg",
+      "1st Left/20260709_161656.jpg"
+    ],
+    "brand_tokens": [
+      "ORIGEM",
+      "REESCAPEROUTEPLAN",
+      "LAB",
+      "GROWN",
+      "DIAMONDSIFINE",
+      "JEWELLERY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ORIGEM",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 3,
+    "row_length": 14
+  },
+  {
+    "store_id": "daily-objects-f0-b",
+    "name": "DAILY OBJECTS",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 5,
+    "images": [
+      "1st Left/20260709_161417.jpg",
+      "1st Left/20260709_161441.jpg",
+      "1st Left/20260709_161502.jpg",
+      "1st Left/20260709_161512.jpg",
+      "1st Left/20260709_161524.jpg",
+      "1st Left/20260709_161526.jpg",
+      "1st Left/20260709_161554.jpg",
+      "1st Left/20260709_161557.jpg",
+      "1st Left/20260709_161609.jpg"
+    ],
+    "brand_tokens": [
+      "DAILY",
+      "OBJECTS",
+      "ASTIC",
+      "ESCAPE",
+      "ROUTE",
+      "PLAN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "DAILY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 5,
+    "row_length": 14
+  },
+  {
+    "store_id": "only-f0-b",
+    "name": "ONLY",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 8,
+    "images": [
+      "1st Left/20260709_161116.jpg",
+      "1st Left/20260709_161119.jpg",
+      "1st Left/20260709_161133.jpg",
+      "1st Left/20260709_161142.jpg"
+    ],
+    "brand_tokens": [
+      "IONLY",
+      "WEAR",
+      "CIITCO",
+      "NMTBO",
+      "CELIO",
+      "WWILEIAIPEI"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "IONLY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 8,
+    "row_length": 14
+  },
+  {
+    "store_id": "metro-f0-b",
+    "name": "METRO",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 10,
+    "images": [
+      "1st Left/20260709_160819.jpg",
+      "1st Left/20260709_160821.jpg",
+      "1st Left/20260709_160835.jpg",
+      "1st Left/20260709_160846.jpg",
+      "1st Left/20260709_160907.jpg",
+      "1st Left/20260709_160930.jpg",
+      "1st Left/20260709_160937.jpg",
+      "1st Left/20260709_160950.jpg",
+      "1st Left/20260709_160959.jpg",
+      "1st Left/20260709_161013.jpg",
+      "1st Left/20260709_161021.jpg",
+      "1st Left/20260709_161029.jpg",
+      "1st Left/20260709_161039.jpg",
+      "1st Left/20260709_161058.jpg"
+    ],
+    "brand_tokens": [
+      "METRO",
+      "COLORS",
+      "BENETTON",
+      "UNITED",
+      "BEASOE",
+      "BESOE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "METRO",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 10,
+    "row_length": 14
+  },
+  {
+    "store_id": "nike-f0-b",
+    "name": "NIKE",
+    "name_confidence": 0.299,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 12,
+    "images": [
+      "1st Left/20260709_160756.jpg",
+      "1st Left/20260709_160811.jpg"
+    ],
+    "brand_tokens": [
+      "BHAANE",
+      "RETAIL",
+      "PVT",
+      "LTD",
+      "GST",
+      "NOAALCPMZV"
+    ],
+    "needs_review": true,
+    "review_reason": "placed by walk order; signage not legible",
+    "ocr_name": "BHAANE",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 12,
+    "row_length": 14
+  },
+  {
+    "store_id": "sperfumery-f0-b",
+    "name": "SPERFUMERY",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "left",
+    "seq": 13,
+    "images": [
+      "1st Left/20260709_160721.jpg",
+      "1st Left/20260709_160730.jpg",
+      "1st Left/20260709_160739.jpg",
+      "1st Left/20260709_160742.jpg"
+    ],
+    "brand_tokens": [
+      "PERFUMERY",
+      "LEGO",
+      "BHAANE",
+      "RETAIL",
+      "PVT",
+      "BYSHOPPERS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "PERFUMERY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 13,
+    "row_length": 14
+  },
+  {
+    "store_id": "westside-f0-t",
+    "name": "WESTSIDE",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 0,
+    "images": [
+      "1st Right/20260709_160414.jpg",
+      "1st Right/20260709_160415.jpg",
+      "1st Right/20260709_160430.jpg",
+      "1st Right/20260709_160443.jpg"
+    ],
+    "brand_tokens": [
+      "ESTSIDE",
+      "TIX"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ESTSIDE",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 0,
+    "row_length": 14
+  },
+  {
+    "store_id": "birkenstock-f0-t",
+    "name": "BIRKENSTOCK",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 1,
+    "images": [
+      "1st Right/20260709_160326.jpg",
+      "1st Right/20260709_160337.jpg",
+      "1st Right/20260709_160350.jpg"
+    ],
+    "brand_tokens": [
+      "BIRKENSTOCK",
+      "GSTINAAECEEZR",
+      "GERMAN",
+      "TRADITION",
+      "ULSHER",
+      "AUE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BIRKENSTOCK",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 1,
+    "row_length": 14
+  },
+  {
+    "store_id": "ethos-f0-t",
+    "name": "ETHOS",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 2,
+    "images": [
+      "1st Right/20260709_160232.jpg",
+      "1st Right/20260709_160248.jpg",
+      "1st Right/20260709_160303.jpg"
+    ],
+    "brand_tokens": [
+      "ETHOS",
+      "BOUTIQUES",
+      "WATCH",
+      "BIKENSTOK",
+      "FOREVERNEW",
+      "WAICH"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ETHOS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 2,
+    "row_length": 14
+  },
+  {
+    "store_id": "forever-new-f0-t",
+    "name": "FOREVER NEW",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 3,
+    "images": [
+      "1st Right/20260709_160150.jpg",
+      "1st Right/20260709_160201.jpg",
+      "1st Right/20260709_160213.jpg"
+    ],
+    "brand_tokens": [
+      "FOREVERNEW",
+      "FOREVER",
+      "AOS",
+      "FINALDAYS",
+      "GUESS",
+      "THAAC"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "FOREVERNEW",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 3,
+    "row_length": 14
+  },
+  {
+    "store_id": "guess-f0-t",
+    "name": "GUESS",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 4,
+    "images": [
+      "1st Right/20260709_160053.jpg",
+      "1st Right/20260709_160119.jpg",
+      "1st Right/20260709_160131.jpg",
+      "1st Right/20260709_160142.jpg"
+    ],
+    "brand_tokens": [
+      "GUESS",
+      "DCLUBA",
+      "ACCESSORIES",
+      "FIGER",
+      "CALVIN",
+      "KLEIN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "GUESS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 4,
+    "row_length": 14
+  },
+  {
+    "store_id": "calvin-klein-f0-t",
+    "name": "CALVIN KLEIN",
+    "name_confidence": 0.668,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 6,
+    "images": [
+      "1st Right/20260709_160009.jpg",
+      "1st Right/20260709_160028.jpg",
+      "1st Right/20260709_160042.jpg"
+    ],
+    "brand_tokens": [
+      "CLUBA",
+      "CALVIN",
+      "KLEIN",
+      "TOMMYHILFIGER",
+      "JPTOOFF",
+      "CALVINKLEIN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CLUBA",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 6,
+    "row_length": 14
+  },
+  {
+    "store_id": "van-heusen-f0-t",
+    "name": "VAN HEUSEN",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 7,
+    "images": [
+      "1st Right/20260709_155934.jpg",
+      "1st Right/20260709_155945.jpg",
+      "1st Right/20260709_155950.jpg",
+      "1st Right/20260709_155958.jpg"
+    ],
+    "brand_tokens": [
+      "VAN",
+      "HEUSEN",
+      "LOU",
+      "LOUIS",
+      "PHILIPPE",
+      "MEN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "VAN",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 7,
+    "row_length": 14
+  },
+  {
+    "store_id": "foot-locker-f0-t",
+    "name": "FOOT LOCKER",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 8,
+    "images": [
+      "1st Right/20260709_155753.jpg",
+      "1st Right/20260709_155804.jpg",
+      "1st Right/20260709_155855.jpg",
+      "1st Right/20260709_155903.jpg",
+      "1st Right/20260709_155920.jpg"
+    ],
+    "brand_tokens": [
+      "ALDO",
+      "FOREST",
+      "ESSENTIALS",
+      "LOCKER",
+      "OCKER",
+      "JOEENOEFOOT"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ALDO",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 8,
+    "row_length": 14
+  },
+  {
+    "store_id": "forest-essentials-f0-t",
+    "name": "FOREST ESSENTIALS",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 9,
+    "images": [
+      "1st Right/20260709_155741.jpg"
+    ],
+    "brand_tokens": [
+      "FOREST",
+      "ESSENTIALS",
+      "SOMETHING",
+      "FRESH",
+      "LUXURIOUS",
+      "AYURVEDA"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "FOREST",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 9,
+    "row_length": 14
+  },
+  {
+    "store_id": "aldo-f0-t",
+    "name": "ALDO",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 10,
+    "images": [
+      "1st Right/20260709_155720.jpg",
+      "1st Right/20260709_155729.jpg"
+    ],
+    "brand_tokens": [
+      "ALDO",
+      "EEISE",
+      "ALDOSHOES",
+      "ALDOLNDIA",
+      "FRESH",
+      "CLAYSTONES"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ALDO",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 10,
+    "row_length": 14
+  },
+  {
+    "store_id": "victoria-s-secret-f0-t",
+    "name": "VICTORIA'S SECRET",
+    "name_confidence": 0.94,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 11,
+    "images": [
+      "1st Right/20260709_155554.jpg",
+      "1st Right/20260709_155556.jpg",
+      "1st Right/20260709_155615.jpg",
+      "1st Right/20260709_155706.jpg"
+    ],
+    "brand_tokens": [
+      "SECRET",
+      "VICTORIAS",
+      "APPAREL",
+      "CLAYSTONES",
+      "GROUP",
+      "VICIORIAS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SECRET",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 11,
+    "row_length": 14
+  },
+  {
+    "store_id": "sephora-f0-t",
+    "name": "SEPHORA",
+    "name_confidence": 1.0,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 12,
+    "images": [
+      "1st Right/20260709_155520.jpg"
+    ],
+    "brand_tokens": [
+      "SEPHORA",
+      "ECRET",
+      "MAKEUP",
+      "SEPHORACOLLECTION",
+      "SKINCARE",
+      "ROREBEAUTY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SEPHORA",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 12,
+    "row_length": 14
+  },
+  {
+    "store_id": "imagine-f0-t",
+    "name": "IMAGINE",
+    "name_confidence": 0.948,
+    "floor": 0,
+    "floor_name": "Ground",
+    "side": "right",
+    "seq": 13,
+    "images": [
+      "1st Right/20260709_155250.jpg",
+      "1st Right/20260709_155314.jpg",
+      "1st Right/20260709_155325.jpg",
+      "1st Right/20260709_155440.jpg",
+      "1st Right/20260709_155447.jpg",
+      "1st Right/20260709_155456.jpg"
+    ],
+    "brand_tokens": [
+      "IMAGINE",
+      "PLASTIC",
+      "BEB",
+      "GADGAND",
+      "IMAGME",
+      "GADBEGEANS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "IMAGINE",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 13,
+    "row_length": 14
+  },
+  {
+    "store_id": "zeiss-vision-center-f1-b",
+    "name": "ZEISS VISION CENTER",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 0,
+    "images": [
+      "2nd right/20260709_163705.jpg",
+      "2nd right/20260709_165002.jpg"
+    ],
+    "brand_tokens": [
+      "ZEISS",
+      "VISION",
+      "CENTER",
+      "FIRE",
+      "ESCAPEROUTEPLAN",
+      "JOCKEY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ZEISS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 0,
+    "row_length": 18
+  },
+  {
+    "store_id": "jockey-f1-b",
+    "name": "JOCKEY",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 1,
+    "images": [
+      "2nd right/20260709_163644.jpg",
+      "2nd right/20260709_163656.jpg"
+    ],
+    "brand_tokens": [
+      "JOCKEY",
+      "ZEISS",
+      "VISION",
+      "CENT",
+      "GREATNESS",
+      "INNOWEAR"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "JOCKEY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 1,
+    "row_length": 18
+  },
+  {
+    "store_id": "asics-f1-b",
+    "name": "ASICS",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 2,
+    "images": [
+      "2nd right/20260709_163556.jpg",
+      "2nd right/20260709_163601.jpg"
+    ],
+    "brand_tokens": [
+      "DASICS",
+      "TTAOC",
+      "JOCKEY",
+      "ZEIS",
+      "ONNI",
+      "STALITY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "DASICS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 2,
+    "row_length": 18
+  },
+  {
+    "store_id": "adidas-f1-b",
+    "name": "ADIDAS",
+    "name_confidence": 0.742,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 3,
+    "images": [
+      "2nd right/20260709_163549.jpg"
+    ],
+    "brand_tokens": [
+      "EMIATES",
+      "DAS",
+      "FLIBSTER",
+      "BEE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "EMIATES",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 3,
+    "row_length": 18
+  },
+  {
+    "store_id": "skechers-f1-b",
+    "name": "SKECHERS",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 4,
+    "images": [
+      "2nd right/20260709_163437.jpg",
+      "2nd right/20260709_163445.jpg",
+      "2nd right/20260709_163453.jpg",
+      "2nd right/20260709_163459.jpg",
+      "2nd right/20260709_163523.jpg"
+    ],
+    "brand_tokens": [
+      "SKECHERS",
+      "SLIPINS",
+      "GAURIK",
+      "FASHIONS",
+      "LTD",
+      "GSTINAAGCGPZV"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SKECHERS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 4,
+    "row_length": 18
+  },
+  {
+    "store_id": "fossil-f1-b",
+    "name": "FOSSIL",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 5,
+    "images": [
+      "2nd right/20260709_163354.jpg",
+      "2nd right/20260709_163402.jpg",
+      "2nd right/20260709_163410.jpg"
+    ],
+    "brand_tokens": [
+      "FOSSIL",
+      "WDRE",
+      "TAKE",
+      "YOUN",
+      "IEST",
+      "ANDCO"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "FOSSIL",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 5,
+    "row_length": 18
+  },
+  {
+    "store_id": "shaya-f1-b",
+    "name": "SHAYA",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 6,
+    "images": [
+      "2nd right/20260709_163333.jpg",
+      "2nd right/20260709_163340.jpg",
+      "2nd right/20260709_163348.jpg"
+    ],
+    "brand_tokens": [
+      "SHAYA",
+      "SILVER",
+      "ONEO",
+      "NITYA",
+      "JEWEL",
+      "KIN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SHAYA",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 6,
+    "row_length": 18
+  },
+  {
+    "store_id": "caratlane-f1-b",
+    "name": "CARATLANE",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 7,
+    "images": [
+      "2nd right/20260709_163306.jpg",
+      "2nd right/20260709_163318.jpg",
+      "2nd right/20260709_163326.jpg"
+    ],
+    "brand_tokens": [
+      "CARATLANE",
+      "PRODUCT",
+      "TATA",
+      "LETYOE",
+      "ZERO",
+      "MAKING"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CARATLANE",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 7,
+    "row_length": 18
+  },
+  {
+    "store_id": "william-penn-f1-b",
+    "name": "WILLIAM PENN",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 8,
+    "images": [
+      "2nd right/20260709_163237.jpg",
+      "2nd right/20260709_163249.jpg",
+      "2nd right/20260709_163300.jpg"
+    ],
+    "brand_tokens": [
+      "PENN",
+      "WILLIA",
+      "LLIAM",
+      "BEING",
+      "LIKE",
+      "INK"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "PENN",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 8,
+    "row_length": 18
+  },
+  {
+    "store_id": "toni-guy-f1-b",
+    "name": "TONI & GUY",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 9,
+    "images": [
+      "2nd right/20260709_163200.jpg"
+    ],
+    "brand_tokens": [
+      "TONIGUY",
+      "KTONIGUY",
+      "TONIBGUT",
+      "LONDON",
+      "SALON",
+      "EST"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "TONIGUY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 9,
+    "row_length": 18
+  },
+  {
+    "store_id": "nails-beyond-f1-b",
+    "name": "NAILS BEYOND",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 10,
+    "images": [
+      "2nd right/20260709_163148.jpg"
+    ],
+    "brand_tokens": [
+      "NAIIS",
+      "BEYOND",
+      "CUST",
+      "MER",
+      "NAILED",
+      "FLRST"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "NAIIS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 10,
+    "row_length": 18
+  },
+  {
+    "store_id": "helios-f1-b",
+    "name": "HELIOS",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 11,
+    "images": [
+      "2nd right/20260709_162434.jpg",
+      "2nd right/20260709_162443.jpg",
+      "2nd right/20260709_162451.jpg"
+    ],
+    "brand_tokens": [
+      "HELIOS",
+      "XHELIOS",
+      "SEIKO",
+      "PRESAGE",
+      "SWISSMADE",
+      "MOV"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "HELIOS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 11,
+    "row_length": 18
+  },
+  {
+    "store_id": "u-s-polo-assn-f1-b",
+    "name": "U.S. POLO ASSN.",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 12,
+    "images": [
+      "2nd right/20260709_162411.jpg",
+      "2nd right/20260709_162418.jpg",
+      "2nd right/20260709_162428.jpg"
+    ],
+    "brand_tokens": [
+      "ASSN",
+      "POLO",
+      "USPOLO",
+      "SINCE",
+      "GSTINAAACHAZV",
+      "GSTINAA"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ASSN",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 12,
+    "row_length": 18
+  },
+  {
+    "store_id": "manyavar-f1-b",
+    "name": "MANYAVAR",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 13,
+    "images": [
+      "2nd right/20260709_162357.jpg",
+      "2nd right/20260709_162407.jpg"
+    ],
+    "brand_tokens": [
+      "MANYAVAR",
+      "MADEFOR",
+      "CANYAKAR",
+      "EACH",
+      "CTHER",
+      "CACH"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MANYAVAR",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 13,
+    "row_length": 18
+  },
+  {
+    "store_id": "mochi-f1-b",
+    "name": "MOCHI",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 14,
+    "images": [
+      "2nd right/20260709_162310.jpg",
+      "2nd right/20260709_162324.jpg",
+      "2nd right/20260709_162327.jpg",
+      "2nd right/20260709_162338.jpg",
+      "2nd right/20260709_162350.jpg"
+    ],
+    "brand_tokens": [
+      "MOCHI",
+      "JENEHUEN",
+      "JFONTINI",
+      "PRC",
+      "CMOCHI",
+      "USPOLOLSR"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MOCHI",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 14,
+    "row_length": 18
+  },
+  {
+    "store_id": "miniso-f1-b",
+    "name": "MINISO",
+    "name_confidence": 0.893,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 16,
+    "images": [
+      "2nd right/20260709_162242.jpg",
+      "2nd right/20260709_162253.jpg"
+    ],
+    "brand_tokens": [
+      "MINI",
+      "HANGOUZ",
+      "GOA",
+      "MINISO",
+      "RAVENCLAW",
+      "HUFFLEPUFF"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MINI",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 16,
+    "row_length": 18
+  },
+  {
+    "store_id": "puma-f1-b",
+    "name": "PUMA",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "right",
+    "seq": 17,
+    "images": [
+      "2nd right/20260709_162007.jpg",
+      "2nd right/20260709_162044.jpg",
+      "2nd right/20260709_162221.jpg",
+      "2nd right/20260709_162233.jpg"
+    ],
+    "brand_tokens": [
+      "MAHIN",
+      "PUMA",
+      "DBLACKBERRYS",
+      "ENDOF",
+      "WILDCRAFT",
+      "STARBUCKS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MAHIN",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 17,
+    "row_length": 18
+  },
+  {
+    "store_id": "westside-f1-t",
+    "name": "WESTSIDE",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 0,
+    "images": [
+      "2nd Left/20260709_164056.jpg",
+      "2nd Left/20260709_164122.jpg",
+      "2nd Left/20260709_164126.jpg"
+    ],
+    "brand_tokens": [
+      "ESTSIDE",
+      "VESTSIDE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ESTSIDE",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 0,
+    "row_length": 12
+  },
+  {
+    "store_id": "blackberrys-f1-t",
+    "name": "BLACKBERRYS",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 1,
+    "images": [
+      "2nd Left/20260709_164142.jpg",
+      "2nd Left/20260709_164153.jpg",
+      "2nd Left/20260709_164200.jpg"
+    ],
+    "brand_tokens": [
+      "BLACKBERRYS",
+      "SHARPCUTSALE",
+      "BUYORMOREGET",
+      "ONSELECT",
+      "MERCHANDSE",
+      "EPRISII"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BLACKBERRYS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 1,
+    "row_length": 12
+  },
+  {
+    "store_id": "allen-solly-f1-t",
+    "name": "ALLEN SOLLY",
+    "name_confidence": 0.94,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 2,
+    "images": [
+      "2nd Left/20260709_164205.jpg",
+      "2nd Left/20260709_164210.jpg",
+      "2nd Left/20260709_164220.jpg"
+    ],
+    "brand_tokens": [
+      "ALLEN",
+      "SOLLY",
+      "EEN",
+      "OEE",
+      "ALLENSOLLY",
+      "EOE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ALLEN",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 2,
+    "row_length": 12
+  },
+  {
+    "store_id": "crocs-f1-t",
+    "name": "CROCS",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 4,
+    "images": [
+      "2nd Left/20260709_164231.jpg",
+      "2nd Left/20260709_164248.jpg",
+      "2nd Left/20260709_164255.jpg",
+      "2nd Left/20260709_164305.jpg",
+      "2nd Left/20260709_164313.jpg",
+      "2nd Left/20260709_164321.jpg",
+      "2nd Left/20260709_164328.jpg"
+    ],
+    "brand_tokens": [
+      "CROCS",
+      "ESTSIDE",
+      "WESTSIDE",
+      "GCROCS",
+      "JIBBITZ",
+      "STATION"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CROCS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 4,
+    "row_length": 12
+  },
+  {
+    "store_id": "rare-rabbit-f1-t",
+    "name": "RARE RABBIT",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 5,
+    "images": [
+      "2nd Left/20260709_164346.jpg",
+      "2nd Left/20260709_164353.jpg",
+      "2nd Left/20260709_164402.jpg",
+      "2nd Left/20260709_164414.jpg",
+      "2nd Left/20260709_164429.jpg",
+      "2nd Left/20260709_164443.jpg"
+    ],
+    "brand_tokens": [
+      "RABBIT",
+      "RARE",
+      "RARERABBIT",
+      "LVI",
+      "DEO",
+      "REXOTONEAR"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "RABBIT",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 5,
+    "row_length": 12
+  },
+  {
+    "store_id": "nautica-f1-t",
+    "name": "NAUTICA",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 6,
+    "images": [
+      "2nd Left/20260709_164505.jpg",
+      "2nd Left/20260709_164513.jpg",
+      "2nd Left/20260709_164524.jpg"
+    ],
+    "brand_tokens": [
+      "NAUTICA",
+      "RRAMOMD",
+      "ARROW",
+      "WEAR",
+      "RABBITI",
+      "BUYOFF"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "NAUTICA",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 6,
+    "row_length": 12
+  },
+  {
+    "store_id": "raymond-f1-t",
+    "name": "RAYMOND",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 7,
+    "images": [
+      "2nd Left/20260709_164531.jpg",
+      "2nd Left/20260709_164537.jpg"
+    ],
+    "brand_tokens": [
+      "RAYMOND",
+      "RRAYMOND",
+      "WEAR",
+      "ROEAOO",
+      "MCA",
+      "MPOLO"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "RAYMOND",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 7,
+    "row_length": 12
+  },
+  {
+    "store_id": "arrow-f1-t",
+    "name": "ARROW",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 8,
+    "images": [
+      "2nd Left/20260709_164550.jpg",
+      "2nd Left/20260709_164556.jpg",
+      "2nd Left/20260709_164605.jpg"
+    ],
+    "brand_tokens": [
+      "ARROW",
+      "BUYGETOFF",
+      "BUYGET",
+      "EDSOE",
+      "USA",
+      "USAT"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "ARROW",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 8,
+    "row_length": 12
+  },
+  {
+    "store_id": "m-s-f1-t",
+    "name": "M&S",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 9,
+    "images": [
+      "2nd Left/20260709_164611.jpg",
+      "2nd Left/20260709_164631.jpg",
+      "2nd Left/20260709_164644.jpg",
+      "2nd Left/20260709_164649.jpg"
+    ],
+    "brand_tokens": [
+      "MARKSSPENCER",
+      "BOMARKSSPENCE",
+      "BEAUTY",
+      "UNDERWEAR",
+      "STYLE",
+      "SEEKERS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MARKSSPENCER",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 9,
+    "row_length": 12
+  },
+  {
+    "store_id": "levi-s-f1-t",
+    "name": "LEVI'S",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 10,
+    "images": [
+      "2nd Left/20260709_164706.jpg",
+      "2nd Left/20260709_164720.jpg"
+    ],
+    "brand_tokens": [
+      "LEVIS",
+      "TERMSAND",
+      "CONDTIONSAPPLY",
+      "ADCO"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "LEVIS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 10,
+    "row_length": 12
+  },
+  {
+    "store_id": "mia-by-tanishq-f1-t",
+    "name": "MIA BY TANISHQ",
+    "name_confidence": 1.0,
+    "floor": 1,
+    "floor_name": "First",
+    "side": "left",
+    "seq": 11,
+    "images": [
+      "2nd Left/20260709_164734.jpg",
+      "2nd Left/20260709_164746.jpg"
+    ],
+    "brand_tokens": [
+      "MIA",
+      "BES",
+      "SAL",
+      "BYTANISHQ",
+      "GFT",
+      "STRBURST"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MIA",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 11,
+    "row_length": 12
+  },
+  {
+    "store_id": "samsonite-f2-b",
+    "name": "SAMSONITE",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 0,
+    "images": [
+      "3rd Right/20260709_165342.jpg",
+      "3rd Right/20260709_165349.jpg",
+      "3rd Right/20260709_165400.jpg",
+      "3rd Right/20260709_165415.jpg"
+    ],
+    "brand_tokens": [
+      "SAMSONITE",
+      "SAMSGNITE",
+      "PLEASE",
+      "MIND",
+      "STEP",
+      "IARNING"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SAMSONITE",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 0,
+    "row_length": 13
+  },
+  {
+    "store_id": "toscano-f2-b",
+    "name": "TOSCANO",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 1,
+    "images": [
+      "3rd Right/20260709_165434.jpg",
+      "3rd Right/20260709_165451.jpg",
+      "3rd Right/20260709_165531.jpg"
+    ],
+    "brand_tokens": [
+      "TOSCANO",
+      "RESTAURANT",
+      "INDIAN",
+      "RESTAURAN",
+      "BAR",
+      "HAPPY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "TOSCANO",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 1,
+    "row_length": 13
+  },
+  {
+    "store_id": "bose-f2-b",
+    "name": "BOSE",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 2,
+    "images": [
+      "3rd Right/20260709_165548.jpg",
+      "3rd Right/20260709_165557.jpg",
+      "3rd Right/20260709_165608.jpg",
+      "3rd Right/20260709_165618.jpg",
+      "3rd Right/20260709_165630.jpg",
+      "3rd Right/20260709_165639.jpg",
+      "3rd Right/20260709_165648.jpg"
+    ],
+    "brand_tokens": [
+      "GSHOCK",
+      "CASIO",
+      "BOSE",
+      "JBOSE",
+      "OCOLORS",
+      "HOCI"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "GSHOCK",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 2,
+    "row_length": 13
+  },
+  {
+    "store_id": "the-body-shop-f2-b",
+    "name": "THE BODY SHOP",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 5,
+    "images": [
+      "3rd Right/20260709_165657.jpg",
+      "3rd Right/20260709_165708.jpg",
+      "3rd Right/20260709_165725.jpg",
+      "3rd Right/20260709_165736.jpg",
+      "3rd Right/20260709_165750.jpg",
+      "3rd Right/20260709_165810.jpg"
+    ],
+    "brand_tokens": [
+      "BODY",
+      "GSHOCK",
+      "USE",
+      "UNLE",
+      "INSTRUCTED",
+      "OTHERY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BODY",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 5,
+    "row_length": 13
+  },
+  {
+    "store_id": "vaya-f2-b",
+    "name": "VAYA",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 6,
+    "images": [
+      "3rd Right/20260709_165823.jpg",
+      "3rd Right/20260709_165834.jpg",
+      "3rd Right/20260709_165857.jpg"
+    ],
+    "brand_tokens": [
+      "VAYA",
+      "HAUTECHEF",
+      "AUTECHEF",
+      "GLOBALPRESENCE",
+      "ERVEWAR",
+      "LOCALROOTS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "VAYA",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 6,
+    "row_length": 13
+  },
+  {
+    "store_id": "chai-point-f2-b",
+    "name": "CHAI POINT",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 7,
+    "images": [
+      "3rd Right/20260709_165904.jpg",
+      "3rd Right/20260709_165915.jpg",
+      "3rd Right/20260709_165923.jpg"
+    ],
+    "brand_tokens": [
+      "CHAI",
+      "POINT",
+      "COFFEE",
+      "ZERO",
+      "DRAMA",
+      "TURN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CHAI",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 7,
+    "row_length": 13
+  },
+  {
+    "store_id": "mothercare-f2-b",
+    "name": "MOTHERCARE",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 8,
+    "images": [
+      "3rd Right/20260709_165946.jpg",
+      "3rd Right/20260709_165956.jpg",
+      "3rd Right/20260709_170012.jpg"
+    ],
+    "brand_tokens": [
+      "MOTHERCARE",
+      "WAGEG",
+      "MOTHERCAREIN",
+      "WERE",
+      "ALWAYS",
+      "NEWBORN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MOTHERCARE",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 8,
+    "row_length": 13
+  },
+  {
+    "store_id": "kushal-s-f2-b",
+    "name": "KUSHAL'S",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 9,
+    "images": [
+      "3rd Right/20260709_170022.jpg",
+      "3rd Right/20260709_170035.jpg",
+      "3rd Right/20260709_170049.jpg",
+      "3rd Right/20260709_170057.jpg",
+      "3rd Right/20260709_170112.jpg",
+      "3rd Right/20260709_170122.jpg"
+    ],
+    "brand_tokens": [
+      "KUSHALS",
+      "DAE",
+      "KUSHAL",
+      "KORAMANGALA",
+      "ADITYA",
+      "BIRLA"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "KUSHALS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 9,
+    "row_length": 13
+  },
+  {
+    "store_id": "soch-f2-b",
+    "name": "SOCH",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "right",
+    "seq": 12,
+    "images": [
+      "3rd Right/20260709_170142.jpg",
+      "3rd Right/20260709_170150.jpg",
+      "3rd Right/20260709_170201.jpg",
+      "3rd Right/20260709_170224.jpg",
+      "3rd Right/20260709_170246.jpg",
+      "3rd Right/20260709_170259.jpg"
+    ],
+    "brand_tokens": [
+      "SOCH",
+      "SOCN",
+      "KORAMANGALA",
+      "ONEPLUS",
+      "EXPERENCESTORE",
+      "PADGO"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SOCH",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 12,
+    "row_length": 13
+  },
+  {
+    "store_id": "timezone-f2-t",
+    "name": "TIMEZONE",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 0,
+    "images": [
+      "3rd Left/20260709_170711.jpg",
+      "3rd Left/20260709_170726.jpg",
+      "3rd Left/20260709_170745.jpg",
+      "3rd Left/20260709_170802.jpg",
+      "3rd Left/20260709_170819.jpg"
+    ],
+    "brand_tokens": [
+      "TIMEZONE",
+      "BODOOENS",
+      "GEAEPO",
+      "DHAMAAL",
+      "RECOVERY",
+      "AUOT"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "TIMEZONE",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 0,
+    "row_length": 25
+  },
+  {
+    "store_id": "decathlon-f2-t",
+    "name": "DECATHLON",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 1,
+    "images": [
+      "3rd Left/20260709_170853.jpg",
+      "3rd Left/20260709_170859.jpg",
+      "3rd Left/20260709_170912.jpg",
+      "3rd Left/20260709_170924.jpg"
+    ],
+    "brand_tokens": [
+      "DECATHLON",
+      "SPORTS",
+      "NNGWS",
+      "MONSOON",
+      "HIT",
+      "REFR"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "DECATHLON",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 1,
+    "row_length": 25
+  },
+  {
+    "store_id": "mod-f2-t",
+    "name": "MOD",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 2,
+    "images": [
+      "3rd Left/20260709_171007.jpg"
+    ],
+    "brand_tokens": [
+      "MOD",
+      "DNGATHER",
+      "ONS",
+      "EEAG",
+      "CRUSH",
+      "CEREA"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MOD",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 2,
+    "row_length": 25
+  },
+  {
+    "store_id": "the-dogfather-f2-t",
+    "name": "THE DOGFATHER",
+    "name_confidence": 0.86,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 3,
+    "images": [
+      "3rd Left/20260709_171015.jpg",
+      "3rd Left/20260709_171025.jpg"
+    ],
+    "brand_tokens": [
+      "DNGFATHER",
+      "MODNIGAHER",
+      "WON",
+      "BNB",
+      "COOLERS",
+      "AMERICAN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "DNGFATHER",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 3,
+    "row_length": 25
+  },
+  {
+    "store_id": "taco-bell-f2-t",
+    "name": "TACO BELL",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 4,
+    "images": [
+      "3rd Left/20260709_171031.jpg",
+      "3rd Left/20260709_171039.jpg",
+      "3rd Left/20260709_171051.jpg",
+      "3rd Left/20260709_171057.jpg"
+    ],
+    "brand_tokens": [
+      "BELL",
+      "KOREAN",
+      "STREET",
+      "FOOD",
+      "TACO",
+      "KRICENOODLES"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BELL",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 4,
+    "row_length": 25
+  },
+  {
+    "store_id": "gochujang-f2-t",
+    "name": "GOCHUJANG",
+    "name_confidence": 0.633,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 5,
+    "images": [
+      "3rd Left/20260709_171101.jpg",
+      "3rd Left/20260709_171108.jpg",
+      "3rd Left/20260709_171121.jpg",
+      "3rd Left/20260709_171138.jpg"
+    ],
+    "brand_tokens": [
+      "WOW",
+      "CHUJANG",
+      "KOREAN",
+      "STREET",
+      "FOOD",
+      "ESBEB"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "WOW",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 5,
+    "row_length": 25
+  },
+  {
+    "store_id": "dindigul-thalappakatti-f2-t",
+    "name": "DINDIGUL THALAPPAKATTI",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 8,
+    "images": [
+      "3rd Left/20260709_171144.jpg",
+      "3rd Left/20260709_171150.jpg",
+      "3rd Left/20260709_171159.jpg"
+    ],
+    "brand_tokens": [
+      "THALAPPAKATTI",
+      "DINDIGUL",
+      "WOW",
+      "SINCE",
+      "ROOTEDIN",
+      "FORDECADES"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "THALAPPAKATTI",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 8,
+    "row_length": 25
+  },
+  {
+    "store_id": "fish-n-chips-f2-t",
+    "name": "FISH N CHIPS",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 9,
+    "images": [
+      "3rd Left/20260709_171205.jpg",
+      "3rd Left/20260709_171213.jpg"
+    ],
+    "brand_tokens": [
+      "FISHNCHIPS",
+      "COCACOLA",
+      "FISH",
+      "SINCE",
+      "NACHOS",
+      "NCHIPS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "FISHNCHIPS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 9,
+    "row_length": 25
+  },
+  {
+    "store_id": "california-burrito-f2-t",
+    "name": "CALIFORNIA BURRITO",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 10,
+    "images": [
+      "3rd Left/20260709_171221.jpg",
+      "3rd Left/20260709_171229.jpg"
+    ],
+    "brand_tokens": [
+      "BURRITO",
+      "CALIFORNIA",
+      "NACHOS",
+      "DESSERTS",
+      "QUESADILLA",
+      "MILD"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BURRITO",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 10,
+    "row_length": 25
+  },
+  {
+    "store_id": "subway-f2-t",
+    "name": "SUBWAY",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 11,
+    "images": [
+      "3rd Left/20260709_171236.jpg",
+      "3rd Left/20260709_171245.jpg"
+    ],
+    "brand_tokens": [
+      "SUBWAY",
+      "SULWAY",
+      "PLATTER",
+      "RRITO",
+      "FORNIA",
+      "CEBOWLS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SUBWAY",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 11,
+    "row_length": 25
+  },
+  {
+    "store_id": "naga-s-f2-t",
+    "name": "NAGA'S",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 12,
+    "images": [
+      "3rd Left/20260709_171252.jpg",
+      "3rd Left/20260709_171300.jpg"
+    ],
+    "brand_tokens": [
+      "NAGAS",
+      "JAY",
+      "ANDHRA",
+      "ROYAL",
+      "CUISINE",
+      "BIRYANI"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "NAGAS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 12,
+    "row_length": 25
+  },
+  {
+    "store_id": "good-flippin-burgers-f2-t",
+    "name": "GOOD FLIPPIN' BURGERS",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 13,
+    "images": [
+      "3rd Left/20260709_171309.jpg",
+      "3rd Left/20260709_171319.jpg",
+      "3rd Left/20260709_171327.jpg"
+    ],
+    "brand_tokens": [
+      "BURGERS",
+      "BURGER",
+      "KING",
+      "GOODFLIPPIN",
+      "GOOD",
+      "FLIPPIN"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "BURGERS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 13,
+    "row_length": 25
+  },
+  {
+    "store_id": "shivsagar-f2-t",
+    "name": "SHIVSAGAR",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 15,
+    "images": [
+      "3rd Left/20260709_171336.jpg",
+      "3rd Left/20260709_171349.jpg",
+      "3rd Left/20260709_171506.jpg"
+    ],
+    "brand_tokens": [
+      "SHIVSAGAR",
+      "BURGER",
+      "KING",
+      "SHIVSAYAR",
+      "RGERKING",
+      "HEY"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SHIVSAGAR",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 15,
+    "row_length": 25
+  },
+  {
+    "store_id": "kfc-f2-t",
+    "name": "KFC",
+    "name_confidence": 1.0,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 16,
+    "images": [
+      "3rd Left/20260709_171511.jpg",
+      "3rd Left/20260709_171520.jpg",
+      "3rd Left/20260709_171551.jpg",
+      "3rd Left/20260709_171600.jpg"
+    ],
+    "brand_tokens": [
+      "KFC",
+      "HFILEYS",
+      "HFILE",
+      "CREATIONS",
+      "FRESHLY",
+      "SBARRO"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "KFC",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 16,
+    "row_length": 25
+  },
+  {
+    "store_id": "squeeze-juice-bars-f2-t",
+    "name": "SQUEEZE JUICE BARS",
+    "name_confidence": 0.94,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 21,
+    "images": [
+      "3rd Left/20260709_171609.jpg",
+      "3rd Left/20260709_171704.jpg",
+      "3rd Left/20260709_171709.jpg",
+      "3rd Left/20260709_171713.jpg",
+      "3rd Left/20260709_171717.jpg",
+      "3rd Left/20260709_171722.jpg",
+      "3rd Left/20260709_171731.jpg",
+      "3rd Left/20260709_171738.jpg",
+      "3rd Left/20260709_171742.jpg",
+      "3rd Left/20260709_171751.jpg"
+    ],
+    "brand_tokens": [
+      "SQUEEZ",
+      "BOBA",
+      "DRICKLE",
+      "BHAI",
+      "KITCHENS",
+      "CRE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SQUEEZ",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 21,
+    "row_length": 25
+  },
+  {
+    "store_id": "mcdonald-s-f2-t",
+    "name": "MCDONALD'S",
+    "name_confidence": 0.571,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 23,
+    "images": [
+      "3rd Left/20260709_171757.jpg",
+      "3rd Left/20260709_171803.jpg",
+      "3rd Left/20260709_171810.jpg",
+      "3rd Left/20260709_171924.jpg",
+      "3rd Left/20260709_171931.jpg",
+      "3rd Left/20260709_171936.jpg"
+    ],
+    "brand_tokens": [
+      "POPEVES",
+      "MCCA",
+      "VESSERT",
+      "WERKS",
+      "DESSERTWEK",
+      "DESTERT"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "POPEVES",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 23,
+    "row_length": 25
+  },
+  {
+    "store_id": "dal-moros-f2-t",
+    "name": "DAL MOROS",
+    "name_confidence": 0.898,
+    "floor": 2,
+    "floor_name": "Second",
+    "side": "left",
+    "seq": 24,
+    "images": [
+      "3rd Left/20260709_171942.jpg",
+      "3rd Left/20260709_171948.jpg",
+      "3rd Left/20260709_171953.jpg"
+    ],
+    "brand_tokens": [
+      "DAL",
+      "MOROS",
+      "FRESHG",
+      "OON",
+      "OVE",
+      "PASTA"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "DAL",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 24,
+    "row_length": 25
+  },
+  {
+    "store_id": "cinemas-8-9-f3-b",
+    "name": "CINEMAS 8-9",
+    "name_confidence": 0.94,
+    "floor": 3,
+    "floor_name": "Third",
+    "side": "left",
+    "seq": 1,
+    "images": [
+      "4th Left/20260709_172701.jpg"
+    ],
+    "brand_tokens": [
+      "CINEMAS",
+      "CONCESSIONAIRE",
+      "WANT",
+      "AUDI",
+      "USAFE",
+      "TICKETS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CINEMAS",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 1,
+    "row_length": 2
+  },
+  {
+    "store_id": "cinemas-1-3-f3-t",
+    "name": "CINEMAS 1-3",
+    "name_confidence": 0.462,
+    "floor": 3,
+    "floor_name": "Third",
+    "side": "right",
+    "seq": 0,
+    "images": [
+      "4th Right/20260709_172342.jpg",
+      "4th Right/20260709_172355.jpg"
+    ],
+    "brand_tokens": [
+      "IMAX",
+      "DRAMA",
+      "PVR",
+      "TICKETS",
+      "MONSTER",
+      "MOVIE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "IMAX",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 0,
+    "row_length": 2
+  },
+  {
+    "store_id": "cinemas-4-7-f3-t",
+    "name": "CINEMAS 4-7",
+    "name_confidence": 0.94,
+    "floor": 3,
+    "floor_name": "Third",
+    "side": "right",
+    "seq": 1,
+    "images": [
+      "4th Right/20260709_172457.jpg",
+      "4th Right/20260709_172525.jpg"
+    ],
+    "brand_tokens": [
+      "CINEMAS",
+      "PVR",
+      "ECINEMAS",
+      "MINIONS",
+      "BABY",
+      "FCINEMAS"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CINEMAS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 1,
+    "row_length": 2
+  },
+  {
+    "store_id": "mr-pronto-f4-b",
+    "name": "MR PRONTO",
+    "name_confidence": 1.0,
+    "floor": 4,
+    "floor_name": "Fourth",
+    "side": "right",
+    "seq": 0,
+    "images": [
+      "5th Right/20260709_172935.jpg",
+      "5th Right/20260709_172939.jpg"
+    ],
+    "brand_tokens": [
+      "MRPRONTA",
+      "MRPRONTO",
+      "AOOO",
+      "OOO",
+      "ARPROND",
+      "APRON"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "MRPRONTA",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 0,
+    "row_length": 2
+  },
+  {
+    "store_id": "sgs-snooker-zone-f4-b",
+    "name": "SGS SNOOKER ZONE",
+    "name_confidence": 0.94,
+    "floor": 4,
+    "floor_name": "Fourth",
+    "side": "right",
+    "seq": 1,
+    "images": [
+      "5th Right/20260709_173017.jpg"
+    ],
+    "brand_tokens": [
+      "SNOOKER",
+      "SGS",
+      "ZONE",
+      "KORAMRNGALA",
+      "MLL",
+      "CUAMINGI"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "SNOOKER",
+    "name_source": "directory",
+    "row": "bottom",
+    "map_index": 1,
+    "row_length": 2
+  },
+  {
+    "store_id": "cars24-f4-t",
+    "name": "CARS24",
+    "name_confidence": 0.873,
+    "floor": 4,
+    "floor_name": "Fourth",
+    "side": "left",
+    "seq": 0,
+    "images": [
+      "5th Left/20260709_173117.jpg",
+      "5th Left/20260709_173119.jpg"
+    ],
+    "brand_tokens": [
+      "CARS",
+      "FHC",
+      "FIN",
+      "QLRI"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "CARS",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 0,
+    "row_length": 2
+  },
+  {
+    "store_id": "centre-management-office-f4-t",
+    "name": "CENTRE MANAGEMENT OFFICE",
+    "name_confidence": 0.94,
+    "floor": 4,
+    "floor_name": "Fourth",
+    "side": "left",
+    "seq": 1,
+    "images": [
+      "5th Left/20260709_173204.jpg",
+      "5th Left/20260709_173206.jpg",
+      "5th Left/20260709_173216.jpg"
+    ],
+    "brand_tokens": [
+      "OFFICE",
+      "MANAGEMENT",
+      "CENTRE",
+      "NEXUSHYDERABADRETAILPRIVATEIMITED",
+      "NEXUSHYDERABADRETAILPRIVATELIMITED",
+      "FIRE"
+    ],
+    "needs_review": false,
+    "review_reason": "",
+    "ocr_name": "OFFICE",
+    "name_source": "directory",
+    "row": "top",
+    "map_index": 1,
+    "row_length": 2
+  }
+]
