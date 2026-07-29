@@ -1,0 +1,19 @@
+# Raw capture set — ~730MB of corridor-walk photographs.
+# Available on request; not tracked in git.
+data/Images/
+data/Videos/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.ipynb_checkpoints/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,17 @@
+# Core ML / vision
+torch
+transformers
+rapidocr-onnxruntime
+numpy
+pillow
+
+# Navigation graph
+networkx
+
+# Web service
+fastapi
+uvicorn
+pydantic
+
+# Report generation (tools/)
+reportlab
