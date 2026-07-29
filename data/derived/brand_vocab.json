@@ -1,0 +1,684 @@
+{
+  "tira-f0-b": [
+    "TIRA",
+    "GAT",
+    "TME",
+    "LOOB",
+    "BATHBODY",
+    "FENTY"
+  ],
+  "swarovski-f0-b": [
+    "SWAROVSKI",
+    "SUNGLASS",
+    "HUT",
+    "SWAROVSKIDOE",
+    "SWAROVSK",
+    "SUNGLASSHUT"
+  ],
+  "ethos-f0-b": [
+    "ETHOS",
+    "ORIGEM",
+    "PATIEN",
+    "OMEGA",
+    "AADCKNZ",
+    "THANK"
+  ],
+  "origem-f0-b": [
+    "REESCAPEROUTEPLAN",
+    "ORIGEM",
+    "LSPOUASSIL",
+    "FEXIT",
+    "LAB",
+    "GROWN"
+  ],
+  "daily-objects-f0-b": [
+    "DAILY",
+    "OBJECTS",
+    "ASTIC",
+    "OBJEETS",
+    "DAILYOBIECTS",
+    "TVANRA"
+  ],
+  "only-f0-b": [
+    "IONLY",
+    "WEAR",
+    "CELIO",
+    "CIITCO",
+    "NMTBO",
+    "WWILEIAIPEI",
+    "ONLY"
+  ],
+  "metro-f0-b": [
+    "METRO",
+    "COLORS",
+    "BENETTON",
+    "UNITED",
+    "BESOE",
+    "MITRO"
+  ],
+  "nike-f0-b": [
+    "BHAANE",
+    "RETAIL",
+    "PVT",
+    "LTD",
+    "GST",
+    "NOAALCPMZV",
+    "NIKE"
+  ],
+  "sperfumery-f0-b": [
+    "PERFUMERY",
+    "LEGO",
+    "BHAANE",
+    "RETAIL",
+    "PVT",
+    "OBLEBBHBH",
+    "SPERFUMERY"
+  ],
+  "westside-f0-t": [
+    "ESTSIDE",
+    "TIX",
+    "WESTSIDE"
+  ],
+  "birkenstock-f0-t": [
+    "BIRKENSTOCK",
+    "GSTINAAECEEZR",
+    "GERMAN",
+    "TRADITION",
+    "ULSHER",
+    "AUE"
+  ],
+  "ethos-f0-t": [
+    "ETHOS",
+    "BOUTIQUES",
+    "BIKENSTOK",
+    "WAICH",
+    "THOSLIMITED",
+    "AADCKNIZ"
+  ],
+  "forever-new-f0-t": [
+    "FOREVERNEW",
+    "FOREVER",
+    "THAAC",
+    "OBIOEIW",
+    "FINALDAYS",
+    "FINAL",
+    "NEW"
+  ],
+  "guess-f0-t": [
+    "DCLUBA",
+    "GUESS",
+    "FIGER",
+    "CALVIN",
+    "KLEIN",
+    "CALVINKLEIN"
+  ],
+  "calvin-klein-f0-t": [
+    "CLUBA",
+    "CALVIN",
+    "KLEIN",
+    "JPTOOFF",
+    "CALVINKLEIN",
+    "TOMMYHILFIGER"
+  ],
+  "van-heusen-f0-t": [
+    "LOU",
+    "LOUIS",
+    "PHILIPPE",
+    "SEN",
+    "VAN",
+    "BUYGET",
+    "HEUSEN"
+  ],
+  "foot-locker-f0-t": [
+    "ALDO",
+    "FOREST",
+    "ESSENTIALS",
+    "LOCKER",
+    "OCKER",
+    "AYURVEDA",
+    "FOOT"
+  ],
+  "forest-essentials-f0-t": [
+    "FOREST",
+    "ESSENTIALS",
+    "SOMETHING",
+    "FRESH",
+    "LUXURIOUS",
+    "AYURVEDA"
+  ],
+  "aldo-f0-t": [
+    "ALDO",
+    "EEISE",
+    "ALDOSHOES",
+    "ALDOLNDIA",
+    "FRESH",
+    "CLAYSTONES"
+  ],
+  "victoria-s-secret-f0-t": [
+    "SECRET",
+    "VICTORIAS",
+    "VICIORIAS",
+    "TEASE",
+    "GSTNOAACCMBZG",
+    "FHC",
+    "VICTORIA"
+  ],
+  "sephora-f0-t": [
+    "SEPHORA",
+    "ECRET",
+    "MAKEUP",
+    "SEPHORACOLLECTION",
+    "SKINCARE",
+    "ROREBEAUTY"
+  ],
+  "imagine-f0-t": [
+    "IMAGINE",
+    "PLASTIC",
+    "GADGAND",
+    "IMAGME",
+    "GADBEGEANS",
+    "KORAMANGALA"
+  ],
+  "zeiss-vision-center-f1-b": [
+    "ZEISS",
+    "VISION",
+    "CENTER",
+    "FIRE",
+    "ESCAPEROUTEPLAN",
+    "JOCKEY"
+  ],
+  "jockey-f1-b": [
+    "JOCKEY",
+    "ZEISS",
+    "VISION",
+    "CENT",
+    "GREATNESS",
+    "INNOWEAR"
+  ],
+  "asics-f1-b": [
+    "DASICS",
+    "TTAOC",
+    "JOCKEY",
+    "ZEIS",
+    "ONNI",
+    "STALITY",
+    "ASICS"
+  ],
+  "adidas-f1-b": [
+    "EMIATES",
+    "DAS",
+    "FLIBSTER",
+    "BEE",
+    "ADIDAS"
+  ],
+  "skechers-f1-b": [
+    "SKECHERS",
+    "SLIPINS",
+    "STEPIN",
+    "GAURIK",
+    "FASHIONS",
+    "LTD"
+  ],
+  "fossil-f1-b": [
+    "FOSSIL",
+    "TAKE",
+    "YOUN",
+    "ANDCO",
+    "SIPINS",
+    "STEPIN"
+  ],
+  "shaya-f1-b": [
+    "SHAYA",
+    "SILVER",
+    "ONEO",
+    "NITYA",
+    "JEWEL",
+    "KIN"
+  ],
+  "caratlane-f1-b": [
+    "CARATLANE",
+    "LETYOE",
+    "ATATA",
+    "ZERO",
+    "MAKING",
+    "PRODUCT"
+  ],
+  "william-penn-f1-b": [
+    "WILLIA",
+    "LLIAM",
+    "PENN",
+    "LIKE",
+    "INK",
+    "UAPTOPBACSAPTOPSLEEVECRIOSSBODYWALLET",
+    "WILLIAM"
+  ],
+  "toni-guy-f1-b": [
+    "TONIGUY",
+    "KTONIGUY",
+    "TONIBGUT",
+    "LONDON",
+    "SALON",
+    "EST",
+    "TONI",
+    "GUY"
+  ],
+  "nails-beyond-f1-b": [
+    "NAIIS",
+    "BEYOND",
+    "CUST",
+    "MER",
+    "NAILED",
+    "FLRST",
+    "NAILS"
+  ],
+  "helios-f1-b": [
+    "HELIOS",
+    "SEIKO",
+    "PRESAGE",
+    "SWISSMADE",
+    "MOV",
+    "SBIKO"
+  ],
+  "u-s-polo-assn-f1-b": [
+    "ASSN",
+    "POLO",
+    "USPOLO",
+    "SINCE",
+    "GSTINAA",
+    "MOVADC"
+  ],
+  "manyavar-f1-b": [
+    "MANYAVAR",
+    "MADEFOR",
+    "CANYAKAR",
+    "EACH",
+    "CTHER",
+    "CACH"
+  ],
+  "mochi-f1-b": [
+    "MOCHI",
+    "JFONTINI",
+    "PRC",
+    "CMOCHI",
+    "GST",
+    "NOAAACMEZH"
+  ],
+  "miniso-f1-b": [
+    "MINI",
+    "HANGOUZ",
+    "GOA",
+    "MINISO",
+    "RAVENCLAW",
+    "HUFFLEPUFF"
+  ],
+  "puma-f1-b": [
+    "MAHIN",
+    "DBLACKBERRYS",
+    "WILDCRAFT",
+    "ENDOF",
+    "STARBUCKS",
+    "BLACKBERRYS",
+    "PUMA"
+  ],
+  "westside-f1-t": [
+    "ESTSIDE",
+    "VESTSIDE",
+    "WESTSIDE"
+  ],
+  "blackberrys-f1-t": [
+    "BLACKBERRYS",
+    "SHARPCUTSALE",
+    "BUYORMOREGET",
+    "ONSELECT",
+    "MERCHANDSE",
+    "EPRISII"
+  ],
+  "allen-solly-f1-t": [
+    "ALLENSOLLY",
+    "EOE",
+    "ALLEN",
+    "SOLLY",
+    "EENOEE",
+    "CROCS"
+  ],
+  "crocs-f1-t": [
+    "CROCS",
+    "ESTSIDE",
+    "GCROCS",
+    "JIBBITZ",
+    "STATION",
+    "CREATION"
+  ],
+  "rare-rabbit-f1-t": [
+    "RABBIT",
+    "RARE",
+    "RARERABBIT",
+    "LVI",
+    "DEO",
+    "VESTSIDE"
+  ],
+  "nautica-f1-t": [
+    "NAUTICA",
+    "RABBITI",
+    "BUYOFF",
+    "IHECITY",
+    "PURCASEOFORMORE"
+  ],
+  "raymond-f1-t": [
+    "RAYMOND",
+    "RRAYMOND",
+    "WEAR",
+    "ROEAOO",
+    "MCA",
+    "MPOLO"
+  ],
+  "arrow-f1-t": [
+    "ARROW",
+    "BUYGETOFF",
+    "BUYGET",
+    "USAT",
+    "IVAME",
+    "USA"
+  ],
+  "m-s-f1-t": [
+    "BOMARKSSPENCE",
+    "MARKSSPENCER",
+    "UNDERWEAR",
+    "LEVIS",
+    "BEAUTY",
+    "LINCERIE"
+  ],
+  "levi-s-f1-t": [
+    "LEVIS",
+    "TERMSAND",
+    "CONDTIONSAPPLY",
+    "ADCO",
+    "LEVI"
+  ],
+  "mia-by-tanishq-f1-t": [
+    "MIA",
+    "BES",
+    "SAL",
+    "BYTANISHQ",
+    "GFT",
+    "STRBURST",
+    "TANISHQ"
+  ],
+  "samsonite-f2-b": [
+    "SAMSONITE",
+    "PLEASE",
+    "MIND",
+    "STEP",
+    "IARNING",
+    "SAMSGNITE"
+  ],
+  "toscano-f2-b": [
+    "TOSCANO",
+    "INDIAN",
+    "RESTAURAN",
+    "MAKING",
+    "RESERVATION",
+    "BENTO"
+  ],
+  "bose-f2-b": [
+    "CASIO",
+    "BOSE",
+    "GSHOCK",
+    "JBOSE",
+    "OCOLORS",
+    "HOCI"
+  ],
+  "the-body-shop-f2-b": [
+    "BODY",
+    "GSHOCK",
+    "GAGG",
+    "COLORS",
+    "FACE",
+    "CASIO",
+    "THE",
+    "SHOP"
+  ],
+  "vaya-f2-b": [
+    "VAYA",
+    "AUTECHEF",
+    "ERVEWAR",
+    "GLOBAL",
+    "PRESENCE",
+    "LOCAL"
+  ],
+  "chai-point-f2-b": [
+    "CHAI",
+    "POINT",
+    "COFFEE",
+    "DRAMA",
+    "ZERO",
+    "TURN"
+  ],
+  "mothercare-f2-b": [
+    "MOTHERCARE",
+    "WAGEG",
+    "MOTHERCAREIN",
+    "NEWBORN",
+    "BABY",
+    "GIRLSL"
+  ],
+  "kushal-s-f2-b": [
+    "KUSHALS",
+    "KUSHAL",
+    "KORAMANGALA",
+    "ADITYA",
+    "BIRLA",
+    "SEASONFNALE"
+  ],
+  "soch-f2-b": [
+    "SOCH",
+    "KORAMANGALA",
+    "SOCN",
+    "ONEPLUS",
+    "EXPERENCESTORE",
+    "EXPERIENCE"
+  ],
+  "timezone-f2-t": [
+    "TIMEZONE",
+    "BODOOENS",
+    "GEAEPO",
+    "DHAMAAL",
+    "RECOVERY",
+    "EBIG"
+  ],
+  "decathlon-f2-t": [
+    "DECATHLON",
+    "SPORTS",
+    "NNGWS",
+    "MONSOON",
+    "HIT",
+    "REFR"
+  ],
+  "mod-f2-t": [
+    "MOD",
+    "DNGATHER",
+    "ONS",
+    "EEAG",
+    "CRUSH",
+    "CEREA"
+  ],
+  "the-dogfather-f2-t": [
+    "DNGFATHER",
+    "MODNIGAHER",
+    "WON",
+    "BNB",
+    "COOLERS",
+    "AMERICAN",
+    "THE",
+    "DOGFATHER"
+  ],
+  "taco-bell-f2-t": [
+    "BELL",
+    "TACO",
+    "KRICENOODLES",
+    "KOREAN",
+    "STREET",
+    "FOOD"
+  ],
+  "gochujang-f2-t": [
+    "WOW",
+    "CHUJANG",
+    "KOREAN",
+    "STREET",
+    "FOOD",
+    "CHINA",
+    "GOCHUJANG"
+  ],
+  "dindigul-thalappakatti-f2-t": [
+    "THALAPPAKATTI",
+    "WOW",
+    "DINDIGUL",
+    "ROOTEDIN",
+    "SINCE",
+    "SNEN"
+  ],
+  "fish-n-chips-f2-t": [
+    "FISHNCHIPS",
+    "COCACOLA",
+    "FISH",
+    "SINCE",
+    "NACHOS",
+    "NCHIPS",
+    "CHIPS"
+  ],
+  "california-burrito-f2-t": [
+    "BURRITO",
+    "CALIFORNIA",
+    "NACHOS",
+    "DESSERTS",
+    "QUESADILLA",
+    "MILD"
+  ],
+  "subway-f2-t": [
+    "SUBWAY",
+    "SULWAY",
+    "PLATTER",
+    "RRITO",
+    "FORNIA",
+    "CEBOWLS"
+  ],
+  "naga-s-f2-t": [
+    "NAGAS",
+    "JAY",
+    "ANDHRA",
+    "ROYAL",
+    "CUISINE",
+    "BIRYANI",
+    "NAGA"
+  ],
+  "good-flippin-burgers-f2-t": [
+    "BURGERS",
+    "GOODFLIPPIN",
+    "GOOD",
+    "FLIPPIN",
+    "PUIFFY",
+    "UNSJUICYPATTIES"
+  ],
+  "shivsagar-f2-t": [
+    "SHIVSAGAR",
+    "BURGER",
+    "KING",
+    "DELICIOUS",
+    "SOUTHINDIAN",
+    "HEY"
+  ],
+  "kfc-f2-t": [
+    "KFC",
+    "HFILE",
+    "FRESHLY",
+    "BURGERS",
+    "ALWAYS",
+    "CREATIONS"
+  ],
+  "squeeze-juice-bars-f2-t": [
+    "SQUEEZ",
+    "BOBA",
+    "DRICKLE",
+    "BHAI",
+    "KITCHENS",
+    "CRE",
+    "SQUEEZE",
+    "JUICE",
+    "BARS"
+  ],
+  "mcdonald-s-f2-t": [
+    "MCCA",
+    "VESSERT",
+    "WERKS",
+    "DESSERTWEK",
+    "DESTERT",
+    "WERLS",
+    "MCDONALD"
+  ],
+  "dal-moros-f2-t": [
+    "OON",
+    "OVE",
+    "POPEYES",
+    "THATY",
+    "PASTA",
+    "FRESHG",
+    "DAL",
+    "MOROS"
+  ],
+  "cinemas-8-9-f3-b": [
+    "CINEMAS",
+    "CONCESSIONAIRE",
+    "WANT",
+    "AUDI",
+    "USAFE",
+    "TICKETS"
+  ],
+  "cinemas-1-3-f3-t": [
+    "IMAX",
+    "DRAMA",
+    "PVR",
+    "TICKETS",
+    "MONSTER",
+    "MOVIE",
+    "CINEMAS"
+  ],
+  "cinemas-4-7-f3-t": [
+    "CINEMAS",
+    "PVR",
+    "ECINEMAS",
+    "MINIONS",
+    "BABY",
+    "FCINEMAS"
+  ],
+  "mr-pronto-f4-b": [
+    "MRPRONTA",
+    "MRPRONTO",
+    "AOOO",
+    "OOO",
+    "ARPROND",
+    "APRON",
+    "PRONTO"
+  ],
+  "sgs-snooker-zone-f4-b": [
+    "SNOOKER",
+    "SGS",
+    "ZONE",
+    "KORAMRNGALA",
+    "MLL",
+    "CUAMINGI"
+  ],
+  "cars24-f4-t": [
+    "CARS",
+    "FHC",
+    "FIN",
+    "QLRI",
+    "CARS24"
+  ],
+  "centre-management-office-f4-t": [
+    "OFFICE",
+    "MANAGEMENT",
+    "CENTRE",
+    "NEXUSHYDERABADRETAILPRIVATEIMITED",
+    "NEXUSHYDERABADRETAILPRIVATELIMITED"
+  ]
+}
