@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>InVision — label review</title>
+<style>
+  :root {
+    --bg:#f6f7f9; --surface:#fff; --line:#e3e6ea; --text:#14181f; --muted:#6b7480;
+    --accent:#2f6fed; --accent-soft:#e8f0fe; --ok:#1a7f4b; --ok-soft:#e6f4ec;
+    --warn:#b4690e; --warn-soft:#fdf4e6; --dest:#e0483a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#0f1216; --surface:#171b21; --line:#272d36; --text:#e8ebef;
+            --muted:#98a2ae; --accent:#6b9bff; --accent-soft:#1b2740;
+            --ok:#54c98c; --ok-soft:#14291e; --warn:#e5a441; --warn-soft:#2a2113;
+            --dest:#ff7a6b; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); padding-bottom:80px;
+         font:14px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  header { position:sticky; top:0; z-index:20; background:var(--surface);
+           border-bottom:1px solid var(--line); padding:12px 18px;
+           display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  h1 { margin:0; font-size:16px; }
+  h1 span { color:var(--muted); font-weight:400; }
+  .bar { flex:1; min-width:180px; height:7px; border-radius:4px;
+         background:var(--line); overflow:hidden; }
+  .bar i { display:block; height:100%; width:0; background:var(--ok);
+           transition:width .3s; }
+  button { font:inherit; border-radius:8px; border:1px solid var(--line);
+           background:var(--surface); color:var(--text); padding:7px 12px; cursor:pointer; }
+  button.primary { background:var(--accent); color:#fff; border-color:transparent;
+                   font-weight:600; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  main { padding:16px; max-width:1500px; margin:0 auto; }
+  .corridor { margin-bottom:30px; }
+  .corridor h2 { font-size:15px; margin:0 0 4px; }
+  .rowref { font-size:12px; color:var(--muted); margin-bottom:10px;
+            background:var(--surface); border:1px solid var(--line);
+            border-radius:8px; padding:8px 10px; }
+  .rowref b { color:var(--text); font-weight:600; }
+  .grid { display:grid; gap:10px;
+          grid-template-columns:repeat(auto-fill,minmax(190px,1fr)); }
+  .card { background:var(--surface); border:1px solid var(--line);
+          border-radius:10px; overflow:hidden; }
+  .card.done { border-color:var(--ok); }
+  .card.sel { outline:2.5px solid var(--accent); outline-offset:1px; }
+  .card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block;
+              background:var(--line); cursor:zoom-in; }
+  .meta { padding:7px 8px 9px; }
+  .ocr { font-size:10.5px; color:var(--muted); height:26px; overflow:hidden;
+         margin-bottom:5px; }
+  select { width:100%; font:inherit; font-size:12.5px; padding:5px 6px;
+           border-radius:6px; border:1px solid var(--line);
+           background:var(--bg); color:var(--text); }
+  select.changed { border-color:var(--accent); background:var(--accent-soft); }
+  .acts { display:flex; gap:5px; margin-top:6px; }
+  .acts button { flex:1; padding:4px 0; font-size:11px; }
+  footer { position:fixed; bottom:0; left:0; right:0; background:var(--surface);
+           border-top:1px solid var(--line); padding:10px 18px;
+           display:flex; gap:12px; align-items:center; }
+  .hint { font-size:12px; color:var(--muted); }
+  kbd { background:var(--bg); border:1px solid var(--line); border-radius:4px;
+        padding:1px 5px; font-size:11px; font-family:inherit; }
+  .status { margin-left:auto; font-size:12.5px; color:var(--muted); }
+  .lightbox { position:fixed; inset:0; background:rgba(0,0,0,.86); display:none;
+              align-items:center; justify-content:center; z-index:50; padding:24px; }
+  .lightbox.on { display:flex; }
+  .lightbox img { max-width:100%; max-height:100%; border-radius:8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Label review <span id="sub">loading…</span></h1>
+  <div class="bar"><i id="bar"></i></div>
+  <button id="save" class="primary" disabled>Save</button>
+</header>
+
+<main id="root"></main>
+
+<footer>
+  <span class="hint">
+    <kbd>←</kbd><kbd>→</kbd> move ·
+    <kbd>[</kbd><kbd>]</kbd> shift unit ·
+    <kbd>Enter</kbd> confirm ·
+    <kbd>S</kbd> same as previous
+  </span>
+  <span class="status" id="status"></span>
+</footer>
+
+<div class="lightbox" id="lightbox"><img id="lightboxImg" alt=""></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let DATA = null, pending = {}, confirmed = new Set(), cards = [], cursor = 0;
+
+const api = async (url, opts) => {
+  const r = await fetch(url, opts);
+  if (!r.ok) throw new Error(`${url} failed (${r.status})`);
+  return r.json();
+};
+
+function unitsFor(floor) { return DATA.units_by_floor[String(floor)] || []; }
+
+function render() {
+  const root = $('root');
+  root.innerHTML = '';
+  cards = [];
+
+  for (const corridor of DATA.corridors) {
+    const units = unitsFor(corridor.floor);
+    const section = document.createElement('section');
+    section.className = 'corridor';
+
+    // Which row the walk covers, inferred from what its frames were assigned.
+    const rows = new Set(corridor.frames.map(f => {
+      const u = units.find(x => x.unit_id === f.unit);
+      return u && u.row;
+    }).filter(Boolean));
+    const rowNames = units
+      .filter(u => rows.size === 0 || rows.has(u.row))
+      .map(u => u.name);
+
+    section.innerHTML =
+      `<h2>${corridor.floor_name} floor — ${corridor.side} walk ` +
+      `<span style="color:var(--muted);font-weight:400">` +
+      `(${corridor.frames.length} photos)</span></h2>` +
+      `<div class="rowref"><b>Expected order:</b> ${rowNames.join(' → ')}</div>`;
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    for (const frame of corridor.frames) {
+      const card = document.createElement('div');
+      card.className = 'card' + (frame.confirmed ? ' done' : '');
+
+      const img = document.createElement('img');
+      img.loading = 'lazy';
+      img.src = `/api/thumb?path=${encodeURIComponent(frame.path)}`;
+      img.alt = frame.path;
+      img.onclick = () => {
+        $('lightboxImg').src = img.src;
+        $('lightbox').classList.add('on');
+      };
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+
+      const ocr = document.createElement('div');
+      ocr.className = 'ocr';
+      ocr.textContent = frame.ocr.length ? frame.ocr.join(' · ') : 'no text read';
+
+      const select = document.createElement('select');
+      select.append(new Option('— not a shopfront —', ''));
+      for (const u of units) {
+        select.append(new Option(`${u.row === 'top' ? '↑' : '↓'} ${u.name}`, u.unit_id));
+      }
+      select.value = frame.unit || '';
+      select.onchange = () => setUnit(frame, card, select, select.value);
+
+      const acts = document.createElement('div');
+      acts.className = 'acts';
+      const same = document.createElement('button');
+      same.textContent = 'same as prev';
+      same.onclick = () => copyPrevious(frame);
+      const shift = document.createElement('button');
+      shift.textContent = 'shift rest →';
+      shift.title = 'Move this photo and every later one in this walk to the next unit';
+      shift.onclick = () => shiftRest(corridor, frame, +1);
+      acts.append(same, shift);
+
+      meta.append(ocr, select, acts);
+      card.append(img, meta);
+      grid.append(card);
+
+      const entry = { frame, card, select, corridor };
+      cards.push(entry);
+      card.onclick = e => { if (e.target === card || e.target === meta) focus(cards.indexOf(entry)); };
+    }
+
+    section.append(grid);
+    root.append(section);
+  }
+  focus(0);
+  updateStatus();
+}
+
+function setUnit(frame, card, select, value) {
+  frame.unit = value || null;
+  pending[frame.path] = frame.unit;
+  confirmed.add(frame.path);
+  frame.confirmed = true;
+  card.classList.add('done');
+  select.classList.toggle('changed', frame.unit !== frame.auto_unit);
+  $('save').disabled = false;
+  updateStatus();
+}
+
+function entryFor(path) { return cards.find(c => c.frame.path === path); }
+
+function copyPrevious(frame) {
+  const i = cards.findIndex(c => c.frame.path === frame.path);
+  if (i <= 0) return;
+  const prev = cards[i - 1];
+  if (prev.corridor !== cards[i].corridor) return;
+  const e = cards[i];
+  e.select.value = prev.frame.unit || '';
+  setUnit(e.frame, e.card, e.select, e.select.value);
+}
+
+// The characteristic error is an off-by-one that persists for the rest of a
+// walk, so shifting every later frame at once is the common repair.
+function shiftRest(corridor, frame, delta) {
+  const units = unitsFor(corridor.floor);
+  const start = corridor.frames.indexOf(frame);
+  for (let i = start; i < corridor.frames.length; i++) {
+    const f = corridor.frames[i];
+    const at = units.findIndex(u => u.unit_id === f.unit);
+    if (at === -1) continue;
+    const next = units[Math.min(Math.max(at + delta, 0), units.length - 1)];
+    const e = entryFor(f.path);
+    if (!e) continue;
+    e.select.value = next.unit_id;
+    setUnit(f, e.card, e.select, next.unit_id);
+  }
+}
+
+function focus(i) {
+  if (!cards.length) return;
+  cursor = Math.max(0, Math.min(i, cards.length - 1));
+  cards.forEach((c, n) => c.card.classList.toggle('sel', n === cursor));
+  cards[cursor].card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+function nudge(delta) {
+  const e = cards[cursor];
+  const units = unitsFor(e.corridor.floor);
+  const at = units.findIndex(u => u.unit_id === e.frame.unit);
+  const next = units[Math.min(Math.max((at === -1 ? 0 : at) + delta, 0), units.length - 1)];
+  e.select.value = next.unit_id;
+  setUnit(e.frame, e.card, e.select, next.unit_id);
+}
+
+function updateStatus() {
+  const total = DATA.total_frames;
+  const done = confirmed.size;
+  $('bar').style.width = `${(done / total * 100).toFixed(1)}%`;
+  $('sub').textContent = `${done} of ${total} confirmed`;
+  const changed = Object.entries(pending).filter(([p, u]) => {
+    const e = entryFor(p);
+    return e && u !== e.frame.auto_unit;
+  }).length;
+  $('status').textContent = `${changed} correction${changed === 1 ? '' : 's'} pending`;
+}
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'SELECT') return;
+  if ($('lightbox').classList.contains('on')) {
+    $('lightbox').classList.remove('on');
+    return;
+  }
+  if (e.key === 'ArrowRight') { focus(cursor + 1); e.preventDefault(); }
+  else if (e.key === 'ArrowLeft') { focus(cursor - 1); e.preventDefault(); }
+  else if (e.key === ']') { nudge(+1); e.preventDefault(); }
+  else if (e.key === '[') { nudge(-1); e.preventDefault(); }
+  else if (e.key === 'Enter') {
+    const c = cards[cursor];
+    setUnit(c.frame, c.card, c.select, c.select.value);
+    focus(cursor + 1);
+    e.preventDefault();
+  } else if (e.key.toLowerCase() === 's') {
+    copyPrevious(cards[cursor].frame);
+    focus(cursor + 1);
+    e.preventDefault();
+  }
+});
+
+$('lightbox').onclick = () => $('lightbox').classList.remove('on');
+
+$('save').onclick = async () => {
+  $('save').disabled = true;
+  $('save').textContent = 'Saving…';
+  try {
+    const res = await api('/api/review', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ assignments: pending, confirmed: [...confirmed] })
+    });
+    $('status').textContent =
+      `saved · ${res.confirmed_total} confirmed in total`;
+    pending = {};
+  } catch (err) {
+    $('status').textContent = err.message;
+    $('save').disabled = false;
+  } finally {
+    $('save').textContent = 'Save';
+  }
+};
+
+(async function init() {
+  try {
+    DATA = await api('/api/review');
+    for (const c of DATA.corridors)
+      for (const f of c.frames) if (f.confirmed) confirmed.add(f.path);
+    render();
+  } catch (err) {
+    $('root').innerHTML = `<p style="color:var(--dest)">${err.message}</p>`;
+  }
+})();
+</script>
+</body>
+</html>
