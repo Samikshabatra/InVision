@@ -1,0 +1,47 @@
+{
+  "images_ingested": 289,
+  "images_with_ocr_text": 288,
+  "stores_recovered": 83,
+  "stores_per_corridor": {
+    "Ground / left": 9,
+    "Ground / right": 13,
+    "First / right": 17,
+    "First / left": 11,
+    "Second / right": 9,
+    "Second / left": 17,
+    "Third / left": 1,
+    "Third / right": 2,
+    "Fourth / right": 2,
+    "Fourth / left": 2
+  },
+  "images_per_store": {
+    "min": 1,
+    "median": 3,
+    "mean": 3.48,
+    "max": 14
+  },
+  "gallery_vectors": 234,
+  "query_vectors": 55,
+  "embedding_dim": 512,
+  "stores_needing_review": 1,
+  "stores_single_image": 8,
+  "stores_unnamed": 0,
+  "duplicate_names": {
+    "ETHOS": [
+      "ethos-f0-b",
+      "ethos-f0-t"
+    ],
+    "WESTSIDE": [
+      "westside-f0-t",
+      "westside-f1-t"
+    ]
+  },
+  "review_sample": [
+    {
+      "store_id": "nike-f0-b",
+      "name": "NIKE",
+      "images": 2,
+      "why": "placed by walk order; signage not legible"
+    }
+  ]
+}
