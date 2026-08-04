@@ -41,20 +41,21 @@
   }
 
   /* ---- the board ---- */
+  /* It is the whole surface, the way the real one is a wall you stand at. */
   .board {
-    max-width: 1140px; margin: 0 auto; background: var(--panel);
-    border: 1px solid var(--steel); border-radius: 2px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
-                0 30px 90px -40px #000;
+    background: var(--panel); min-height: 100vh;
+    display: flex; flex-direction: column;
   }
-  @media (min-width: 800px) { .board { margin: 26px auto 60px; } }
 
   /* ---- the lamp: this board's whole reason to exist ---- */
   .head {
+    position: sticky; top: 0; z-index: 5;
     display: grid; grid-template-columns: 1fr auto; align-items: end;
-    gap: 12px 18px; padding: 18px 20px 16px;
+    gap: 12px 18px; padding: 18px 22px 16px;
     border-bottom: 1px solid var(--steel);
-    background: linear-gradient(180deg, #12242a 0%, var(--panel) 100%);
+    background:
+      radial-gradient(80% 130% at 22% -30%, #1b3238 0%, transparent 70%),
+      linear-gradient(180deg, #12242a 0%, var(--panel) 100%);
   }
   .mark { grid-column: 1; display: flex; align-items: center; gap: 9px; }
   .lamp {
@@ -92,8 +93,8 @@
   }
 
   /* ---- bays: sections of one panel, divided by its own extrusion ---- */
-  .body { display: block; }
-  .bay { padding: 20px; border-top: 1px solid var(--steel); }
+  .body { display: block; flex: 1; }
+  .bay { padding: 22px; border-top: 1px solid var(--steel); }
   .rail > .bay:first-child { border-top: none; }
   .bay h2 {
     margin: 0 0 14px; font-family: var(--data); font-size: 10.5px;
@@ -101,10 +102,20 @@
     color: var(--muted);
   }
   @media (min-width: 900px) {
-    .body { display: grid; grid-template-columns: 340px minmax(0, 1fr); }
+    .body { display: grid; grid-template-columns: 360px minmax(0, 1fr); }
+    /* The rule runs the full height of the board, not just past the content. */
     .rail { border-right: 1px solid var(--steel); }
     .stage > .bay:first-child { border-top: none; }
     .rail > .bay:first-child { border-top: none; }
+    .bay { padding: 26px 28px; }
+  }
+  /* Nothing has been asked for yet, so the stage carries the board's name
+     rather than an empty frame. */
+  .stage:not(:has(.bay:not(.hidden)))::before {
+    content: "Photograph a shopfront and this becomes your floor plan";
+    display: block; padding: 26px 28px; color: var(--steel);
+    font-family: var(--data); font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
   /* Nowhere to go until the board knows where you are. */
   .board:not(:has(#preview.on)) #destCard { opacity: 0.5; }
