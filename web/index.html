@@ -5,283 +5,440 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InVision — Mall Navigation</title>
 <style>
+  /* This reads a mall the way the mall reads itself - off its signage - so it
+     is dressed as the thing it stands in for: the illuminated directory board
+     bolted beside the escalator. Lit glass, cool signage white, and exactly
+     one warm lamp, which is the shopper. Nothing else in the palette glows,
+     because on a directory board only one thing needs to. */
   :root {
-    --bg: #f6f7f9;
-    --surface: #ffffff;
-    --line: #e3e6ea;
-    --text: #14181f;
-    --muted: #6b7480;
-    --accent: #2f6fed;
-    --accent-soft: #e8f0fe;
-    --dest: #e0483a;
-    --warn: #b4690e;
-    --warn-soft: #fdf4e6;
-    --radius: 12px;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #0f1216; --surface: #171b21; --line: #272d36;
-      --text: #e8ebef; --muted: #98a2ae; --accent: #6b9bff;
-      --accent-soft: #1b2740; --dest: #ff7a6b;
-      --warn: #e5a441; --warn-soft: #2a2113;
-    }
+    --ink: #0a1316;      /* the dark behind the glass */
+    --panel: #0e1b1f;    /* the board face */
+    --well: #13272b;     /* recessed: plans, drop wells */
+    --steel: #29424a;    /* extrusion, hairlines, unlit chrome */
+    --muted: #8aa6ad;    /* secondary lettering */
+    --vapour: #e0eaea;   /* primary lettering */
+    --you: #ffb23f;      /* the lamp: the shopper, the route, cautions */
+    --you-wash: rgba(255, 178, 63, 0.12);
+    --transit: #5f818a;  /* escalators and gates - cool, never the lamp */
+
+    /* DIN is the typeface of transit signage, and both desktop platforms ship
+       a descendant of it, so the board is lettered in the real thing without
+       fetching a font. */
+    --sign: "Bahnschrift", "DIN Alternate", "DIN Condensed", "Archivo Narrow",
+            "Arial Narrow", "Helvetica Neue", sans-serif;
+    --data: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
   }
   * { box-sizing: border-box; }
+  html { background: var(--ink); }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    padding: 0 0 48px;
+    margin: 0; color: var(--vapour);
+    font: 400 15px/1.55 var(--sign);
+    background:
+      radial-gradient(130% 55% at 50% -8%, #172c31 0%, transparent 60%),
+      var(--ink);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
-  header {
-    padding: 20px 16px 14px; border-bottom: 1px solid var(--line);
-    background: var(--surface);
+
+  /* ---- the board ---- */
+  .board {
+    max-width: 1140px; margin: 0 auto; background: var(--panel);
+    border: 1px solid var(--steel); border-radius: 2px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset,
+                0 30px 90px -40px #000;
   }
-  h1 { margin: 0; font-size: 19px; letter-spacing: -0.01em; }
-  h1 span { color: var(--muted); font-weight: 400; }
-  main { max-width: 620px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
-  .card {
-    background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--radius); padding: 16px;
+  @media (min-width: 800px) { .board { margin: 26px auto 60px; } }
+
+  /* ---- the lamp: this board's whole reason to exist ---- */
+  .head {
+    display: grid; grid-template-columns: 1fr auto; align-items: end;
+    gap: 12px 18px; padding: 18px 20px 16px;
+    border-bottom: 1px solid var(--steel);
+    background: linear-gradient(180deg, #12242a 0%, var(--panel) 100%);
   }
-  .card h2 {
-    margin: 0 0 12px; font-size: 12px; text-transform: uppercase;
-    letter-spacing: 0.07em; color: var(--muted); font-weight: 600;
+  .mark { grid-column: 1; display: flex; align-items: center; gap: 9px; }
+  .lamp {
+    width: 9px; height: 9px; flex: none; background: var(--steel);
+    box-shadow: 0 0 0 1px #0006 inset;
   }
-  .step-num {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
-    color: #fff; font-size: 11px; font-weight: 700; margin-right: 8px;
+  .mark-label {
+    font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--muted); font-family: var(--data);
   }
+  .board:has(#preview.on) .lamp {
+    background: var(--you);
+    box-shadow: 0 0 14px 1px rgba(255, 178, 63, 0.55);
+    animation: flare 0.5s ease-out;
+  }
+  .board:has(#preview.on) .mark-label { color: var(--vapour); }
+  @keyframes flare {
+    from { box-shadow: 0 0 0 0 rgba(255, 178, 63, 0.9); }
+    to   { box-shadow: 0 0 14px 1px rgba(255, 178, 63, 0.55); }
+  }
+  .unlit {
+    grid-column: 1; margin: 0; color: var(--steel);
+    font-size: clamp(26px, 6vw, 40px); font-stretch: 87.5%;
+    text-transform: uppercase; letter-spacing: 0.01em; line-height: 1;
+  }
+  #preview.on + .unlit { display: none; }
+  .plate {
+    grid-column: 2; grid-row: 1 / span 2; align-self: end; text-align: right;
+    font-size: 13px; font-stretch: 87.5%; text-transform: uppercase;
+    letter-spacing: 0.14em; color: var(--vapour);
+  }
+  .plate span {
+    display: block; font-family: var(--data); font-size: 9.5px;
+    letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase;
+  }
+
+  /* ---- bays: sections of one panel, divided by its own extrusion ---- */
+  .body { display: block; }
+  .bay { padding: 20px; border-top: 1px solid var(--steel); }
+  .rail > .bay:first-child { border-top: none; }
+  .bay h2 {
+    margin: 0 0 14px; font-family: var(--data); font-size: 10.5px;
+    font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em;
+    color: var(--muted);
+  }
+  @media (min-width: 900px) {
+    .body { display: grid; grid-template-columns: 340px minmax(0, 1fr); }
+    .rail { border-right: 1px solid var(--steel); }
+    .stage > .bay:first-child { border-top: none; }
+    .rail > .bay:first-child { border-top: none; }
+  }
+  /* Nowhere to go until the board knows where you are. */
+  .board:not(:has(#preview.on)) #destCard { opacity: 0.5; }
+
   button, select, input[type=text] {
-    font: inherit; border-radius: 9px; border: 1px solid var(--line);
-    background: var(--surface); color: var(--text); padding: 11px 13px;
+    font: inherit; font-family: var(--sign); border-radius: 2px;
+    border: 1px solid var(--steel); background: var(--well);
+    color: var(--vapour); padding: 10px 12px;
   }
+  select, input[type=text] { width: 100%; }
+  input[type=text]::placeholder { color: var(--steel); }
   button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
   button.primary {
-    background: var(--accent); color: #fff; border-color: transparent;
-    font-weight: 600; width: 100%;
+    background: var(--you); color: #10191b; border-color: var(--you);
+    width: 100%; font-stretch: 87.5%; text-transform: uppercase;
+    letter-spacing: 0.1em; font-size: 13px;
   }
-  button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
-  button.ghost { width: 100%; color: var(--muted); font-weight: 600; }
-  #arrived { margin-top: 12px; }
-  button.ghost:hover { color: var(--accent); border-color: var(--accent); }
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  button.primary:hover:not(:disabled) { background: #ffc366; border-color: #ffc366; }
+  button.primary:disabled { opacity: 0.3; cursor: not-allowed; }
+  button.ghost {
+    width: 100%; color: var(--muted); font-stretch: 87.5%;
+    text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px;
+  }
+  button.ghost:hover { color: var(--you); border-color: var(--you); }
+  #arrived { margin-top: 14px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
   .chips:empty { margin-top: 0; }
   .chips button {
-    display: inline-flex; align-items: center; gap: 7px;
-    padding: 5px 9px 5px 11px; font-size: 12.5px; font-weight: 600;
-    background: var(--accent-soft); color: var(--accent); border-color: transparent;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 8px 5px 10px; font-family: var(--data); font-size: 11px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--you-wash); color: var(--you); border-color: transparent;
   }
-  .chips button::after { content: "×"; font-size: 15px; opacity: 0.7; }
+  .chips button::after { content: "\00d7"; opacity: 0.6; }
   .chips button:hover::after { opacity: 1; }
+
+  /* The itinerary is a real sequence - the order the stops get walked - so it
+     is numbered. Nothing else on the board is. */
   ol.itinerary { margin: 0; padding: 0; list-style: none; counter-reset: t; }
   ol.itinerary li {
-    counter-increment: t; display: flex; align-items: center; gap: 11px;
-    padding: 9px 0; border-top: 1px solid var(--line);
+    counter-increment: t; display: flex; align-items: center; gap: 12px;
+    padding: 11px 0; border-top: 1px solid var(--steel);
   }
   ol.itinerary li:first-child { border-top: none; }
   ol.itinerary li::before {
-    content: counter(t); flex: none;
-    width: 21px; height: 21px; border-radius: 50%;
-    background: var(--line); color: var(--text);
-    font-size: 11px; font-weight: 700; display: grid; place-items: center;
+    content: counter(t, decimal-leading-zero); flex: none;
+    width: 22px; height: 20px; border: 1px solid var(--steel);
+    color: var(--muted); font-family: var(--data); font-size: 10px;
+    display: grid; place-items: center;
   }
-  ol.itinerary li.start::before { content: "◉"; background: var(--accent); color: #fff; }
-  ol.itinerary li.active { color: var(--accent); }
-  ol.itinerary li.active::before { background: var(--accent); color: #fff; }
-  ol.itinerary .who { flex: 1; font-weight: 600; }
-  ol.itinerary .leg { color: var(--muted); font-size: 12.5px; font-weight: 400; }
-  ol.itinerary button { padding: 5px 11px; font-size: 12.5px; }
+  ol.itinerary li.start::before {
+    content: ""; border-color: var(--you); background: var(--you);
+    box-shadow: 0 0 10px rgba(255, 178, 63, 0.5);
+  }
+  ol.itinerary li.active { color: var(--you); }
+  ol.itinerary li.active::before { border-color: var(--you); color: var(--you); }
+  ol.itinerary .who { flex: 1; font-stretch: 87.5%; letter-spacing: 0.02em; }
+  ol.itinerary .leg {
+    display: block; font-family: var(--data); font-size: 10.5px;
+    letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase;
+  }
+  ol.itinerary button {
+    padding: 5px 10px; font-family: var(--data); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
+  ol.itinerary button:hover { color: var(--you); border-color: var(--you); }
+
   label.file {
-    display: flex; align-items: center; justify-content: center; gap: 9px;
-    border: 1.5px dashed var(--line); border-radius: var(--radius);
-    padding: 26px 14px; cursor: pointer; color: var(--muted); text-align: center;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px dashed var(--steel); border-radius: 2px; background: var(--well);
+    padding: 30px 14px; cursor: pointer; text-align: center;
+    color: var(--muted); font-family: var(--data); font-size: 11px;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    transition: border-color .15s, color .15s, background .15s;
   }
-  label.file:hover { border-color: var(--accent); color: var(--accent); }
+  label.file:hover { border-color: var(--transit); color: var(--vapour); }
   label.file.dragging {
-    border-color: var(--accent); color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: var(--you); color: var(--you); background: var(--you-wash);
   }
   input[type=file] { display: none; }
-  .row { display: grid; gap: 9px; }
-  .preview { display: none; gap: 13px; align-items: center; }
+  .row { display: grid; gap: 8px; }
+  /* The position readout sits in the header, because on a directory board the
+     lit words are the product. */
+  .preview { display: none; grid-column: 1; gap: 14px; align-items: center; }
   .preview.on { display: flex; }
   .preview img {
-    width: 76px; height: 76px; object-fit: cover; border-radius: 9px;
-    border: 1px solid var(--line); flex: none;
+    width: 60px; height: 60px; object-fit: cover; border-radius: 2px;
+    border: 1px solid var(--steel); flex: none;
   }
-  .found { font-weight: 650; font-size: 16px; }
-  .sub { color: var(--muted); font-size: 13px; }
+  .found {
+    font-size: clamp(26px, 6vw, 40px); font-stretch: 87.5%; line-height: 1;
+    text-transform: uppercase; letter-spacing: 0.01em;
+    text-shadow: 0 0 26px rgba(224, 234, 234, 0.25);
+  }
+  .sub {
+    color: var(--muted); font-family: var(--data); font-size: 11px;
+    letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px;
+  }
   .chip {
-    display: inline-block; padding: 2px 8px; border-radius: 20px;
-    background: var(--accent-soft); color: var(--accent);
-    font-size: 11px; font-weight: 600;
+    display: inline-block; margin-left: 6px; padding: 2px 7px;
+    border: 1px solid var(--you); color: var(--you);
+    font-family: var(--data); font-size: 9.5px; letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
+  /* Amber is the caution colour on every sign in the building; it does the
+     same job here, so warnings need no colour of their own. */
   .notice {
-    background: var(--warn-soft); color: var(--warn); border-radius: 9px;
-    padding: 9px 11px; font-size: 13px; margin-top: 9px;
+    border-left: 2px solid var(--you); background: var(--you-wash);
+    color: var(--vapour); padding: 9px 12px; font-size: 13.5px; margin-top: 10px;
   }
-  .notice.good { background: var(--accent-soft); color: var(--accent); }
+  .notice.good { color: var(--you); }
+  .notice.done {
+    border-left-color: var(--vapour); background: rgba(224, 234, 234, 0.07);
+    color: var(--vapour);
+  }
   .notice button {
-    padding: 4px 10px; font-size: 12px; font-weight: 600; margin-left: 7px;
+    padding: 3px 9px; margin-left: 8px; font-family: var(--data);
+    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    background: transparent; color: inherit; border-color: currentColor;
   }
-  .notice.done { background: var(--dest-soft, var(--accent-soft)); color: var(--dest); }
-  .hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
   .progress-bar {
-    height: 6px; border-radius: 99px; background: var(--line);
-    overflow: hidden; margin-bottom: 7px;
+    height: 3px; background: var(--steel); overflow: hidden; margin-bottom: 9px;
   }
   .progress-bar span {
-    display: block; height: 100%; width: 0;
-    background: var(--accent); border-radius: 99px;
+    display: block; height: 100%; width: 0; background: var(--you);
+    box-shadow: 0 0 10px rgba(255, 178, 63, 0.6);
     transition: width 0.45s ease;
   }
-  #trackCard .file { margin-top: 12px; }
+  #trackCard .file { margin-top: 14px; }
+
+  /* Directions are a sequence, so they are numbered. The kind of step is in
+     the plate, not in a glyph. */
   ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
   ol.steps li {
-    counter-increment: s; position: relative; padding: 0 0 16px 30px;
-    border-left: 2px solid var(--line); margin-left: 9px;
+    counter-increment: s; position: relative; padding: 0 0 18px 34px;
+    border-left: 1px solid var(--steel); margin-left: 10px;
   }
   ol.steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
   ol.steps li::before {
-    content: counter(s); position: absolute; left: -11px; top: -2px;
-    width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
-    color: #fff; font-size: 11px; font-weight: 700;
+    content: counter(s, decimal-leading-zero); position: absolute;
+    left: -11px; top: -2px; width: 21px; height: 19px;
+    border: 1px solid var(--steel); background: var(--panel);
+    color: var(--muted); font-family: var(--data); font-size: 10px;
     display: grid; place-items: center;
   }
-  ol.steps li.escalator::before { content: "↕"; background: var(--warn); }
-  ol.steps li.arrive::before { content: "★"; background: var(--dest); }
-  .card-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
-  .card-head h2 { margin:0; flex:1; }
-  .speech { display:flex; align-items:center; gap:9px; }
-  .speech .auto { font-size:11.5px; color:var(--muted); display:flex;
-                  align-items:center; gap:4px; cursor:pointer; }
-  .speech button { padding:6px 12px; font-size:12.5px; font-weight:600;
-                   border-radius:20px; }
-  .speech button.on { background:var(--accent); color:#fff; border-color:transparent; }
-  .speech button[hidden] { display:none; }
-  ol.steps li.speaking { background:var(--accent-soft); border-radius:8px;
-                         margin-left:9px; padding-left:30px;
-                         box-shadow:-2px 0 0 var(--accent); }
+  ol.steps li.escalator::before { border-color: var(--transit); color: var(--transit); }
+  ol.steps li.cross::before { border-color: var(--transit); color: var(--transit); }
+  ol.steps li.arrive::before {
+    border-color: var(--you); background: var(--you); color: #10191b;
+  }
+  ol.steps li.speaking { color: var(--you); }
+  .bay-head { display: flex; align-items: center; gap: 12px; }
+  .bay-head h2 { margin: 0 0 14px; flex: 1; }
+  .speech { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .speech .auto {
+    font-family: var(--data); font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    display: flex; align-items: center; gap: 5px; cursor: pointer;
+  }
+  .speech button {
+    padding: 5px 11px; font-family: var(--data); font-size: 10px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .speech button.on { background: var(--you); color: #10191b; border-color: var(--you); }
+  .speech button[hidden] { display: none; }
+  #speakIcon { font-size: 8px; vertical-align: 1px; }
   .total {
-    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
-    font-size: 13px; color: var(--muted);
+    margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--steel);
+    font-family: var(--data); font-size: 11px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
   }
-  .floorplan { margin-bottom: 6px; }
+
+  /* ---- the plan ---- */
+  .floorplan { margin-bottom: 20px; }
   .floorplan h3 {
-    margin: 0 0 2px; font-size: 13px; font-weight: 650;
+    margin: 0; font-size: 12px; font-stretch: 87.5%; font-weight: 400;
+    text-transform: uppercase; letter-spacing: 0.2em; color: var(--vapour);
+    display: inline-block; border-bottom: 1px solid var(--you);
+    padding-bottom: 3px;
   }
-  .floorplan .sub { margin-bottom: 6px; }
-  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px;
-            color: var(--muted); margin: 2px 0 14px; }
-  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px;
-              margin-right: 5px; vertical-align: -1px; }
-  svg { width: 100%; height: auto; display: block; overflow: visible; }
-  .walkway { stroke: var(--line); stroke-width: 7; stroke-linecap: round; }
-  .stub { stroke: var(--line); stroke-width: 1.5; opacity: 0.7; }
-  .atrium { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 5 4; }
-  .marker-gate { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; }
+  .floorplan .sub { margin: 6px 0 10px; }
+  .legend {
+    display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 0;
+    font-family: var(--data); font-size: 10px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .legend i {
+    display: inline-block; width: 8px; height: 8px;
+    margin-right: 6px; vertical-align: 0;
+  }
+  svg {
+    width: 100%; height: auto; display: block; overflow: visible;
+    background: var(--well); padding: 10px 0;
+  }
+  .walkway { stroke: #1d353b; stroke-width: 8; stroke-linecap: square; }
+  .stub { stroke: var(--steel); stroke-width: 1; opacity: 0.55; }
+  .atrium { fill: none; stroke: var(--steel); stroke-width: 1; stroke-dasharray: 3 5; }
+  .marker-gate { fill: var(--panel); stroke: var(--transit); stroke-width: 1; }
   .unit {
-    fill: var(--surface); stroke: var(--line); stroke-width: 1.5;
+    fill: var(--panel); stroke: var(--steel); stroke-width: 1;
     transition: fill .2s, stroke .2s;
   }
-  .unit.on { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
-  .unit-label { fill: var(--muted); font-weight: 600; pointer-events: none; }
-  .unit-label.on { fill: var(--accent); font-weight: 700; }
-  .on-marker { fill: var(--surface); font-weight: 700; }
-  .route-line {
-    fill: none; stroke: var(--accent); stroke-width: 5.5;
-    stroke-linecap: round; stroke-linejoin: round;
+  .unit.on { fill: var(--you-wash); stroke: var(--you); stroke-width: 1.5; }
+  .unit-label {
+    fill: var(--muted); font-family: var(--data); letter-spacing: 0.04em;
+    pointer-events: none;
   }
-  .marker-origin { fill: var(--accent); stroke: var(--surface); stroke-width: 3; }
-  .marker-dest { fill: var(--dest); stroke: var(--surface); stroke-width: 3; }
-  .marker-esc { fill: var(--warn); }
-  ol.steps li.cross::before { content: "\21C4"; background: var(--muted); }
-  .lbl { font-size: 11px; font-weight: 650; fill: var(--text); }
-  .lbl-sm { font-size: 9.5px; fill: var(--muted); }
+  .unit-label.on { fill: var(--you); }
+  .on-marker { fill: #10191b; font-family: var(--data); letter-spacing: 0.08em; }
+  .route-line {
+    fill: none; stroke: var(--you); stroke-width: 3;
+    stroke-linecap: square; stroke-linejoin: miter;
+    filter: drop-shadow(0 0 5px rgba(255, 178, 63, 0.55));
+  }
+  .marker-origin {
+    fill: var(--you); stroke: var(--well); stroke-width: 2.5;
+    filter: drop-shadow(0 0 7px rgba(255, 178, 63, 0.7));
+  }
+  .marker-dest { fill: none; stroke: var(--vapour); stroke-width: 2.5; }
+  .marker-esc { fill: var(--transit); }
+  .lbl { font-family: var(--data); font-size: 10px; fill: var(--vapour); }
+  .lbl-sm {
+    font-family: var(--data); font-size: 9px; fill: var(--steel);
+    letter-spacing: 0.14em;
+  }
   .hidden { display: none; }
-  .err { color: var(--dest); font-size: 13px; }
-  .cand { font-size: 13px; color: var(--muted); margin-top: 7px; }
+  .err { color: var(--you); font-size: 13.5px; padding: 20px; }
+  .cand {
+    margin-top: 10px; font-family: var(--data); font-size: 10px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  }
   .cand button {
-    padding: 4px 9px; font-size: 12px; margin: 3px 4px 0 0; border-radius: 20px;
+    padding: 4px 9px; margin: 4px 5px 0 0; font-family: var(--data);
+    font-size: 10px; letter-spacing: 0.08em; color: var(--vapour);
+  }
+  .cand button:hover { border-color: var(--you); color: var(--you); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important; transition-duration: 0.01ms !important;
+    }
   }
 </style>
 </head>
 <body>
-<header><h1>InVision <span>· indoor navigation</span></h1></header>
-
-<main>
-  <section class="card">
-    <h2><span class="step-num">1</span>Where are you?</h2>
-    <label class="file" for="photo" id="drop">
-      <span id="dropText">Take a photo, or drop one here</span>
-    </label>
-    <input type="file" id="photo" accept="image/*" capture="environment">
+<main class="board">
+  <header class="head">
+    <div class="mark">
+      <span class="lamp" aria-hidden="true"></span>
+      <span class="mark-label">You are here</span>
+    </div>
     <div class="preview" id="preview">
       <img id="thumb" alt="">
       <div>
         <div class="found" id="foundName">—</div>
         <div class="sub" id="foundWhere"></div>
+      </div>
+    </div>
+    <p class="unlit">Not known yet</p>
+    <div class="plate">InVision <span>indoor wayfinding</span></div>
+  </header>
+
+  <div class="body">
+    <div class="rail">
+      <section class="bay">
+        <h2>Sighting</h2>
+        <label class="file" for="photo" id="drop">
+          <span id="dropText">Take a photo, or drop one here</span>
+        </label>
+        <input type="file" id="photo" accept="image/*" capture="environment">
         <div class="cand" id="cands"></div>
-      </div>
+        <div id="locateNotice"></div>
+      </section>
+
+      <section class="bay" id="destCard">
+        <h2>Destination</h2>
+        <div class="row">
+          <input type="text" id="filter" placeholder="Search store" autocomplete="off">
+          <select id="dest" size="1"></select>
+          <div class="pair">
+            <button class="ghost" id="addStop" type="button">Add to list</button>
+            <button class="primary" id="go" disabled>Get directions</button>
+          </div>
+        </div>
+        <div class="chips" id="stopList"></div>
+        <div id="routeErr"></div>
+      </section>
+
+      <section class="bay hidden" id="tripCard">
+        <h2>Trip</h2>
+        <p class="hint" id="tripSummary"></p>
+        <ol class="itinerary" id="itinerary"></ol>
+      </section>
     </div>
-    <div id="locateNotice"></div>
-  </section>
 
-  <section class="card" id="destCard">
-    <h2><span class="step-num">2</span>Where do you want to go?</h2>
-    <div class="row">
-      <input type="text" id="filter" placeholder="Search store…" autocomplete="off">
-      <select id="dest" size="1"></select>
-      <div class="pair">
-        <button class="ghost" id="addStop" type="button">Add to list</button>
-        <button class="primary" id="go" disabled>Get directions</button>
-      </div>
+    <div class="stage">
+      <section class="bay hidden" id="mapCard">
+        <h2>Plan</h2>
+        <div id="maps"></div>
+      </section>
+
+      <section class="bay hidden" id="stepsCard">
+        <div class="bay-head">
+          <h2>Directions</h2>
+          <div class="speech">
+            <label class="auto"><input type="checkbox" id="autoSpeak"> auto</label>
+            <button id="speak" type="button" aria-label="Read directions aloud">
+              <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
+            </button>
+          </div>
+        </div>
+        <ol class="steps" id="steps"></ol>
+        <div class="total" id="total"></div>
+        <button class="ghost hidden" id="arrived" type="button"></button>
+        <div id="caveats"></div>
+      </section>
+
+      <section class="bay hidden" id="trackCard">
+        <h2>Progress</h2>
+        <p class="hint">Shoot another shopfront part way along and the route
+          catches up with where you actually are.</p>
+        <div class="progress-bar"><span id="progressFill"></span></div>
+        <div class="sub" id="progressLabel">Not checked yet</div>
+        <label class="file" for="checkPhoto" id="checkDrop">
+          <span id="checkText">Take a photo, or drop one here</span>
+        </label>
+        <input type="file" id="checkPhoto" accept="image/*" capture="environment">
+        <div id="trackNotice"></div>
+      </section>
     </div>
-    <div class="chips" id="stopList"></div>
-    <div id="routeErr"></div>
-  </section>
-
-  <section class="card hidden" id="tripCard">
-    <h2>Your trip</h2>
-    <p class="hint" id="tripSummary"></p>
-    <ol class="itinerary" id="itinerary"></ol>
-  </section>
-
-  <section class="card hidden" id="mapCard">
-    <h2>Route</h2>
-    <div id="maps"></div>
-  </section>
-
-  <section class="card hidden" id="stepsCard">
-    <div class="card-head">
-      <h2>Directions</h2>
-      <div class="speech">
-        <label class="auto"><input type="checkbox" id="autoSpeak"> auto</label>
-        <button id="speak" type="button" aria-label="Read directions aloud">
-          <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
-        </button>
-      </div>
-    </div>
-    <ol class="steps" id="steps"></ol>
-    <div class="total" id="total"></div>
-    <button class="ghost hidden" id="arrived" type="button"></button>
-    <div id="caveats"></div>
-  </section>
-
-  <section class="card hidden" id="trackCard">
-    <h2>Still on track?</h2>
-    <p class="hint">Shoot another shopfront part way along and the route
-      catches up with where you actually are.</p>
-    <div class="progress-bar"><span id="progressFill"></span></div>
-    <div class="sub" id="progressLabel">Not checked yet</div>
-    <label class="file" for="checkPhoto" id="checkDrop">
-      <span id="checkText">Take a photo, or drop one here</span>
-    </label>
-    <input type="file" id="checkPhoto" accept="image/*" capture="environment">
-    <div id="trackNotice"></div>
-  </section>
+  </div>
 </main>
 
 <script>
@@ -1084,9 +1241,9 @@ function renderRoute(r, opts = {}) {
       const legend = document.createElement('div');
       legend.className = 'legend';
       legend.innerHTML =
-        `<span><i style="background:var(--accent)"></i>${originStore.name}</span>` +
-        `<span><i style="background:var(--dest)"></i>${destStore.name}</span>` +
-        `<span><i style="background:var(--warn)"></i>escalator</span>`;
+        `<span><i style="background:var(--you)"></i>${originStore.name}</span>` +
+        `<span><i style="box-shadow:inset 0 0 0 2px var(--vapour)"></i>${destStore.name}</span>` +
+        `<span><i style="background:var(--transit)"></i>escalator</span>`;
       el.appendChild(legend);
       maps.appendChild(el);
     }
@@ -1141,7 +1298,8 @@ function renderRoute(r, opts = {}) {
     $('speak').hidden = !speech.supported;
   } catch (err) {
     document.querySelector('main').innerHTML =
-      `<div class="card err">Could not load mall data: ${err.message}</div>`;
+      `<div class="err">The board could not load the mall directory: ` +
+      `${err.message}. Check that the service is running, then reload.</div>`;
   }
 })();
 </script>
