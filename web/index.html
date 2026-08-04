@@ -68,6 +68,10 @@
     padding: 26px 14px; cursor: pointer; color: var(--muted); text-align: center;
   }
   label.file:hover { border-color: var(--accent); color: var(--accent); }
+  label.file.dragging {
+    border-color: var(--accent); color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
   input[type=file] { display: none; }
   .row { display: grid; gap: 9px; }
   .preview { display: none; gap: 13px; align-items: center; }
@@ -164,7 +168,7 @@
   <section class="card">
     <h2><span class="step-num">1</span>Where are you?</h2>
     <label class="file" for="photo" id="drop">
-      <span id="dropText">Take or choose a photo of a nearby store</span>
+      <span id="dropText">Take a photo, or drop one here</span>
     </label>
     <input type="file" id="photo" accept="image/*" capture="environment">
     <div class="preview" id="preview">
@@ -560,9 +564,12 @@ document.addEventListener('click', e => {
 });
 
 /* ---------- actions ---------- */
-$('photo').addEventListener('change', async e => {
-  const file = e.target.files[0];
+async function locateFrom(file) {
   if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    $('locateNotice').innerHTML = '<div class="notice">That is not an image.</div>';
+    return;
+  }
   $('dropText').textContent = 'Recognising…';
   $('locateNotice').innerHTML = '';
   $('thumb').src = URL.createObjectURL(file);
@@ -591,8 +598,50 @@ $('photo').addEventListener('change', async e => {
     $('foundName').textContent = 'Not recognised';
     $('locateNotice').innerHTML = `<div class="notice">${err.message}</div>`;
   } finally {
-    $('dropText').textContent = 'Take or choose a different photo';
+    $('dropText').textContent = 'Take or drop a different photo';
   }
+}
+
+$('photo').addEventListener('change', e => locateFrom(e.target.files[0]));
+
+/* Drag and drop onto the box. The window listeners are what stop the browser
+   from navigating away to the image when a drop lands slightly off target. */
+const drop = $('drop');
+
+['dragenter', 'dragover'].forEach(name => {
+  drop.addEventListener(name, e => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    drop.classList.add('dragging');
+  });
+});
+
+['dragleave', 'dragend'].forEach(name => {
+  drop.addEventListener(name, e => {
+    // Moving over a child fires dragleave on the parent; ignore those.
+    if (e.relatedTarget && drop.contains(e.relatedTarget)) return;
+    drop.classList.remove('dragging');
+  });
+});
+
+drop.addEventListener('drop', e => {
+  e.preventDefault();
+  drop.classList.remove('dragging');
+  const file = [...(e.dataTransfer.files || [])][0];
+  if (file) locateFrom(file);
+});
+
+['dragover', 'drop'].forEach(name =>
+  window.addEventListener(name, e => {
+    if (!drop.contains(e.target)) e.preventDefault();
+  })
+);
+
+// Paste a screenshot straight from the clipboard.
+window.addEventListener('paste', e => {
+  const item = [...(e.clipboardData?.items || [])]
+    .find(i => i.type.startsWith('image/'));
+  if (item) locateFrom(item.getAsFile());
 });
 
 function setOrigin(p) {
