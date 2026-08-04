@@ -63,6 +63,7 @@
   }
   button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
   button.ghost { width: 100%; color: var(--muted); font-weight: 600; }
+  #arrived { margin-top: 12px; }
   button.ghost:hover { color: var(--accent); border-color: var(--accent); }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
@@ -122,6 +123,9 @@
     padding: 9px 11px; font-size: 13px; margin-top: 9px;
   }
   .notice.good { background: var(--accent-soft); color: var(--accent); }
+  .notice button {
+    padding: 4px 10px; font-size: 12px; font-weight: 600; margin-left: 7px;
+  }
   .notice.done { background: var(--dest-soft, var(--accent-soft)); color: var(--dest); }
   .hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
   .progress-bar {
@@ -262,6 +266,7 @@
     </div>
     <ol class="steps" id="steps"></ol>
     <div class="total" id="total"></div>
+    <button class="ghost hidden" id="arrived" type="button"></button>
     <div id="caveats"></div>
   </section>
 
@@ -639,6 +644,7 @@ async function locateFrom(file) {
   $('dropText').textContent = 'Recognising…';
   $('locateNotice').innerHTML = '';
   $('thumb').src = URL.createObjectURL(file);
+  $('thumb').classList.remove('hidden');
   $('preview').classList.add('on');
   $('foundName').textContent = '…';
   $('foundWhere').textContent = '';
@@ -746,6 +752,10 @@ async function checkProgress(file) {
     const here = r.current.name;
     const left = Math.round(r.remaining_m);
 
+    // A sighting mid-walk is the freshest evidence of where the shopper is.
+    $('thumb').src = URL.createObjectURL(file);
+    setPosition(r.current.unit_id, 'photo', { score: r.current.score });
+
     $('progressFill').style.width = `${Math.round(r.done_fraction * 100)}%`;
     $('progressLabel').textContent = r.state === 'arrived'
       ? `At ${here}.`
@@ -789,13 +799,108 @@ async function checkProgress(file) {
   }
 }
 
-function setOrigin(p) {
-  originId = p.unit_id || p.store_id;
-  $('foundName').textContent = p.name;
-  $('foundWhere').innerHTML =
-    `${p.floor_name} floor <span class="chip">${(p.score * 100).toFixed(0)}% match</span>`;
-  $('go').disabled = false;
+/* ---------- where you are ---------- */
+// One shopper, one position, however it was learned: recognised from a photo,
+// declared on arrival, or carried over from earlier. Every route starts here,
+// so walking somewhere and asking for the next place does not need a
+// second photograph.
+
+const POSITION_KEY = 'invision.position';
+// A position older than this is stale enough that asking again beats guessing.
+const POSITION_MAX_AGE_MS = 3 * 60 * 60 * 1000;
+
+function storeOf(unitId) {
+  return STORES.find(s => s.store_id === unitId);
 }
+
+function agoText(ms) {
+  const mins = Math.round(ms / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins} min ago`;
+  const hours = Math.round(mins / 60);
+  return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+}
+
+function setPosition(unitId, source, extra = {}) {
+  const store = storeOf(unitId);
+  if (!store) return;
+
+  originId = unitId;
+  const label = extra.note || (source === 'photo'
+    ? `${Math.round((extra.score || 0) * 100)}% match`
+    : source === 'declared'
+      ? 'you marked this'
+      : `still here? · ${extra.ago || 'earlier'}`);
+  const note = `<span class="chip">${label}</span>`;
+
+  $('preview').classList.add('on');
+  $('foundName').textContent = store.name;
+  $('foundWhere').innerHTML = `${store.floor_name} floor ${note}`;
+  // Only a photo has a photo to show.
+  $('thumb').classList.toggle('hidden', source !== 'photo');
+  if (source !== 'photo') {
+    $('cands').innerHTML = '';
+    $('locateNotice').innerHTML = '';
+    $('dropText').textContent = 'Somewhere else? Take or drop a photo';
+  }
+  $('go').disabled = false;
+
+  if (source !== 'remembered') {
+    try {
+      localStorage.setItem(POSITION_KEY, JSON.stringify({
+        unit_id: unitId, source, at: Date.now(),
+      }));
+    } catch { /* private browsing; the position just will not outlive the tab */ }
+  }
+  refreshArrivedButton();
+}
+
+function restorePosition() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(POSITION_KEY) || 'null'); } catch { return; }
+  if (!saved || !storeOf(saved.unit_id)) return;
+
+  const age = Date.now() - (saved.at || 0);
+  if (age > POSITION_MAX_AGE_MS) {
+    try { localStorage.removeItem(POSITION_KEY); } catch { /* nothing to clean */ }
+    return;
+  }
+  setPosition(saved.unit_id, 'remembered', { ago: agoText(age) });
+}
+
+function setOrigin(p) {
+  setPosition(p.unit_id || p.store_id, 'photo', { score: p.score });
+}
+
+// The route on screen, so arriving can be declared without another photo.
+let shownRoute = null;
+
+function refreshArrivedButton() {
+  const button = $('arrived');
+  const destination = shownRoute && shownRoute.destination_id;
+  if (!destination || destination === originId) {
+    button.classList.add('hidden');
+    return;
+  }
+  button.textContent = `I'm at ${nameOf(destination)} now`;
+  button.classList.remove('hidden');
+}
+
+$('arrived').addEventListener('click', () => {
+  const destination = shownRoute && shownRoute.destination_id;
+  if (!destination) return;
+  stopSpeaking();
+  setPosition(destination, 'declared');
+
+  const next = trip && trip.legs[legIndex + 1];
+  if (next) {
+    showLeg(legIndex + 1);
+  } else {
+    // The walk is over; the next question is where to go from here.
+    $('routeErr').innerHTML = '';
+    $('destCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
 
 $('filter').addEventListener('input', e => fillDest(e.target.value));
 
@@ -838,10 +943,41 @@ $('addStop').addEventListener('click', () => {
   renderStops();
 });
 
+/* Asking for somewhere new while a route is on screen almost always means the
+   walk was made: the shopper is at the far end of it, not back where they
+   photographed. Move the position there rather than making them photograph a
+   second shopfront, and say so with a way back in case they never left. */
+function assumeWalked() {
+  if (!shownRoute) return null;
+  const arrivedAt = shownRoute.destination_id;
+  // Only when the position is still the one that route started from. Anything
+  // else means the position already moved on its own evidence.
+  if (arrivedAt === originId || shownRoute.origin_id !== originId) return null;
+
+  const cameFrom = originId;
+  setPosition(arrivedAt, 'declared', { note: 'assumed after your last route' });
+  return { cameFrom, arrivedAt };
+}
+
+function showAssumption(assumption, replan) {
+  if (!assumption) return;
+  $('routeErr').innerHTML =
+    `<div class="notice good">Starting from ${nameOf(assumption.arrivedAt)}, ` +
+    `where your last route ended. <button type="button" id="undoAssume">` +
+    `Start from ${nameOf(assumption.cameFrom)} instead</button></div>`;
+  $('undoAssume').onclick = () => {
+    setPosition(assumption.cameFrom, 'declared', { note: 'back where you were' });
+    shownRoute = null;
+    replan();
+  };
+}
+
 $('go').addEventListener('click', async () => {
   const destination = $('dest').value;
   $('routeErr').innerHTML = '';
   if (!originId) return;
+
+  const assumption = assumeWalked();
 
   // A list beats the dropdown: if stops have been added, walk those.
   const list = stops.length
@@ -851,6 +987,7 @@ $('go').addEventListener('click', async () => {
   if (!list.length) {
     if (destination === originId) {
       $('routeErr').innerHTML = '<div class="notice">You are already there.</div>';
+      showAssumption(assumption, () => $('go').click());
     }
     return;
   }
@@ -876,6 +1013,7 @@ $('go').addEventListener('click', async () => {
       });
       renderTrip(trip);
     }
+    showAssumption(assumption, () => $('go').click());
   } catch (err) {
     $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
   } finally {
@@ -975,6 +1113,8 @@ function renderRoute(r, opts = {}) {
   // Later checks measure against wherever this render starts from, so a
   // reroute becomes the new plan rather than being judged against the old one.
   journey = { origin: r.origin_id, destination: r.destination_id };
+  shownRoute = r;
+  refreshArrivedButton();
 
   if (!opts.keepJourney) {
     $('progressFill').style.width = '0%';
@@ -995,6 +1135,8 @@ function renderRoute(r, opts = {}) {
       api('/api/stores').then(r => r.stores)
     ]);
     fillDest();
+    // Pick the shopper up where they left off, so a reload is not a re-shoot.
+    restorePosition();
     // Browsers without speech synthesis should never show the control at all.
     $('speak').hidden = !speech.supported;
   } catch (err) {
