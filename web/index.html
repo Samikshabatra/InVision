@@ -91,6 +91,19 @@
     background: var(--warn-soft); color: var(--warn); border-radius: 9px;
     padding: 9px 11px; font-size: 13px; margin-top: 9px;
   }
+  .notice.good { background: var(--accent-soft); color: var(--accent); }
+  .notice.done { background: var(--dest-soft, var(--accent-soft)); color: var(--dest); }
+  .hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+  .progress-bar {
+    height: 6px; border-radius: 99px; background: var(--line);
+    overflow: hidden; margin-bottom: 7px;
+  }
+  .progress-bar span {
+    display: block; height: 100%; width: 0;
+    background: var(--accent); border-radius: 99px;
+    transition: width 0.45s ease;
+  }
+  #trackCard .file { margin-top: 12px; }
   ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
   ol.steps li {
     counter-increment: s; position: relative; padding: 0 0 16px 30px;
@@ -210,6 +223,19 @@
     <ol class="steps" id="steps"></ol>
     <div class="total" id="total"></div>
     <div id="caveats"></div>
+  </section>
+
+  <section class="card hidden" id="trackCard">
+    <h2>Still on track?</h2>
+    <p class="hint">Shoot another shopfront part way along and the route
+      catches up with where you actually are.</p>
+    <div class="progress-bar"><span id="progressFill"></span></div>
+    <div class="sub" id="progressLabel">Not checked yet</div>
+    <label class="file" for="checkPhoto" id="checkDrop">
+      <span id="checkText">Take a photo, or drop one here</span>
+    </label>
+    <input type="file" id="checkPhoto" accept="image/*" capture="environment">
+    <div id="trackNotice"></div>
   </section>
 </main>
 
@@ -602,47 +628,116 @@ async function locateFrom(file) {
   }
 }
 
-$('photo').addEventListener('change', e => locateFrom(e.target.files[0]));
-
-/* Drag and drop onto the box. The window listeners are what stop the browser
+/* Drag and drop onto a box. The window listeners are what stop the browser
    from navigating away to the image when a drop lands slightly off target. */
-const drop = $('drop');
+const dropZones = [];
 
-['dragenter', 'dragover'].forEach(name => {
-  drop.addEventListener(name, e => {
+function wireDropZone(inputId, zoneId, handler) {
+  const zone = $(zoneId);
+  dropZones.push({ zone, handler });
+
+  $(inputId).addEventListener('change', e => handler(e.target.files[0]));
+
+  ['dragenter', 'dragover'].forEach(name => {
+    zone.addEventListener(name, e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+      zone.classList.add('dragging');
+    });
+  });
+
+  ['dragleave', 'dragend'].forEach(name => {
+    zone.addEventListener(name, e => {
+      // Moving over a child fires dragleave on the parent; ignore those.
+      if (e.relatedTarget && zone.contains(e.relatedTarget)) return;
+      zone.classList.remove('dragging');
+    });
+  });
+
+  zone.addEventListener('drop', e => {
     e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    drop.classList.add('dragging');
+    zone.classList.remove('dragging');
+    const file = [...(e.dataTransfer.files || [])][0];
+    if (file) handler(file);
   });
-});
+}
 
-['dragleave', 'dragend'].forEach(name => {
-  drop.addEventListener(name, e => {
-    // Moving over a child fires dragleave on the parent; ignore those.
-    if (e.relatedTarget && drop.contains(e.relatedTarget)) return;
-    drop.classList.remove('dragging');
-  });
-});
-
-drop.addEventListener('drop', e => {
-  e.preventDefault();
-  drop.classList.remove('dragging');
-  const file = [...(e.dataTransfer.files || [])][0];
-  if (file) locateFrom(file);
-});
+wireDropZone('photo', 'drop', locateFrom);
+wireDropZone('checkPhoto', 'checkDrop', checkProgress);
 
 ['dragover', 'drop'].forEach(name =>
   window.addEventListener(name, e => {
-    if (!drop.contains(e.target)) e.preventDefault();
+    if (!dropZones.some(z => z.zone.contains(e.target))) e.preventDefault();
   })
 );
 
-// Paste a screenshot straight from the clipboard.
+// Paste a screenshot straight from the clipboard. Once a route is up, the
+// paste is a progress check; before that it is the opening "where am I".
 window.addEventListener('paste', e => {
   const item = [...(e.clipboardData?.items || [])]
     .find(i => i.type.startsWith('image/'));
-  if (item) locateFrom(item.getAsFile());
+  if (!item) return;
+  const live = !$('trackCard').classList.contains('hidden');
+  (live ? checkProgress : locateFrom)(item.getAsFile());
 });
+
+/* ---------- progress checks ---------- */
+// The walk in flight: where it started, where it is headed, and how long it
+// was when first planned. The server recomputes the plan from these, so the
+// page only has to remember the two ends.
+let journey = null;
+
+async function checkProgress(file) {
+  if (!journey || !file) return;
+  if (!file.type.startsWith('image/')) {
+    $('trackNotice').innerHTML = '<div class="notice">That is not an image.</div>';
+    return;
+  }
+  $('checkText').textContent = 'Checking…';
+  $('trackNotice').innerHTML = '';
+
+  const body = new FormData();
+  body.append('photo', file);
+  body.append('origin_id', journey.origin);
+  body.append('destination_id', journey.destination);
+
+  try {
+    const r = await api('/api/progress', { method: 'POST', body });
+    const here = r.current.name;
+    const left = Math.round(r.remaining_m);
+
+    $('progressFill').style.width = `${Math.round(r.done_fraction * 100)}%`;
+    $('progressLabel').textContent = r.state === 'arrived'
+      ? `At ${here}.`
+      : `At ${here} · ${left} m to go · about ${Math.ceil(r.minutes_left)} min`;
+
+    if (r.state === 'arrived') {
+      $('trackNotice').innerHTML =
+        `<div class="notice done">You are there. ${here} is the destination.</div>`;
+      stopSpeaking();
+    } else if (r.state === 'on_route') {
+      $('trackNotice').innerHTML =
+        `<div class="notice good">On track at ${here}. ${left} m left.</div>`;
+      // Redraw from here so the map and the steps drop what is already walked.
+      renderRoute(r.route, { keepJourney: true });
+    } else {
+      $('trackNotice').innerHTML =
+        `<div class="notice">Off the planned route at ${here}` +
+        ` (${Math.round(r.deviation_m)} m away from it). Rerouted below.</div>`;
+      renderRoute(r.route, { keepJourney: true });
+    }
+
+    if (!r.confident && r.alternatives.length) {
+      $('trackNotice').innerHTML +=
+        '<div class="sub">Close call. Not ' + here + '? ' +
+        r.alternatives.filter(p => p.unit_id).map(p => p.name).join(', ') + '</div>';
+    }
+  } catch (err) {
+    $('trackNotice').innerHTML = `<div class="notice">${err.message}</div>`;
+  } finally {
+    $('checkText').textContent = 'Take or drop another photo';
+  }
+}
 
 function setOrigin(p) {
   originId = p.unit_id || p.store_id;
@@ -680,7 +775,7 @@ $('go').addEventListener('click', async () => {
   }
 });
 
-function renderRoute(r) {
+function renderRoute(r, opts = {}) {
   const originStore = STORES.find(s => s.store_id === r.origin_id);
   const destStore = STORES.find(s => s.store_id === r.destination_id);
 
@@ -732,7 +827,18 @@ function renderRoute(r) {
   $('speak').hidden = !speech.supported;
   if (speech.supported && $('autoSpeak').checked) startSpeaking();
 
-  $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Later checks measure against wherever this render starts from, so a
+  // reroute becomes the new plan rather than being judged against the old one.
+  journey = { origin: r.origin_id, destination: r.destination_id };
+
+  if (!opts.keepJourney) {
+    $('progressFill').style.width = '0%';
+    $('progressLabel').textContent = 'Not checked yet';
+    $('checkText').textContent = 'Take a photo, or drop one here';
+    $('trackNotice').innerHTML = '';
+    $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  $('trackCard').classList.remove('hidden');
 }
 
 (async function init() {

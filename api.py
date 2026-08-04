@@ -19,7 +19,7 @@ from contextlib import asynccontextmanager
 from dataclasses import asdict
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
@@ -83,8 +83,12 @@ def layout():
     return state["graph"].layout()
 
 
-@app.post("/api/locate")
-async def locate(photo: UploadFile = File(...)):
+async def _localise(photo: UploadFile) -> dict:
+    """Decode an upload and run it through the localiser.
+
+    Shared by the opening "where am I" question and the progress checks that
+    follow it, which ask the same thing of the same model.
+    """
     raw = await photo.read()
     if not raw:
         raise HTTPException(400, "empty upload")
@@ -127,6 +131,50 @@ async def locate(photo: UploadFile = File(...)):
         "confident": confident,
         "margin": round(margin, 4),
         "decided_by": top.decided_by,
+    }
+
+
+@app.post("/api/locate")
+async def locate(photo: UploadFile = File(...)):
+    return await _localise(photo)
+
+
+@app.post("/api/progress")
+async def progress(
+    photo: UploadFile = File(...),
+    origin_id: str = Form(...),
+    destination_id: str = Form(...),
+):
+    """Mid-walk check: a second photo, judged against the route already given.
+
+    Answers whether the shopper is still on the line, and hands back a route
+    from wherever they actually are - the same one if they are on track, a
+    fresh one if they wandered.
+    """
+    found = await _localise(photo)
+    here = found["predictions"][0]["unit_id"]
+
+    graph: MallGraph = state["graph"]
+    try:
+        result = graph.progress(origin_id, here, destination_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+
+    route = asdict(result.route)
+    route["origin_id"] = here
+    route["destination_id"] = destination_id
+
+    return {
+        "state": result.state,
+        "current": found["predictions"][0],
+        "confident": found["confident"],
+        "alternatives": found["predictions"][1:4],
+        "deviation_m": result.deviation_m,
+        "remaining_m": result.remaining_m,
+        "original_m": result.original_m,
+        "done_fraction": result.done_fraction,
+        "minutes_left": result.minutes_left,
+        "route": route,
     }
 
 

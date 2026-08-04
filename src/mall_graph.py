@@ -41,6 +41,16 @@ STORE_STUB_M = 2.0        # walkway centreline to shop entrance
 CORRIDOR_WIDTH_M = 34.0   # across the atrium, top row to bottom row
 ESCALATOR_COST_M = 25.0   # walking-equivalent cost of one level
 
+# How far off the planned line a shopper can be found and still be considered
+# on it. One storefront either side plus the stub back out to the walkway: far
+# enough to absorb a misread shopfront, tight enough to catch a wrong turn.
+ON_ROUTE_TOLERANCE_M = 12.0
+
+# Below this the shopper is close enough that the walk is effectively over.
+ARRIVAL_RADIUS_M = 6.0
+
+WALKING_SPEED_M_PER_MIN = 55.0  # unhurried indoor pace
+
 GATE_WEST_X, GATE_EAST_X = 0.0, 1.0
 ESC_WEST_X, ESC_EAST_X = 0.28, 0.72
 
@@ -69,6 +79,21 @@ class Route:
     floors_traversed: list[int]
     caveats: list[str]
     map_legs: list[dict] = field(default_factory=list)
+
+
+@dataclass
+class Progress:
+    """Where a shopper turned out to be, measured against where they were sent.
+
+    `state` is what the interface reacts to; the rest explains the verdict.
+    """
+    state: str                # arrived | on_route | off_route
+    deviation_m: float        # walking distance from the planned line
+    remaining_m: float        # from here to the destination
+    original_m: float         # the whole walk, as first planned
+    done_fraction: float      # 0 at the start, 1 on arrival
+    minutes_left: float
+    route: Route              # from here onward, rerouted if it had to be
 
 
 def unit_node(unit_id: str) -> str:
@@ -236,6 +261,58 @@ class MallGraph:
             self.graph, unit_node(a), unit_node(b), weight="weight"
         )
         return self._describe(path, distance, a, b)
+
+    def progress(self, origin: str, current: str, destination: str) -> Progress:
+        """Judge a mid-walk sighting against the route the shopper was given.
+
+        The plan is recomputed rather than carried around by the client, so a
+        stale or tampered payload cannot move the line being measured against.
+        """
+        a, c, b = (self.resolve(origin), self.resolve(current),
+                   self.resolve(destination))
+        if a is None:
+            raise KeyError(f"unknown origin: {origin}")
+        if c is None:
+            raise KeyError(f"unknown current position: {current}")
+        if b is None:
+            raise KeyError(f"unknown destination: {destination}")
+
+        planned = set(nx.shortest_path(
+            self.graph, unit_node(a), unit_node(b), weight="weight"))
+        original = nx.shortest_path_length(
+            self.graph, unit_node(a), unit_node(b), weight="weight")
+
+        # One sweep out from where the shopper is: it answers both how far the
+        # destination still is and how far the planned line is.
+        reach = nx.single_source_dijkstra_path_length(
+            self.graph, unit_node(c), weight="weight")
+        remaining = reach.get(unit_node(b), float("inf"))
+        deviation = min((reach[n] for n in planned if n in reach), default=float("inf"))
+
+        if c == b or remaining <= ARRIVAL_RADIUS_M:
+            state = "arrived"
+        elif deviation <= ON_ROUTE_TOLERANCE_M and remaining <= original:
+            state = "on_route"
+        else:
+            # Either off the line, or on it but facing the wrong way round the
+            # walkway; both are answered the same way, with a fresh route.
+            state = "off_route"
+
+        route = (Route([Step("arrive", f"You have arrived at {self.units[b]['name']}.",
+                             floor=self.units[b]["floor"])], 0.0, [], [])
+                 if state == "arrived" else self.route(c, b))
+
+        done = 0.0 if original <= 0 else max(0.0, min(1.0, 1 - remaining / original))
+        return Progress(
+            state=state,
+            deviation_m=round(deviation, 1),
+            remaining_m=round(0.0 if state == "arrived" else remaining, 1),
+            original_m=round(original, 1),
+            done_fraction=round(1.0 if state == "arrived" else done, 3),
+            minutes_left=round(max(0.0, remaining) / WALKING_SPEED_M_PER_MIN, 1)
+            if state != "arrived" else 0.0,
+            route=route,
+        )
 
     def _describe(self, path, distance, origin_id, destination_id) -> Route:
         origin, destination = self.units[origin_id], self.units[destination_id]
