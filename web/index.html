@@ -5,187 +5,174 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InVision — Mall Navigation</title>
 <style>
-  /* This reads a mall the way the mall reads itself - off its signage - so it
-     is built from the mall's own materials rather than an app's: the terrazzo
-     underfoot, the grout lines between slabs, and brass for the one thing that
-     has to catch the eye, which is the shopper. Nothing else is warm, so the
-     brass never has to compete. */
+  /* Midnight glass. The mall at night through the window of the thing that is
+     navigating it: deep blue-black, panels that sit above the ground rather
+     than being ruled into it, and exactly one luminous colour - the shopper,
+     their route, and anything that needs their attention. Everything else is
+     slate, so the cyan never has to share. */
   :root {
-    --ink: #e5dfd3;      /* the floor the board stands on */
-    --panel: #efeae1;    /* limestone board face */
-    --well: #f8f5ef;     /* polished slab: plans, drop wells */
-    --steel: #d6cec1;    /* grout line, hairlines, unlit chrome */
-    --muted: #6b6259;    /* secondary lettering - dark enough for 10px mono */
-    --vapour: #241f1a;   /* charcoal lettering */
-    --you: #875c25;      /* brass: the shopper, the route, cautions */
-    --you-wash: rgba(135, 92, 37, 0.1);
-    --transit: #6e7b72;  /* patinated bronze - escalators and gates */
+    --ink: #0b0e14;      /* midnight, the ground everything floats on */
+    --panel: #141a24;    /* raised glass */
+    --well: #1a2130;     /* recessed: inputs, plans, drop wells */
+    --steel: #222a38;    /* hairline edge */
+    --muted: #8b94a7;    /* secondary lettering */
+    --vapour: #e7ebf2;   /* primary lettering */
+    --you: #4cd9e8;      /* the shopper, the route, anything urgent */
+    --you-wash: rgba(76, 217, 232, 0.11);
+    --transit: #6b7789;  /* escalators and gates - slate, never the cyan */
 
-    /* DIN is the typeface of transit signage, and both desktop platforms ship
-       a descendant of it, so the board is lettered in the real thing without
-       fetching a font. */
-    --sign: "Bahnschrift", "DIN Alternate", "DIN Condensed", "Archivo Narrow",
-            "Arial Narrow", "Helvetica Neue", sans-serif;
+    --ui: "Segoe UI Variable Text", "Segoe UI", -apple-system, "SF Pro Text",
+          Inter, system-ui, sans-serif;
+    /* One display face, used only for the name of where you are. */
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Variable Display",
+               "SF Pro Display", var(--ui);
     --data: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
   }
   * { box-sizing: border-box; }
   html { background: var(--ink); }
   body {
     margin: 0; color: var(--vapour);
-    font: 400 15px/1.55 var(--sign);
+    font: 400 15px/1.6 var(--ui);
     background: var(--ink);
     min-height: 100vh;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ---- the board ---- */
-  /* It is the whole surface, the way the real one is a wall you stand at. */
+  /* ---- panels floating on midnight ---- */
   .board {
-    background: var(--panel); min-height: 100vh;
-    display: flex; flex-direction: column;
+    min-height: 100vh; padding: 14px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  @media (min-width: 900px) { .board { padding: 18px; gap: 16px; } }
+
+  .head, .bay {
+    background: var(--panel); border: 1px solid var(--steel);
+    border-radius: 14px;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
+                0 10px 30px -22px #000;
   }
 
-  /* ---- the lamp: this board's whole reason to exist ---- */
+  /* ---- the readout: the one thing this product exists to produce ---- */
   .head {
-    position: sticky; top: 0; z-index: 5;
+    position: sticky; top: 14px; z-index: 5;
     display: grid; grid-template-columns: 1fr auto; align-items: end;
-    gap: 12px 18px; padding: 18px 22px 16px;
-    border-bottom: 1px solid var(--steel);
-    background: linear-gradient(180deg, var(--well) 0%, var(--panel) 100%);
+    gap: 10px 18px; padding: 18px 20px;
   }
+  @media (min-width: 900px) { .head { top: 18px; padding: 20px 24px; } }
   .mark { grid-column: 1; display: flex; align-items: center; gap: 9px; }
   .lamp {
-    width: 9px; height: 9px; flex: none; background: transparent;
-    box-shadow: 0 0 0 1px var(--muted) inset;
+    width: 8px; height: 8px; border-radius: 50%; flex: none;
+    background: transparent; box-shadow: 0 0 0 1.5px var(--transit) inset;
   }
-  .mark-label {
-    font-size: 10.5px; letter-spacing: 0.24em; text-transform: uppercase;
-    color: var(--muted); font-family: var(--data);
-  }
+  .mark-label { font-size: 13px; color: var(--muted); }
   .board:has(#preview.on) .lamp {
     background: var(--you);
-    box-shadow: 0 0 0 4px var(--you-wash);
-    animation: flare 0.5s ease-out;
+    box-shadow: 0 0 0 4px var(--you-wash), 0 0 12px rgba(76, 217, 232, 0.7);
+    animation: flare 0.55s ease-out;
   }
   .board:has(#preview.on) .mark-label { color: var(--vapour); }
   @keyframes flare {
-    from { box-shadow: 0 0 0 0 rgba(135, 92, 37, 0.5); }
-    to   { box-shadow: 0 0 0 4px var(--you-wash); }
+    from { box-shadow: 0 0 0 0 rgba(76, 217, 232, 0.85); }
+    to   { box-shadow: 0 0 0 4px var(--you-wash), 0 0 12px rgba(76, 217, 232, 0.7); }
   }
   .unlit {
-    grid-column: 1; margin: 0; color: var(--steel);
-    font-size: clamp(26px, 6vw, 40px); font-stretch: 87.5%;
-    text-transform: uppercase; letter-spacing: 0.01em; line-height: 1;
+    grid-column: 1; margin: 0; color: var(--transit);
+    font-family: var(--display); font-size: clamp(25px, 5vw, 36px);
+    letter-spacing: -0.01em; line-height: 1.1;
   }
   #preview.on + .unlit { display: none; }
   .plate {
     grid-column: 2; grid-row: 1 / span 2; align-self: end; text-align: right;
-    font-size: 13px; font-stretch: 87.5%; text-transform: uppercase;
-    letter-spacing: 0.14em; color: var(--vapour);
+    font-size: 14px; color: var(--vapour);
   }
   .plate span {
-    display: block; font-family: var(--data); font-size: 9.5px;
-    letter-spacing: 0.18em; color: var(--muted); text-transform: uppercase;
+    display: block; font-size: 12px; color: var(--muted);
   }
 
-  /* ---- bays: sections of one panel, divided by its own extrusion ---- */
-  .body { display: block; flex: 1; }
-  .bay { padding: 22px; border-top: 1px solid var(--steel); }
-  .rail > .bay:first-child { border-top: none; }
+  /* ---- bays ---- */
+  .body { display: grid; gap: 14px; flex: 1; align-content: start; }
+  .rail, .stage { display: grid; gap: 14px; align-content: start; }
+  .bay { padding: 20px; }
   .bay h2 {
-    margin: 0 0 14px; font-family: var(--data); font-size: 10.5px;
-    font-weight: 400; text-transform: uppercase; letter-spacing: 0.22em;
-    color: var(--muted);
+    margin: 0 0 14px; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
   }
   @media (min-width: 900px) {
-    .body { display: grid; grid-template-columns: 360px minmax(0, 1fr); }
-    /* The rule runs the full height of the board, not just past the content. */
-    .rail { border-right: 1px solid var(--steel); }
-    .stage > .bay:first-child { border-top: none; }
-    .rail > .bay:first-child { border-top: none; }
-    .bay { padding: 26px 28px; }
+    .body { grid-template-columns: 360px minmax(0, 1fr); gap: 16px; }
+    .rail, .stage { gap: 16px; }
+    .bay { padding: 24px; }
   }
-  /* Nothing has been asked for yet, so the stage carries the board's name
-     rather than an empty frame. */
+  /* Nothing has been asked for yet, so the stage says what will fill it. */
   .stage:not(:has(.bay:not(.hidden)))::before {
-    content: "Photograph a shopfront and this becomes your floor plan";
-    display: block; padding: 26px 28px; color: var(--steel);
-    font-family: var(--data); font-size: 11px; letter-spacing: 0.16em;
-    text-transform: uppercase;
+    content: "Photograph a shopfront and your floor plan appears here";
+    display: block; padding: 26px 24px; color: var(--muted);
+    border: 1px dashed var(--steel); border-radius: 14px; font-size: 14px;
   }
-  /* Nowhere to go until the board knows where you are. */
-  .board:not(:has(#preview.on)) #destCard { opacity: 0.5; }
+  /* Nowhere to go until the app knows where you are. */
+  .board:not(:has(#preview.on)) #destCard { opacity: 0.55; }
 
   button, select, input[type=text] {
-    font: inherit; font-family: var(--sign); border-radius: 2px;
+    font: inherit; border-radius: 9px;
     border: 1px solid var(--steel); background: var(--well);
     color: var(--vapour); padding: 10px 12px;
   }
   select, input[type=text] { width: 100%; }
-  input[type=text]::placeholder { color: var(--steel); }
-  button { cursor: pointer; }
+  input[type=text]::placeholder { color: var(--muted); }
+  button { cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
   :focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
   button.primary {
-    background: var(--you); color: #fbf8f3; border-color: var(--you);
-    width: 100%; font-stretch: 87.5%; text-transform: uppercase;
-    letter-spacing: 0.1em; font-size: 13px;
+    background: var(--you); color: var(--ink); border-color: var(--you);
+    width: 100%; font-weight: 600; font-size: 14px;
   }
-  button.primary:hover:not(:disabled) { background: #7f5622; border-color: #7f5622; }
-  button.primary:disabled { opacity: 0.3; cursor: not-allowed; }
-  button.ghost {
-    width: 100%; color: var(--muted); font-stretch: 87.5%;
-    text-transform: uppercase; letter-spacing: 0.1em; font-size: 13px;
-  }
+  button.primary:hover:not(:disabled) { background: #6ee2ee; border-color: #6ee2ee; }
+  button.primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  button.ghost { width: 100%; color: var(--muted); font-size: 14px; }
   button.ghost:hover { color: var(--you); border-color: var(--you); }
   #arrived { margin-top: 14px; }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
   .chips:empty { margin-top: 0; }
   .chips button {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 5px 8px 5px 10px; font-family: var(--data); font-size: 11px;
-    letter-spacing: 0.08em; text-transform: uppercase;
+    display: inline-flex; align-items: center; gap: 8px; border-radius: 99px;
+    padding: 5px 10px 5px 13px; font-size: 13px;
     background: var(--you-wash); color: var(--you); border-color: transparent;
   }
-  .chips button::after { content: "\00d7"; opacity: 0.6; }
+  .chips button::after { content: "\00d7"; font-size: 15px; opacity: 0.6; }
   .chips button:hover::after { opacity: 1; }
 
   /* The itinerary is a real sequence - the order the stops get walked - so it
-     is numbered. Nothing else on the board is. */
+     is numbered. Nothing else here is. */
   ol.itinerary { margin: 0; padding: 0; list-style: none; counter-reset: t; }
   ol.itinerary li {
-    counter-increment: t; display: flex; align-items: center; gap: 12px;
+    counter-increment: t; display: flex; align-items: center; gap: 13px;
     padding: 11px 0; border-top: 1px solid var(--steel);
   }
   ol.itinerary li:first-child { border-top: none; }
   ol.itinerary li::before {
-    content: counter(t, decimal-leading-zero); flex: none;
-    width: 22px; height: 20px; border: 1px solid var(--steel);
-    color: var(--muted); font-family: var(--data); font-size: 10px;
+    content: counter(t); flex: none;
+    width: 23px; height: 23px; border-radius: 50%; border: 1px solid var(--steel);
+    color: var(--muted); font-family: var(--data); font-size: 11px;
     display: grid; place-items: center;
   }
   ol.itinerary li.start::before {
-    content: ""; border-color: var(--you); background: var(--you);
+    content: ""; width: 9px; height: 9px; margin: 0 7px;
+    border-color: transparent; background: var(--you);
+    box-shadow: 0 0 10px rgba(76, 217, 232, 0.6);
   }
   ol.itinerary li.active { color: var(--you); }
   ol.itinerary li.active::before { border-color: var(--you); color: var(--you); }
-  ol.itinerary .who { flex: 1; font-stretch: 87.5%; letter-spacing: 0.02em; }
+  ol.itinerary .who { flex: 1; }
   ol.itinerary .leg {
-    display: block; font-family: var(--data); font-size: 10.5px;
-    letter-spacing: 0.06em; color: var(--muted); text-transform: uppercase;
+    display: block; font-size: 12.5px; color: var(--muted);
   }
-  ol.itinerary button {
-    padding: 5px 10px; font-family: var(--data); font-size: 10px;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
-  }
+  ol.itinerary button { padding: 6px 12px; font-size: 13px; color: var(--muted); }
   ol.itinerary button:hover { color: var(--you); border-color: var(--you); }
 
   label.file {
     display: flex; align-items: center; justify-content: center;
-    border: 1px dashed var(--steel); border-radius: 2px; background: var(--well);
-    padding: 30px 14px; cursor: pointer; text-align: center;
-    color: var(--muted); font-family: var(--data); font-size: 11px;
-    letter-spacing: 0.12em; text-transform: uppercase;
+    border: 1px dashed var(--steel); border-radius: 11px; background: var(--well);
+    padding: 30px 16px; cursor: pointer; text-align: center;
+    color: var(--muted); font-size: 14px;
     transition: border-color .15s, color .15s, background .15s;
   }
   label.file:hover { border-color: var(--transit); color: var(--vapour); }
@@ -193,122 +180,114 @@
     border-color: var(--you); color: var(--you); background: var(--you-wash);
   }
   input[type=file] { display: none; }
-  .row { display: grid; gap: 8px; }
-  /* The position readout sits in the header, because on a directory board the
-     lit words are the product. */
+  .row { display: grid; gap: 9px; }
+
+  /* The position readout lives in the header: it is what the product produces. */
   .preview { display: none; grid-column: 1; gap: 14px; align-items: center; }
   .preview.on { display: flex; }
   .preview img {
-    width: 60px; height: 60px; object-fit: cover; border-radius: 2px;
+    width: 56px; height: 56px; object-fit: cover; border-radius: 10px;
     border: 1px solid var(--steel); flex: none;
   }
   .found {
-    font-size: clamp(26px, 6vw, 40px); font-stretch: 87.5%; line-height: 1;
-    text-transform: uppercase; letter-spacing: 0.01em;
+    font-family: var(--display); font-size: clamp(25px, 5vw, 36px);
+    line-height: 1.1; letter-spacing: -0.01em;
   }
-  .sub {
-    color: var(--muted); font-family: var(--data); font-size: 11px;
-    letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px;
-  }
+  .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
   .chip {
-    display: inline-block; margin-left: 6px; padding: 2px 7px;
-    border: 1px solid var(--you); color: var(--you);
-    font-family: var(--data); font-size: 9.5px; letter-spacing: 0.1em;
-    text-transform: uppercase;
+    display: inline-block; margin-left: 8px; padding: 2px 9px;
+    border-radius: 99px; background: var(--you-wash); color: var(--you);
+    font-size: 12px; vertical-align: 1px;
   }
-  /* Amber is the caution colour on every sign in the building; it does the
-     same job here, so warnings need no colour of their own. */
+  /* One luminous colour carries attention, so a warning needs no hue of its
+     own - it borrows the same cyan and a heavier edge. */
   .notice {
     border-left: 2px solid var(--you); background: var(--you-wash);
-    color: var(--vapour); padding: 9px 12px; font-size: 13.5px; margin-top: 10px;
+    border-radius: 0 10px 10px 0; color: var(--vapour);
+    padding: 10px 13px; font-size: 14px; margin-top: 11px;
   }
   .notice.good { color: var(--you); }
   .notice.done {
-    border-left-color: var(--vapour); background: rgba(36, 31, 26, 0.05);
-    color: var(--vapour);
+    border-left-color: var(--vapour); background: rgba(231, 235, 242, 0.06);
   }
   .notice button {
-    padding: 3px 9px; margin-left: 8px; font-family: var(--data);
-    font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 4px 10px; margin-left: 9px; font-size: 12.5px;
     background: transparent; color: inherit; border-color: currentColor;
   }
-  .hint { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+  .hint { color: var(--muted); font-size: 14px; margin: 0 0 15px; }
   .progress-bar {
-    height: 3px; background: var(--steel); overflow: hidden; margin-bottom: 9px;
+    height: 4px; border-radius: 99px; background: var(--well);
+    overflow: hidden; margin-bottom: 10px;
   }
   .progress-bar span {
-    display: block; height: 100%; width: 0; background: var(--you);
+    display: block; height: 100%; width: 0; border-radius: 99px;
+    background: var(--you); box-shadow: 0 0 12px rgba(76, 217, 232, 0.5);
     transition: width 0.45s ease;
   }
   #trackCard .file { margin-top: 14px; }
 
-  /* Directions are a sequence, so they are numbered. The kind of step is in
-     the plate, not in a glyph. */
+  /* Directions are a sequence, so they are numbered. The kind of step shows in
+     the marker, not in a glyph. */
   ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
   ol.steps li {
-    counter-increment: s; position: relative; padding: 0 0 18px 34px;
-    border-left: 1px solid var(--steel); margin-left: 10px;
+    counter-increment: s; position: relative; padding: 0 0 19px 34px;
+    border-left: 1px solid var(--steel); margin-left: 11px;
   }
   ol.steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
   ol.steps li::before {
-    content: counter(s, decimal-leading-zero); position: absolute;
-    left: -11px; top: -2px; width: 21px; height: 19px;
+    content: counter(s); position: absolute; left: -12px; top: -1px;
+    width: 23px; height: 23px; border-radius: 50%;
     border: 1px solid var(--steel); background: var(--panel);
-    color: var(--muted); font-family: var(--data); font-size: 10px;
+    color: var(--muted); font-family: var(--data); font-size: 11px;
     display: grid; place-items: center;
   }
-  ol.steps li.escalator::before { border-color: var(--transit); color: var(--transit); }
-  ol.steps li.cross::before { border-color: var(--transit); color: var(--transit); }
+  ol.steps li.escalator::before,
+  ol.steps li.cross::before { border-color: var(--transit); color: var(--vapour); }
   ol.steps li.arrive::before {
-    border-color: var(--you); background: var(--you); color: #fbf8f3;
+    border-color: var(--you); background: var(--you); color: var(--ink);
+    box-shadow: 0 0 14px rgba(76, 217, 232, 0.45);
   }
   ol.steps li.speaking { color: var(--you); }
   .bay-head { display: flex; align-items: center; gap: 12px; }
   .bay-head h2 { margin: 0 0 14px; flex: 1; }
-  .speech { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .speech { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
   .speech .auto {
-    font-family: var(--data); font-size: 10px; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--muted);
-    display: flex; align-items: center; gap: 5px; cursor: pointer;
+    font-size: 13px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px; cursor: pointer;
   }
   .speech button {
-    padding: 5px 11px; font-family: var(--data); font-size: 10px;
-    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    padding: 6px 13px; border-radius: 99px; font-size: 13px; color: var(--muted);
   }
-  .speech button.on { background: var(--you); color: #fbf8f3; border-color: var(--you); }
+  .speech button.on { background: var(--you); color: var(--ink); border-color: var(--you); }
   .speech button[hidden] { display: none; }
   #speakIcon { font-size: 8px; vertical-align: 1px; }
   .total {
-    margin-top: 16px; padding-top: 13px; border-top: 1px solid var(--steel);
-    font-family: var(--data); font-size: 11px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--muted);
+    margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--steel);
+    font-size: 13px; color: var(--muted);
   }
 
   /* ---- the plan ---- */
-  .floorplan { margin-bottom: 20px; }
+  .floorplan { margin-bottom: 22px; }
   .floorplan h3 {
-    margin: 0; font-size: 12px; font-stretch: 87.5%; font-weight: 400;
-    text-transform: uppercase; letter-spacing: 0.2em; color: var(--vapour);
-    display: inline-block; border-bottom: 1px solid var(--you);
-    padding-bottom: 3px;
+    margin: 0; font-size: 15px; font-weight: 600; color: var(--vapour);
   }
-  .floorplan .sub { margin: 6px 0 10px; }
+  .floorplan .sub { margin: 2px 0 10px; }
   .legend {
-    display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 0;
-    font-family: var(--data); font-size: 10px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--muted);
+    display: flex; gap: 18px; flex-wrap: wrap; margin: 12px 0 0;
+    font-size: 13px; color: var(--muted);
   }
   .legend i {
-    display: inline-block; width: 8px; height: 8px;
-    margin-right: 6px; vertical-align: 0;
+    display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+    margin-right: 7px; vertical-align: 0;
   }
   svg {
     width: 100%; height: auto; display: block; overflow: visible;
-    background: var(--well); padding: 10px 0;
+    background: var(--well); padding: 12px 0; border-radius: 11px;
+    border: 1px solid var(--steel);
   }
-  /* The walkway is the terrazzo the shopper is standing on, so it is drawn as
-     floor rather than as a line: a wide pale band between the shopfronts. */
-  .walkway { stroke: #e6dfd2; stroke-width: 8; stroke-linecap: square; }
+  /* The walkway is the floor the shopper is standing on, so it is drawn as
+     floor rather than as a line: a wide band between the shopfronts. */
+  .walkway { stroke: #10151f; stroke-width: 8; stroke-linecap: round; }
   .stub { stroke: var(--steel); stroke-width: 1; }
   .atrium { fill: none; stroke: var(--steel); stroke-width: 1; stroke-dasharray: 3 5; }
   .marker-gate { fill: var(--panel); stroke: var(--transit); stroke-width: 1; }
@@ -317,35 +296,36 @@
     transition: fill .2s, stroke .2s;
   }
   .unit.on { fill: var(--you-wash); stroke: var(--you); stroke-width: 1.5; }
-  .unit-label {
-    fill: var(--muted); font-family: var(--data); letter-spacing: 0.04em;
-    pointer-events: none;
-  }
+  .unit-label { fill: var(--muted); pointer-events: none; }
   .unit-label.on { fill: var(--you); }
-  .on-marker { fill: var(--vapour); font-family: var(--data); letter-spacing: 0.08em; }
+  .on-marker { fill: var(--vapour); font-family: var(--data); letter-spacing: 0.06em; }
   .route-line {
-    fill: none; stroke: var(--you); stroke-width: 3;
-    stroke-linecap: square; stroke-linejoin: miter;
+    fill: none; stroke: var(--you); stroke-width: 3.5;
+    stroke-linecap: round; stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(76, 217, 232, 0.5));
   }
-  .marker-origin { fill: var(--you); stroke: var(--well); stroke-width: 2.5; }
-  .marker-dest { fill: var(--well); stroke: var(--vapour); stroke-width: 2.5; }
-  /* Escalators read as a pale plate with a bronze edge: present on the plan,
-     never mistaken for the brass that means you. */
-  .marker-esc { fill: #dfe4de; stroke: var(--transit); stroke-width: 1; }
+  .marker-origin {
+    fill: var(--you); stroke: var(--panel); stroke-width: 2.5;
+    filter: drop-shadow(0 0 8px rgba(76, 217, 232, 0.75));
+  }
+  .marker-dest { fill: var(--panel); stroke: var(--vapour); stroke-width: 2.5; }
+  /* Escalators sit on a slate plate: legible on the plan, never mistaken for
+     the cyan that means you. */
+  .marker-esc { fill: #232c3c; stroke: var(--transit); stroke-width: 1; }
   .lbl { font-family: var(--data); font-size: 10px; fill: var(--vapour); }
   .lbl-sm {
     font-family: var(--data); font-size: 9px; fill: var(--muted);
     letter-spacing: 0.14em;
   }
   .hidden { display: none; }
-  .err { color: var(--you); font-size: 13.5px; padding: 20px; }
-  .cand {
-    margin-top: 10px; font-family: var(--data); font-size: 10px;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  .err {
+    color: var(--you); font-size: 15px; padding: 22px; background: var(--panel);
+    border: 1px solid var(--steel); border-radius: 14px;
   }
+  .cand { margin-top: 11px; font-size: 13px; color: var(--muted); }
   .cand button {
-    padding: 4px 9px; margin: 4px 5px 0 0; font-family: var(--data);
-    font-size: 10px; letter-spacing: 0.08em; color: var(--vapour);
+    padding: 5px 11px; margin: 5px 5px 0 0; border-radius: 99px;
+    font-size: 13px; color: var(--vapour);
   }
   .cand button:hover { border-color: var(--you); color: var(--you); }
 
