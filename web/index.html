@@ -697,7 +697,9 @@ const VIEW = {
 const px = x => VIEW.padX + x * (VIEW.w - 2 * VIEW.padX);
 const py = y => y === 0 ? VIEW.topWalk : (y === 1 ? VIEW.bottomWalk : VIEW.mid);
 const boxBand = row => row === 'top' ? VIEW.topBox : VIEW.bottomBox;
-const boxCentreY = row => { const [a, b] = boxBand(row); return (a + b) / 2; };
+// The side of a shopfront box that faces the walkway. Routes and pins stop
+// here rather than at the centre, which would cross the unit's own name.
+const boxEdgeY = row => { const [a, b] = boxBand(row); return row === 'top' ? b : a; };
 
 function svgEl(name, attrs = {}) {
   const el = document.createElementNS('http://www.w3.org/2000/svg', name);
@@ -710,13 +712,16 @@ function svgEl(name, attrs = {}) {
 function labelBox(svg, unit, geom, highlight) {
   const { x, w, top, bottom } = geom;
   const vertical = w < 66;
-  const room = vertical ? (bottom - top) : w;
+  // A vertical name is kept clear of the walkway edge, where the route
+  // arrives and the pin sits.
+  const room = vertical ? (bottom - top) - 18 : w;
   const size = vertical ? 9.5 : Math.min(11, Math.max(8, w / 6));
   const maxChars = Math.floor(room / (size * 0.58));
   let text = unit.name;
   if (text.length > maxChars) text = text.slice(0, Math.max(3, maxChars - 1)) + '…';
 
-  const cx = x + w / 2, cy = (top + bottom) / 2;
+  const cx = x + w / 2;
+  const cy = (top + bottom) / 2 + (vertical ? (unit.row === 'top' ? -7 : 7) : 0);
   const el = svgEl('text', {
     class: 'unit-label' + (highlight ? ' on' : ''),
     x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central',
@@ -724,7 +729,8 @@ function labelBox(svg, unit, geom, highlight) {
   });
   if (vertical) el.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
   el.textContent = text;
-  svg.append(el);
+  // Returned rather than appended: names go on last, above the route.
+  return el;
 }
 
 function drawFloor(floorKey, opts = {}) {
@@ -742,6 +748,7 @@ function drawFloor(floorKey, opts = {}) {
 
   const svg = svgEl('svg', { viewBox: `0 0 ${VIEW.w} ${VIEW.h}`, role: 'img' });
   const highlight = new Set((opts.markers || []).map(m => m.store_id));
+  const labels = [];
 
   // Atrium.
   const atrium = svgEl('ellipse', {
@@ -783,7 +790,7 @@ function drawFloor(floorKey, opts = {}) {
     tip.textContent = unit.name;
     box.append(tip);
     svg.append(box);
-    labelBox(svg, unit, { x: left + 1, w: Math.max(width - 2, 4), top, bottom }, on);
+    labels.push(labelBox(svg, unit, { x: left + 1, w: Math.max(width - 2, 4), top, bottom }, on));
 
     // Stub linking the shopfront to the walkway it opens onto.
     svg.append(svgEl('line', {
@@ -812,8 +819,8 @@ function drawFloor(floorKey, opts = {}) {
     const pts = opts.leg.path.map(([x, y]) => [px(x), py(y)]);
     const origin = (opts.markers || []).find(m => m.kind === 'origin');
     const dest = (opts.markers || []).find(m => m.kind === 'dest');
-    if (origin) pts.unshift([px(origin.x), boxCentreY(origin.row)]);
-    if (dest) pts.push([px(dest.x), boxCentreY(dest.row)]);
+    if (origin) pts.unshift([px(origin.x), boxEdgeY(origin.row)]);
+    if (dest) pts.push([px(dest.x), boxEdgeY(dest.row)]);
 
     const line = svgEl('polyline', {
       class: 'route-line',
@@ -831,16 +838,17 @@ function drawFloor(floorKey, opts = {}) {
     });
   }
 
-  // Origin and destination pins. They sit on the outer edge of the shopfront
-  // box rather than its centre, which would cover the name.
+  // Origin and destination pins, on the shopfront's opening where the route
+  // meets it, so neither the line nor the pin crosses the unit's name.
   for (const marker of (opts.markers || [])) {
-    const [top, bottom] = boxBand(marker.row);
-    const cy = marker.row === 'top' ? top + 9 : bottom - 9;
     svg.append(svgEl('circle', {
       class: marker.kind === 'dest' ? 'marker-dest' : 'marker-origin',
-      cx: px(marker.x), cy, r: 6.5
+      cx: px(marker.x), cy: boxEdgeY(marker.row), r: 6
     }));
   }
+
+  // Names last of all, so a route can never be drawn over one.
+  for (const label of labels) svg.append(label);
 
   wrap.appendChild(svg);
   return wrap;
