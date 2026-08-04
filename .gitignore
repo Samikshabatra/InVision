@@ -11,3 +11,7 @@ __pycache__/
 venv/
 .env
 .DS_Store
+
+# Reference screenshots dropped in the working directory
+/image*.png
+/ChatGPT Image*.png
