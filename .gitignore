@@ -15,3 +15,9 @@ venv/
 # Reference screenshots dropped in the working directory
 /image*.png
 /ChatGPT Image*.png
+
+# Storefront photographs. Captured under written permission from mall
+# management for this project; that permission does not extend to
+# redistribution, so only the derived vectors are published.
+data/dataset/gallery/
+data/dataset/query/
