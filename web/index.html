@@ -5,27 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>InVision — Mall Navigation</title>
 <style>
-  /* Midnight glass. The mall at night through the window of the thing that is
-     navigating it: deep blue-black, panels that sit above the ground rather
-     than being ruled into it, and exactly one luminous colour - the shopper,
-     their route, and anything that needs their attention. Everything else is
-     slate, so the cyan never has to share. */
+  /* Warm paper, deep forest green, sage. The mall's calm interior rather than
+     its signage: soft cards on an oat ground, a serif for the few words that
+     matter - where you are, and where you are going - and one green that means
+     the shopper, their route, and the action to take next. */
   :root {
-    --ink: #0b0e14;      /* midnight, the ground everything floats on */
-    --panel: #141a24;    /* raised glass */
-    --well: #1a2130;     /* recessed: inputs, plans, drop wells */
-    --steel: #222a38;    /* hairline edge */
-    --muted: #8b94a7;    /* secondary lettering */
-    --vapour: #e7ebf2;   /* primary lettering */
-    --you: #4cd9e8;      /* the shopper, the route, anything urgent */
-    --you-wash: rgba(76, 217, 232, 0.11);
-    --transit: #6b7789;  /* escalators and gates - slate, never the cyan */
+    --ink: #f0ece4;      /* oat paper, the ground the cards sit on */
+    --panel: #fdfcfa;    /* card */
+    --well: #f7f4ee;     /* recessed: wells, plans, the wide card */
+    --steel: #e6e1d6;    /* hairline */
+    --muted: #656b5e;    /* secondary text - clears 4.5:1 on card, stage and sage */
+    --vapour: #2a2f26;   /* primary text, near-black warm */
+    --you: #1f4a32;      /* forest: you, your route, the next action */
+    --you-wash: #e9eee4; /* sage wash: icon discs, chips, highlights */
+    --transit: #8a9584;  /* escalators and gates - sage grey */
 
     --ui: "Segoe UI Variable Text", "Segoe UI", -apple-system, "SF Pro Text",
           Inter, system-ui, sans-serif;
-    /* One display face, used only for the name of where you are. */
-    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Variable Display",
-               "SF Pro Display", var(--ui);
+    /* A book serif carries the two things worth reading slowly. */
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua",
+               Georgia, "Times New Roman", serif;
     --data: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, monospace;
   }
   * { box-sizing: border-box; }
@@ -38,106 +37,147 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  /* ---- panels floating on midnight ---- */
+  /* ---- cards on paper ---- */
   .board {
-    min-height: 100vh; padding: 14px;
-    display: flex; flex-direction: column; gap: 14px;
+    min-height: 100vh; padding: 16px;
+    display: flex; flex-direction: column; gap: 16px;
   }
-  @media (min-width: 900px) { .board { padding: 18px; gap: 16px; } }
+  @media (min-width: 900px) { .board { padding: 22px; gap: 20px; } }
 
-  .head, .bay {
+  .head, .rail, .stage {
     background: var(--panel); border: 1px solid var(--steel);
-    border-radius: 14px;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03) inset,
-                0 10px 30px -22px #000;
+    border-radius: 20px; box-shadow: 0 18px 40px -34px rgba(42, 47, 38, 0.5);
   }
+  .stage { background: var(--well); }
 
-  /* ---- the readout: the one thing this product exists to produce ---- */
+  /* ---- the readout ---- */
   .head {
-    position: sticky; top: 14px; z-index: 5;
-    display: grid; grid-template-columns: 1fr auto; align-items: end;
-    gap: 10px 18px; padding: 18px 20px;
+    position: relative; overflow: hidden;
+    display: grid; grid-template-columns: 1fr auto; align-items: start;
+    gap: 4px 20px; padding: 22px 24px 20px;
   }
-  @media (min-width: 900px) { .head { top: 18px; padding: 20px 24px; } }
-  .mark { grid-column: 1; display: flex; align-items: center; gap: 9px; }
-  .lamp {
-    width: 8px; height: 8px; border-radius: 50%; flex: none;
-    background: transparent; box-shadow: 0 0 0 1.5px var(--transit) inset;
+  @media (min-width: 900px) { .head { padding: 26px 30px 24px; } }
+  .mark { grid-column: 1; display: flex; align-items: center; gap: 11px; }
+  .disc {
+    width: 34px; height: 34px; border-radius: 50%; flex: none;
+    background: var(--you-wash); color: var(--you);
+    display: grid; place-items: center;
   }
-  .mark-label { font-size: 13px; color: var(--muted); }
-  .board:has(#preview.on) .lamp {
-    background: var(--you);
-    box-shadow: 0 0 0 4px var(--you-wash), 0 0 12px rgba(76, 217, 232, 0.7);
-    animation: flare 0.55s ease-out;
+  .disc svg { width: 17px; height: 17px; }
+  .mark-label {
+    font-size: 11.5px; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--muted);
   }
-  .board:has(#preview.on) .mark-label { color: var(--vapour); }
-  @keyframes flare {
-    from { box-shadow: 0 0 0 0 rgba(76, 217, 232, 0.85); }
-    to   { box-shadow: 0 0 0 4px var(--you-wash), 0 0 12px rgba(76, 217, 232, 0.7); }
+  .board:has(#preview.on) .disc {
+    background: var(--you); color: #fdfcfa;
+    animation: settle 0.5s ease-out;
   }
-  .unlit {
-    grid-column: 1; margin: 0; color: var(--transit);
-    font-family: var(--display); font-size: clamp(25px, 5vw, 36px);
-    letter-spacing: -0.01em; line-height: 1.1;
+  .board:has(#preview.on) .mark-label { color: var(--you); }
+  @keyframes settle {
+    from { transform: scale(0.82); }
+    to   { transform: scale(1); }
   }
+  .unlit, .found {
+    font-family: var(--display); font-size: clamp(34px, 6vw, 54px);
+    line-height: 1.05; letter-spacing: -0.005em; color: var(--you);
+  }
+  .unlit { grid-column: 1; margin: 6px 0 0; color: var(--transit); }
   #preview.on + .unlit { display: none; }
   .plate {
-    grid-column: 2; grid-row: 1 / span 2; align-self: end; text-align: right;
-    font-size: 14px; color: var(--vapour);
+    grid-column: 2; grid-row: 1 / span 3; align-self: start; text-align: right;
+    position: relative; z-index: 2;
+    font-family: var(--display); font-size: 21px; color: var(--you);
   }
   .plate span {
-    display: block; font-size: 12px; color: var(--muted);
+    display: block; font-family: var(--ui); font-size: 13px;
+    color: var(--muted); margin-top: 2px;
   }
+  .plate .brandmark {
+    width: 19px; height: 19px; vertical-align: -3px; margin-right: 7px;
+  }
+  /* A little of the mall's planting, cropped by the card. */
+  .fronds {
+    position: absolute; top: -18px; right: 210px; width: 340px; height: 210px;
+    pointer-events: none; opacity: 0.9;
+  }
+  @media (max-width: 899px) { .fronds { display: none; } }
 
-  /* ---- bays ---- */
-  .body { display: grid; gap: 14px; flex: 1; align-content: start; }
-  .rail, .stage { display: grid; gap: 14px; align-content: start; }
-  .bay { padding: 20px; }
+  /* ---- bays: sections of a card, divided by a hairline ---- */
+  .body { display: grid; gap: 16px; flex: 1; align-content: start; }
+  .rail, .stage { align-content: start; height: max-content; }
+  .bay { padding: 22px 24px; border-top: 1px solid var(--steel); }
+  .rail > .bay:first-child, .stage > .bay:first-child { border-top: none; }
   .bay h2 {
-    margin: 0 0 14px; font-size: 11px; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted);
+    margin: 0 0 16px; font-size: 11.5px; font-weight: 600;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--vapour);
+    display: flex; align-items: center; gap: 11px;
   }
+  .bay h2 .disc { width: 30px; height: 30px; }
+  .bay h2 .disc svg { width: 15px; height: 15px; }
   @media (min-width: 900px) {
-    .body { grid-template-columns: 360px minmax(0, 1fr); gap: 16px; }
-    .rail, .stage { gap: 16px; }
-    .bay { padding: 24px; }
-  }
-  /* Nothing has been asked for yet, so the stage says what will fill it. */
-  .stage:not(:has(.bay:not(.hidden)))::before {
-    content: "Photograph a shopfront and your floor plan appears here";
-    display: block; padding: 26px 24px; color: var(--muted);
-    border: 1px dashed var(--steel); border-radius: 14px; font-size: 14px;
+    .body { grid-template-columns: 372px minmax(0, 1fr); gap: 20px; }
+    .bay { padding: 24px 26px; }
   }
   /* Nowhere to go until the app knows where you are. */
   .board:not(:has(#preview.on)) #destCard { opacity: 0.55; }
 
   button, select, input[type=text] {
-    font: inherit; border-radius: 9px;
-    border: 1px solid var(--steel); background: var(--well);
-    color: var(--vapour); padding: 10px 12px;
+    font: inherit; border-radius: 11px;
+    border: 1px solid var(--steel); background: var(--panel);
+    color: var(--vapour); padding: 11px 13px;
   }
   select, input[type=text] { width: 100%; }
   input[type=text]::placeholder { color: var(--muted); }
+  /* Room for the magnifier and the chevron drawn into the field. */
+  #filter { padding-left: 38px; }
+  select {
+    appearance: none; padding-right: 38px; cursor: pointer;
+    background-repeat: no-repeat; background-position: right 14px center;
+    background-size: 12px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8' fill='none' stroke='%23656b5e' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+  }
   button { cursor: pointer; transition: background .15s, border-color .15s, color .15s; }
   :focus-visible { outline: 2px solid var(--you); outline-offset: 2px; }
-  button.primary {
-    background: var(--you); color: var(--ink); border-color: var(--you);
-    width: 100%; font-weight: 600; font-size: 14px;
+  .field { position: relative; }
+  .field-icon {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; color: var(--muted); pointer-events: none;
   }
-  button.primary:hover:not(:disabled) { background: #6ee2ee; border-color: #6ee2ee; }
-  button.primary:disabled { opacity: 0.35; cursor: not-allowed; }
-  button.ghost { width: 100%; color: var(--muted); font-size: 14px; }
-  button.ghost:hover { color: var(--you); border-color: var(--you); }
+  .file-sub { font-size: 13.5px; color: var(--muted); }
+
+  button.primary, label.primary {
+    background: var(--you); color: #fdfcfa; border: 1px solid var(--you);
+    border-radius: 11px; width: 100%; font-size: 12.5px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+    padding: 14px 16px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    transition: background .15s, border-color .15s;
+  }
+  label.primary:hover { background: #17381f; border-color: #17381f; }
+  button.primary::after, label.primary::after {
+    content: ""; width: 15px; height: 11px; flex: none;
+    background: no-repeat center/contain
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 11' fill='none' stroke='%23fdfcfa' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M1 5.5h12M9 1.5l4 4-4 4'/%3E%3C/svg%3E");
+  }
+  button.primary:hover:not(:disabled) { background: #17381f; border-color: #17381f; }
+  button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.ghost {
+    width: 100%; color: var(--vapour); font-size: 13.5px; padding: 14px 16px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  button.ghost svg { width: 15px; height: 15px; color: var(--muted); }
+  button.ghost:hover { border-color: var(--you); color: var(--you); }
+  button.ghost:hover svg { color: var(--you); }
   #arrived { margin-top: 14px; }
-  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .pair { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
   .chips:empty { margin-top: 0; }
   .chips button {
     display: inline-flex; align-items: center; gap: 8px; border-radius: 99px;
-    padding: 5px 10px 5px 13px; font-size: 13px;
+    padding: 6px 11px 6px 14px; font-size: 13px;
     background: var(--you-wash); color: var(--you); border-color: transparent;
   }
-  .chips button::after { content: "\00d7"; font-size: 15px; opacity: 0.6; }
+  .chips button::after { content: "\00d7"; font-size: 15px; opacity: 0.55; }
   .chips button:hover::after { opacity: 1; }
 
   /* The itinerary is a real sequence - the order the stops get walked - so it
@@ -155,74 +195,83 @@
     display: grid; place-items: center;
   }
   ol.itinerary li.start::before {
-    content: ""; width: 9px; height: 9px; margin: 0 7px;
+    content: ""; width: 10px; height: 10px; margin: 0 7px;
     border-color: transparent; background: var(--you);
-    box-shadow: 0 0 10px rgba(76, 217, 232, 0.6);
   }
   ol.itinerary li.active { color: var(--you); }
-  ol.itinerary li.active::before { border-color: var(--you); color: var(--you); }
+  ol.itinerary li.active::before {
+    border-color: var(--you); background: var(--you-wash); color: var(--you);
+  }
   ol.itinerary .who { flex: 1; }
   ol.itinerary .leg {
     display: block; font-size: 12.5px; color: var(--muted);
   }
-  ol.itinerary button { padding: 6px 12px; font-size: 13px; color: var(--muted); }
+  ol.itinerary button { padding: 7px 13px; font-size: 13px; color: var(--muted); }
   ol.itinerary button:hover { color: var(--you); border-color: var(--you); }
 
   label.file {
-    display: flex; align-items: center; justify-content: center;
-    border: 1px dashed var(--steel); border-radius: 11px; background: var(--well);
-    padding: 30px 16px; cursor: pointer; text-align: center;
-    color: var(--muted); font-size: 14px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    border: 1px dashed #d8d2c4; border-radius: 14px; background: var(--well);
+    padding: 26px 16px; cursor: pointer; text-align: center;
+    color: var(--muted); font-size: 13.5px;
     transition: border-color .15s, color .15s, background .15s;
   }
-  label.file:hover { border-color: var(--transit); color: var(--vapour); }
-  label.file.dragging {
-    border-color: var(--you); color: var(--you); background: var(--you-wash);
+  label.file .disc { margin-bottom: 8px; }
+  label.file #dropText, label.file #checkText {
+    font-size: 15px; font-weight: 600; color: var(--vapour);
   }
+  label.file:hover { border-color: var(--transit); }
+  label.file.dragging { border-color: var(--you); background: var(--you-wash); }
+  label.file.dragging #dropText, label.file.dragging #checkText { color: var(--you); }
   input[type=file] { display: none; }
-  .row { display: grid; gap: 9px; }
+  .row { display: grid; gap: 10px; }
 
   /* The position readout lives in the header: it is what the product produces. */
   .preview { display: none; grid-column: 1; gap: 14px; align-items: center; }
   .preview.on { display: flex; }
   .preview img {
-    width: 56px; height: 56px; object-fit: cover; border-radius: 10px;
+    width: 62px; height: 62px; object-fit: cover; border-radius: 14px;
     border: 1px solid var(--steel); flex: none;
   }
-  .found {
-    font-family: var(--display); font-size: clamp(25px, 5vw, 36px);
-    line-height: 1.1; letter-spacing: -0.01em;
+  .sub {
+    color: var(--muted); font-size: 14px; margin-top: 7px;
+    display: flex; align-items: center; flex-wrap: wrap;
   }
-  .sub { color: var(--muted); font-size: 13px; margin-top: 3px; }
+  .sub::before {
+    content: ""; width: 15px; height: 15px; margin-right: 8px; flex: none;
+    background: no-repeat center/contain
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23656b5e' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 13.5h3.4V7H2zM6.3 13.5h3.4V3.2H6.3zM10.6 13.5H14V9.4h-3.4z'/%3E%3C/svg%3E");
+  }
   .chip {
-    display: inline-block; margin-left: 8px; padding: 2px 9px;
-    border-radius: 99px; background: var(--you-wash); color: var(--you);
-    font-size: 12px; vertical-align: 1px;
+    display: inline-block; margin-left: 17px; position: relative;
+    padding: 3px 11px; border-radius: 99px;
+    background: var(--you-wash); color: var(--you); font-size: 13px;
   }
-  /* One luminous colour carries attention, so a warning needs no hue of its
-     own - it borrows the same cyan and a heavier edge. */
+  .chip::before {
+    content: ""; position: absolute; left: -9px; top: 3px; bottom: 3px;
+    border-left: 1px solid var(--steel);
+  }
+  /* One green carries attention, so a warning needs no hue of its own - it
+     borrows the same green and a heavier edge. */
   .notice {
-    border-left: 2px solid var(--you); background: var(--you-wash);
-    border-radius: 0 10px 10px 0; color: var(--vapour);
-    padding: 10px 13px; font-size: 14px; margin-top: 11px;
+    border-left: 3px solid var(--you); background: var(--you-wash);
+    border-radius: 0 12px 12px 0; color: var(--vapour);
+    padding: 11px 14px; font-size: 14px; margin-top: 12px;
   }
   .notice.good { color: var(--you); }
-  .notice.done {
-    border-left-color: var(--vapour); background: rgba(231, 235, 242, 0.06);
-  }
+  .notice.done { border-left-color: var(--transit); background: #f1f0ea; }
   .notice button {
     padding: 4px 10px; margin-left: 9px; font-size: 12.5px;
     background: transparent; color: inherit; border-color: currentColor;
   }
   .hint { color: var(--muted); font-size: 14px; margin: 0 0 15px; }
   .progress-bar {
-    height: 4px; border-radius: 99px; background: var(--well);
+    height: 5px; border-radius: 99px; background: #ebe7dd;
     overflow: hidden; margin-bottom: 10px;
   }
   .progress-bar span {
     display: block; height: 100%; width: 0; border-radius: 99px;
-    background: var(--you); box-shadow: 0 0 12px rgba(76, 217, 232, 0.5);
-    transition: width 0.45s ease;
+    background: var(--you); transition: width 0.45s ease;
   }
   #trackCard .file { margin-top: 14px; }
 
@@ -236,16 +285,17 @@
   ol.steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
   ol.steps li::before {
     content: counter(s); position: absolute; left: -12px; top: -1px;
-    width: 23px; height: 23px; border-radius: 50%;
+    width: 24px; height: 24px; border-radius: 50%;
     border: 1px solid var(--steel); background: var(--panel);
-    color: var(--muted); font-family: var(--data); font-size: 11px;
+    color: var(--muted); font-size: 12px; font-weight: 600;
     display: grid; place-items: center;
   }
   ol.steps li.escalator::before,
-  ol.steps li.cross::before { border-color: var(--transit); color: var(--vapour); }
+  ol.steps li.cross::before {
+    border-color: transparent; background: var(--you-wash); color: var(--you);
+  }
   ol.steps li.arrive::before {
-    border-color: var(--you); background: var(--you); color: var(--ink);
-    box-shadow: 0 0 14px rgba(76, 217, 232, 0.45);
+    border-color: var(--you); background: var(--you); color: #fdfcfa;
   }
   ol.steps li.speaking { color: var(--you); }
   .bay-head { display: flex; align-items: center; gap: 12px; }
@@ -258,7 +308,7 @@
   .speech button {
     padding: 6px 13px; border-radius: 99px; font-size: 13px; color: var(--muted);
   }
-  .speech button.on { background: var(--you); color: var(--ink); border-color: var(--you); }
+  .speech button.on { background: var(--you); color: #fdfcfa; border-color: var(--you); }
   .speech button[hidden] { display: none; }
   #speakIcon { font-size: 8px; vertical-align: 1px; }
   .total {
@@ -280,54 +330,79 @@
     display: inline-block; width: 9px; height: 9px; border-radius: 50%;
     margin-right: 7px; vertical-align: 0;
   }
-  svg {
+  .floorplan svg {
     width: 100%; height: auto; display: block; overflow: visible;
-    background: var(--well); padding: 12px 0; border-radius: 11px;
+    background: var(--panel); padding: 14px 0; border-radius: 14px;
     border: 1px solid var(--steel);
   }
   /* The walkway is the floor the shopper is standing on, so it is drawn as
      floor rather than as a line: a wide band between the shopfronts. */
-  .walkway { stroke: #10151f; stroke-width: 8; stroke-linecap: round; }
+  .walkway { stroke: #f1eee6; stroke-width: 8; stroke-linecap: round; }
   .stub { stroke: var(--steel); stroke-width: 1; }
   .atrium { fill: none; stroke: var(--steel); stroke-width: 1; stroke-dasharray: 3 5; }
-  .marker-gate { fill: var(--panel); stroke: var(--transit); stroke-width: 1; }
+  .marker-gate { fill: var(--well); stroke: var(--transit); stroke-width: 1; }
   .unit {
-    fill: var(--panel); stroke: var(--steel); stroke-width: 1;
+    fill: var(--well); stroke: var(--steel); stroke-width: 1;
     transition: fill .2s, stroke .2s;
   }
   .unit.on { fill: var(--you-wash); stroke: var(--you); stroke-width: 1.5; }
   .unit-label { fill: var(--muted); pointer-events: none; }
   .unit-label.on { fill: var(--you); }
-  .on-marker { fill: var(--vapour); font-family: var(--data); letter-spacing: 0.06em; }
+  .on-marker { fill: var(--vapour); letter-spacing: 0.06em; }
   .route-line {
     fill: none; stroke: var(--you); stroke-width: 3.5;
     stroke-linecap: round; stroke-linejoin: round;
-    filter: drop-shadow(0 0 6px rgba(76, 217, 232, 0.5));
   }
-  .marker-origin {
-    fill: var(--you); stroke: var(--panel); stroke-width: 2.5;
-    filter: drop-shadow(0 0 8px rgba(76, 217, 232, 0.75));
-  }
+  .marker-origin { fill: var(--you); stroke: var(--panel); stroke-width: 2.5; }
   .marker-dest { fill: var(--panel); stroke: var(--vapour); stroke-width: 2.5; }
-  /* Escalators sit on a slate plate: legible on the plan, never mistaken for
-     the cyan that means you. */
-  .marker-esc { fill: #232c3c; stroke: var(--transit); stroke-width: 1; }
-  .lbl { font-family: var(--data); font-size: 10px; fill: var(--vapour); }
-  .lbl-sm {
-    font-family: var(--data); font-size: 9px; fill: var(--muted);
-    letter-spacing: 0.14em;
-  }
+  /* Escalators sit on a sage plate: legible on the plan, never mistaken for
+     the green that means you. */
+  .marker-esc { fill: var(--you-wash); stroke: var(--transit); stroke-width: 1; }
+  .lbl { font-size: 10px; fill: var(--vapour); }
+  .lbl-sm { font-size: 9px; fill: var(--muted); letter-spacing: 0.14em; }
   .hidden { display: none; }
   .err {
-    color: var(--you); font-size: 15px; padding: 22px; background: var(--panel);
-    border: 1px solid var(--steel); border-radius: 14px;
+    color: var(--you); font-size: 15px; padding: 24px; background: var(--panel);
+    border: 1px solid var(--steel); border-radius: 20px;
   }
   .cand { margin-top: 11px; font-size: 13px; color: var(--muted); }
   .cand button {
-    padding: 5px 11px; margin: 5px 5px 0 0; border-radius: 99px;
+    padding: 6px 12px; margin: 6px 5px 0 0; border-radius: 99px;
     font-size: 13px; color: var(--vapour);
   }
   .cand button:hover { border-color: var(--you); color: var(--you); }
+
+  /* ---- the opening panel, until a route replaces it ---- */
+  .hero { display: grid; gap: 26px; }
+  @media (min-width: 1040px) {
+    .hero { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; }
+  }
+  .hero h2 {
+    display: block; margin: 0 0 18px; font-family: var(--display);
+    font-size: clamp(30px, 3.6vw, 44px); font-weight: 400; line-height: 1.12;
+    letter-spacing: -0.005em; text-transform: none; color: var(--you);
+  }
+  .hero h2 em { display: block; font-style: italic; }
+  .hero .rule { width: 62px; height: 1px; background: var(--transit); margin: 0 0 20px; }
+  .hero p { margin: 0 0 24px; color: var(--muted); font-size: 15.5px; max-width: 34ch; }
+  .hero .primary { width: auto; padding: 15px 26px; }
+  /* The hero's call to action opens the same file picker as the drop well, so
+     it carries an upload mark rather than the forward arrow. */
+  #heroUpload::after {
+    width: 15px; height: 15px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23fdfcfa' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 11V2M4.5 5.5 8 2l3.5 3.5M2 11v3h12v-3'/%3E%3C/svg%3E");
+    order: -1;
+  }
+  .hero-art { width: 100%; height: auto; display: block; }
+  .features {
+    display: grid; gap: 18px; margin-top: 26px; padding-top: 24px;
+    border-top: 1px solid var(--steel);
+  }
+  @media (min-width: 760px) { .features { grid-template-columns: repeat(3, 1fr); gap: 26px; } }
+  .feature { display: flex; gap: 13px; align-items: flex-start; }
+  .feature .disc { margin-top: 1px; }
+  .feature b { display: block; font-size: 14.5px; font-weight: 600; }
+  .feature span { font-size: 13.5px; color: var(--muted); }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
@@ -339,8 +414,26 @@
 <body>
 <main class="board">
   <header class="head">
+    <svg class="fronds" viewBox="0 0 340 210" aria-hidden="true">
+      <g fill="none" stroke="#9db08e" stroke-width="1.1" stroke-linecap="round">
+        <g fill="#d8e2cd" fill-opacity="0.85" stroke="#a9bb99">
+          <path d="M168 8c34-16 74-10 96 16 20 24 18 56-4 76-24-30-58-62-92-92z"/>
+          <path d="M232 2c30 4 56 26 64 56 7 27-3 54-25 68-12-38-26-84-39-124z"/>
+          <path d="M120 44c30-6 62 8 78 36 14 25 10 55-10 72-22-32-46-70-68-108z"/>
+          <path d="M286 34c26 12 42 40 40 70-2 26-18 48-42 56 1-40 2-86 2-126z"/>
+          <path d="M96 108c26-14 58-10 78 12 18 20 20 48 6 70-28-22-58-52-84-82z"/>
+        </g>
+        <path d="M186 30c22 22 44 46 62 72M244 20c8 34 16 74 22 108M148 74c18 22 36 48 50 72M300 56c-4 34-6 74-8 108M126 130c22 18 46 42 66 62"/>
+      </g>
+    </svg>
     <div class="mark">
-      <span class="lamp" aria-hidden="true"></span>
+      <span class="disc" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 18s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z"/>
+          <circle cx="10" cy="8" r="2.2"/>
+        </svg>
+      </span>
       <span class="mark-label">You are here</span>
     </div>
     <div class="preview" id="preview">
@@ -351,15 +444,38 @@
       </div>
     </div>
     <p class="unlit">Not known yet</p>
-    <div class="plate">InVision <span>indoor wayfinding</span></div>
+    <div class="plate">
+      <svg class="brandmark" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+           stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+           aria-hidden="true">
+        <path d="M16.5 3.5c0 7.2-3.4 11-8.2 11a4.6 4.6 0 0 1-4.8-4.6C3.5 5.6 8.6 3.5 16.5 3.5z"/>
+        <path d="M4 16.5C7 12 11 8.6 15.4 6.4"/>
+      </svg>InVision <span>indoor wayfinding</span>
+    </div>
   </header>
 
   <div class="body">
     <div class="rail">
       <section class="bay">
-        <h2>Sighting</h2>
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1.5 10S4.6 4.5 10 4.5 18.5 10 18.5 10 15.4 15.5 10 15.5 1.5 10 1.5 10z"/>
+              <circle cx="10" cy="10" r="2.6"/>
+            </svg>
+          </span>Sighting
+        </h2>
         <label class="file" for="photo" id="drop">
-          <span id="dropText">Take a photo, or drop one here</span>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 6.5h3l1.4-2h6.2l1.4 2h3v9h-15z"/>
+              <circle cx="10" cy="10.5" r="3"/>
+            </svg>
+          </span>
+          <span id="dropText">Drop a photo here</span>
+          <span class="file-sub">or click to upload</span>
         </label>
         <input type="file" id="photo" accept="image/*" capture="environment">
         <div class="cand" id="cands"></div>
@@ -367,12 +483,31 @@
       </section>
 
       <section class="bay" id="destCard">
-        <h2>Destination</h2>
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10 18s6-5.2 6-10a6 6 0 1 0-12 0c0 4.8 6 10 6 10z"/>
+              <circle cx="10" cy="8" r="2.2"/>
+            </svg>
+          </span>Destination
+        </h2>
         <div class="row">
-          <input type="text" id="filter" placeholder="Search store" autocomplete="off">
+          <div class="field">
+            <svg class="field-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor"
+                 stroke-width="1.6" stroke-linecap="round" aria-hidden="true">
+              <circle cx="8" cy="8" r="5.2"/><path d="m12 12 4 4"/>
+            </svg>
+            <input type="text" id="filter" placeholder="Search store" autocomplete="off">
+          </div>
           <select id="dest" size="1"></select>
           <div class="pair">
-            <button class="ghost" id="addStop" type="button">Add to list</button>
+            <button class="ghost" id="addStop" type="button">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 2.5h10v13l-5-3.6-5 3.6z"/>
+              </svg>Add to list
+            </button>
             <button class="primary" id="go" disabled>Get directions</button>
           </div>
         </div>
@@ -381,21 +516,113 @@
       </section>
 
       <section class="bay hidden" id="tripCard">
-        <h2>Trip</h2>
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 5h14M3 10h14M3 15h9"/>
+            </svg>
+          </span>Trip
+        </h2>
         <p class="hint" id="tripSummary"></p>
         <ol class="itinerary" id="itinerary"></ol>
       </section>
     </div>
 
     <div class="stage">
+      <section class="bay" id="heroBay">
+        <div class="hero">
+          <div>
+            <h2>Let's get you <em>where you need to go</em></h2>
+            <div class="rule"></div>
+            <p>Photograph any shopfront nearby. InVision reads the sign, works
+              out which unit you are standing at, and draws the walk from there
+              to wherever you are headed.</p>
+            <label class="primary" for="photo" id="heroUpload">Upload a photo</label>
+          </div>
+          <svg class="hero-art" viewBox="0 0 520 340" role="img"
+               aria-label="Line drawing of a mall atrium with escalators">
+            <g fill="none" stroke="#c8bfae" stroke-width="1.1"
+               stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 268h492M14 300h492" stroke="#ddd5c6"/>
+              <path d="M60 40v206M132 62v184M388 62v184M460 40v206"/>
+              <path d="M60 40h400M132 62h256" stroke="#ddd5c6"/>
+              <path d="M14 96h46M460 96h46M14 150h46M460 150h46" stroke="#e2dacb"/>
+              <path d="M150 96h84v92h-84zM286 96h84v92h-84z" fill="#faf8f3"/>
+              <path d="M150 118h84M286 118h84" stroke="#e2dacb"/>
+              <path d="M168 188v-46h18v46M334 188v-46h18v46" stroke="#ddd5c6"/>
+            </g>
+            <g fill="none" stroke="#a9bb99" stroke-width="1.3"
+               stroke-linecap="round" stroke-linejoin="round">
+              <path d="M212 266 316 150h42L254 266z" fill="#eef2e8"/>
+              <path d="M226 266 330 150M240 266 344 150" stroke="#c3d0b6"/>
+              <path d="m246 231 12 0m-2 12 12 0m-2 12 12 0m-2 12 12 0"
+                    stroke="#bccdb0"/>
+              <path d="M262 266 366 150h42L304 266z" fill="#f3f6ee"/>
+              <path d="M276 266 380 150" stroke="#c3d0b6"/>
+            </g>
+            <g fill="none" stroke="#9db08e" stroke-width="1.2" stroke-linecap="round">
+              <path d="M92 268v-26M84 242c0-14 8-22 8-22s8 8 8 22z" fill="#e4ecdb"/>
+              <path d="M78 268h28l-4 30H82z" fill="#f2f0e8" stroke="#c8bfae"/>
+              <path d="M432 268v-30M420 238c4-16 12-24 12-24s8 10 12 24z" fill="#e4ecdb"/>
+              <path d="M414 268h36l-5 30h-26z" fill="#f2f0e8" stroke="#c8bfae"/>
+            </g>
+          </svg>
+        </div>
+        <div class="features">
+          <div class="feature">
+            <span class="disc" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="9" r="6"/><path d="m13.5 13.5 4 4"/>
+              </svg>
+            </span>
+            <div><b>Know where you are</b><span>One shopfront photo places you</span></div>
+          </div>
+          <div class="feature">
+            <span class="disc" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 2.5 9 17l-1.8-6.2L1 9z"/>
+              </svg>
+            </span>
+            <div><b>Routed across floors</b><span>Escalators counted in the walk</span></div>
+          </div>
+          <div class="feature">
+            <span class="disc" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="10" r="7.5"/><path d="M10 5.5V10l3 2"/>
+              </svg>
+            </span>
+            <div><b>Several stops at once</b><span>Walked in the shortest order</span></div>
+          </div>
+        </div>
+      </section>
+
       <section class="bay hidden" id="mapCard">
-        <h2>Plan</h2>
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 5 7.5 3l5 2 5-2v12l-5 2-5-2-5 2z"/>
+              <path d="M7.5 3v12M12.5 5v12"/>
+            </svg>
+          </span>Plan
+        </h2>
         <div id="maps"></div>
       </section>
 
       <section class="bay hidden" id="stepsCard">
         <div class="bay-head">
-          <h2>Directions</h2>
+          <h2>
+            <span class="disc" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17.5 2.5 9 17l-1.8-6.2L1 9z"/>
+              </svg>
+            </span>Directions
+          </h2>
           <div class="speech">
             <label class="auto"><input type="checkbox" id="autoSpeak"> auto</label>
             <button id="speak" type="button" aria-label="Read directions aloud">
@@ -410,13 +637,28 @@
       </section>
 
       <section class="bay hidden" id="trackCard">
-        <h2>Progress</h2>
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="7.5"/><path d="M10 5.5V10l3 2"/>
+            </svg>
+          </span>Progress
+        </h2>
         <p class="hint">Shoot another shopfront part way along and the route
           catches up with where you actually are.</p>
         <div class="progress-bar"><span id="progressFill"></span></div>
         <div class="sub" id="progressLabel">Not checked yet</div>
         <label class="file" for="checkPhoto" id="checkDrop">
-          <span id="checkText">Take a photo, or drop one here</span>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 6.5h3l1.4-2h6.2l1.4 2h3v9h-15z"/>
+              <circle cx="10" cy="10.5" r="3"/>
+            </svg>
+          </span>
+          <span id="checkText">Drop a photo here</span>
+          <span class="file-sub">or click to upload</span>
         </label>
         <input type="file" id="checkPhoto" accept="image/*" capture="environment">
         <div id="trackNotice"></div>
@@ -811,7 +1053,7 @@ async function locateFrom(file) {
     $('foundName').textContent = 'Not recognised';
     $('locateNotice').innerHTML = `<div class="notice">${err.message}</div>`;
   } finally {
-    $('dropText').textContent = 'Take or drop a different photo';
+    $('dropText').textContent = 'Drop another photo';
   }
 }
 
@@ -936,7 +1178,7 @@ async function checkProgress(file) {
   } catch (err) {
     $('trackNotice').innerHTML = `<div class="notice">${err.message}</div>`;
   } finally {
-    $('checkText').textContent = 'Take or drop another photo';
+    $('checkText').textContent = 'Drop another photo';
   }
 }
 
@@ -982,7 +1224,7 @@ function setPosition(unitId, source, extra = {}) {
   if (source !== 'photo') {
     $('cands').innerHTML = '';
     $('locateNotice').innerHTML = '';
-    $('dropText').textContent = 'Somewhere else? Take or drop a photo';
+    $('dropText').textContent = 'Somewhere else? Drop a photo';
   }
   $('go').disabled = false;
 
@@ -1256,11 +1498,13 @@ function renderRoute(r, opts = {}) {
   journey = { origin: r.origin_id, destination: r.destination_id };
   shownRoute = r;
   refreshArrivedButton();
+  // The opening panel has done its job once there is a route to show.
+  $('heroBay').classList.add('hidden');
 
   if (!opts.keepJourney) {
     $('progressFill').style.width = '0%';
     $('progressLabel').textContent = 'Not checked yet';
-    $('checkText').textContent = 'Take a photo, or drop one here';
+    $('checkText').textContent = 'Drop a photo here';
     $('trackNotice').innerHTML = '';
     if (!opts.noScroll) {
       $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
