@@ -1,0 +1,13 @@
+# Raw corridor captures (732 MB). The pipeline reads these to build
+# data/derived; the running app only needs the derived artefacts.
+data/Images/
+
+# Generated thumbnails
+data/derived/thumbs/
+
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.DS_Store

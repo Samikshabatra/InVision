@@ -1,0 +1,264 @@
+{
+  "mall": "Nexus Koramangala",
+  "source": "Official floor directory maps supplied by the project owner.",
+  "notes": [
+    "Floor numbers here are internal (0 = ground). The mall's own signage and the",
+    "capture folders call the ground floor '1st', so internal floor N is the mall's",
+    "ordinal N+1.",
+    "Each floor is a rectangular loop around a central atrium, with a front gate at",
+    "the west end and a back gate at the east end. Four escalators sit in the middle",
+    "band: a west bank and an east bank, either side of the atrium.",
+    "Rows are listed west to east as drawn on the map. 'top' and 'bottom' refer to",
+    "the map, not to the capture folders - the side/row correspondence differs by",
+    "floor and is resolved by sequence alignment.",
+    "aliases maps an official name to alternate spellings seen on signage; the aligner scores a recovered name against the official name and every alias."
+  ],
+  "floors": [
+    {
+      "floor": 0,
+      "mall_ordinal": 1,
+      "name": "Ground",
+      "rows": {
+        "top": [
+          "WESTSIDE",
+          "BIRKENSTOCK",
+          "ETHOS",
+          "FOREVER NEW",
+          "GUESS",
+          "TOMMY HILFIGER",
+          "CALVIN KLEIN",
+          "VAN HEUSEN",
+          "FOOT LOCKER",
+          "FOREST ESSENTIALS",
+          "ALDO",
+          "VICTORIA'S SECRET",
+          "SEPHORA",
+          "IMAGINE"
+        ],
+        "bottom": [
+          "TIRA",
+          "SWAROVSKI",
+          "ETHOS",
+          "ORIGEM",
+          "JAIPUR WATCH COMPANY",
+          "DAILY OBJECTS",
+          "MAC",
+          "CELIO",
+          "ONLY",
+          "SPEEDO",
+          "METRO",
+          "UNITED COLORS OF BENETTON",
+          "NIKE",
+          "SPERFUMERY"
+        ]
+      }
+    },
+    {
+      "floor": 1,
+      "mall_ordinal": 2,
+      "name": "First",
+      "rows": {
+        "top": [
+          "WESTSIDE",
+          "BLACKBERRYS",
+          "ALLEN SOLLY",
+          "FLYING MACHINE",
+          "CROCS",
+          "RARE RABBIT",
+          "NAUTICA",
+          "RAYMOND",
+          "ARROW",
+          "M&S",
+          "LEVI'S",
+          "MIA BY TANISHQ"
+        ],
+        "bottom": [
+          "ZEISS VISION CENTER",
+          "JOCKEY",
+          "ASICS",
+          "ADIDAS",
+          "SKECHERS",
+          "FOSSIL",
+          "SHAYA",
+          "CARATLANE",
+          "WILLIAM PENN",
+          "TONI & GUY",
+          "NAILS BEYOND",
+          "HELIOS",
+          "U.S. POLO ASSN.",
+          "MANYAVAR",
+          "MOCHI",
+          "AND",
+          "MINISO",
+          "PUMA"
+        ]
+      }
+    },
+    {
+      "floor": 2,
+      "mall_ordinal": 3,
+      "name": "Second",
+      "rows": {
+        "top": [
+          "TIMEZONE",
+          "DECATHLON",
+          "MOD",
+          "THE DOGFATHER",
+          "TACO BELL",
+          "GOCHUJANG",
+          "WOW! MOMO",
+          "WOW! CHINA",
+          "DINDIGUL THALAPPAKATTI",
+          "FISH N CHIPS",
+          "CALIFORNIA BURRITO",
+          "SUBWAY",
+          "NAGA'S",
+          "GOOD FLIPPIN' BURGERS",
+          "BURGER KING",
+          "SHIVSAGAR",
+          "KFC",
+          "DESSERT WORKS",
+          "WOW! KULFI",
+          "DRICKLE",
+          "BOBA BHAI",
+          "SQUEEZE JUICE BARS",
+          "BELGIAN WAFFLE",
+          "MCDONALD'S",
+          "DAL MOROS"
+        ],
+        "bottom": [
+          "SAMSONITE",
+          "TOSCANO",
+          "BOSE",
+          "CASIO",
+          "GO COLORS",
+          "THE BODY SHOP",
+          "VAYA",
+          "CHAI POINT",
+          "MOTHERCARE",
+          "KUSHAL'S",
+          "W",
+          "ONEPLUS",
+          "SOCH"
+        ]
+      },
+      "kiosks": {
+        "note": "Connected kiosks standing in front of KFC. Also inlined into the top row in walk order so sequence alignment and routing can place them.",
+        "near": "KFC",
+        "stores": [
+          "DESSERT WORKS",
+          "WOW! KULFI",
+          "DRICKLE",
+          "BOBA BHAI",
+          "SQUEEZE JUICE BARS",
+          "BELGIAN WAFFLE"
+        ]
+      }
+    },
+    {
+      "floor": 3,
+      "mall_ordinal": 4,
+      "name": "Third",
+      "rows": {
+        "top": [
+          "CINEMAS 1-3",
+          "CINEMAS 4-7"
+        ],
+        "bottom": [
+          "IMAX TICKETS",
+          "CINEMAS 8-9"
+        ]
+      }
+    },
+    {
+      "floor": 4,
+      "mall_ordinal": 5,
+      "name": "Fourth",
+      "rows": {
+        "top": [
+          "CARS24",
+          "CENTRE MANAGEMENT OFFICE"
+        ],
+        "bottom": [
+          "MR PRONTO",
+          "SGS SNOOKER ZONE"
+        ]
+      }
+    }
+  ],
+  "aliases": {
+    "M&S": [
+      "MARKS AND SPENCER",
+      "MARKS & SPENCER",
+      "MARKSSPENCER",
+      "MARKS SPENCER"
+    ],
+    "U.S. POLO ASSN.": [
+      "US POLO ASSN",
+      "USPA",
+      "POLO ASSN"
+    ],
+    "MIA BY TANISHQ": [
+      "MIA",
+      "TANISHQ"
+    ],
+    "ZEISS VISION CENTER": [
+      "ZEISS"
+    ],
+    "TONI & GUY": [
+      "TONI AND GUY",
+      "TONIGUY"
+    ],
+    "WOW! MOMO": [
+      "WOW MOMO"
+    ],
+    "WOW! CHINA": [
+      "WOW CHINA"
+    ],
+    "WOW! KULFI": [
+      "WOW KULFI"
+    ],
+    "GOOD FLIPPIN' BURGERS": [
+      "GOOD FLIPPIN BURGERS",
+      "GOOD FLIPPIN"
+    ],
+    "NAGA'S": [
+      "NAGAS"
+    ],
+    "KUSHAL'S": [
+      "KUSHALS",
+      "KUSHAL"
+    ],
+    "MCDONALD'S": [
+      "MCDONALDS",
+      "MCD"
+    ],
+    "LEVI'S": [
+      "LEVIS"
+    ],
+    "VICTORIA'S SECRET": [
+      "VICTORIAS SECRET"
+    ],
+    "SPERFUMERY": [
+      "PERFUMERY",
+      "S PERFUMERY"
+    ],
+    "THE BODY SHOP": [
+      "BODY SHOP"
+    ],
+    "CENTRE MANAGEMENT OFFICE": [
+      "CENTRE MANAGEMENT",
+      "MANAGEMENT OFFICE"
+    ],
+    "SGS SNOOKER ZONE": [
+      "SGS",
+      "SNOOKER ZONE"
+    ],
+    "MR PRONTO": [
+      "PRONTO"
+    ],
+    "CARS24": [
+      "CARS 24"
+    ]
+  }
+}

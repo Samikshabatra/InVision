@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>InVision — Mall Navigation</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --line: #e3e6ea;
+    --text: #14181f;
+    --muted: #6b7480;
+    --accent: #2f6fed;
+    --accent-soft: #e8f0fe;
+    --dest: #e0483a;
+    --warn: #b4690e;
+    --warn-soft: #fdf4e6;
+    --radius: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1216; --surface: #171b21; --line: #272d36;
+      --text: #e8ebef; --muted: #98a2ae; --accent: #6b9bff;
+      --accent-soft: #1b2740; --dest: #ff7a6b;
+      --warn: #e5a441; --warn-soft: #2a2113;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    padding: 0 0 48px;
+  }
+  header {
+    padding: 20px 16px 14px; border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  h1 { margin: 0; font-size: 19px; letter-spacing: -0.01em; }
+  h1 span { color: var(--muted); font-weight: 400; }
+  main { max-width: 620px; margin: 0 auto; padding: 16px; display: grid; gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 16px;
+  }
+  .card h2 {
+    margin: 0 0 12px; font-size: 12px; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--muted); font-weight: 600;
+  }
+  .step-num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: 11px; font-weight: 700; margin-right: 8px;
+  }
+  button, select, input[type=text] {
+    font: inherit; border-radius: 9px; border: 1px solid var(--line);
+    background: var(--surface); color: var(--text); padding: 11px 13px;
+  }
+  button { cursor: pointer; }
+  button.primary {
+    background: var(--accent); color: #fff; border-color: transparent;
+    font-weight: 600; width: 100%;
+  }
+  button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  label.file {
+    display: flex; align-items: center; justify-content: center; gap: 9px;
+    border: 1.5px dashed var(--line); border-radius: var(--radius);
+    padding: 26px 14px; cursor: pointer; color: var(--muted); text-align: center;
+  }
+  label.file:hover { border-color: var(--accent); color: var(--accent); }
+  input[type=file] { display: none; }
+  .row { display: grid; gap: 9px; }
+  .preview { display: none; gap: 13px; align-items: center; }
+  .preview.on { display: flex; }
+  .preview img {
+    width: 76px; height: 76px; object-fit: cover; border-radius: 9px;
+    border: 1px solid var(--line); flex: none;
+  }
+  .found { font-weight: 650; font-size: 16px; }
+  .sub { color: var(--muted); font-size: 13px; }
+  .chip {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    background: var(--accent-soft); color: var(--accent);
+    font-size: 11px; font-weight: 600;
+  }
+  .notice {
+    background: var(--warn-soft); color: var(--warn); border-radius: 9px;
+    padding: 9px 11px; font-size: 13px; margin-top: 9px;
+  }
+  ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: s; }
+  ol.steps li {
+    counter-increment: s; position: relative; padding: 0 0 16px 30px;
+    border-left: 2px solid var(--line); margin-left: 9px;
+  }
+  ol.steps li:last-child { border-left-color: transparent; padding-bottom: 0; }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: -11px; top: -2px;
+    width: 20px; height: 20px; border-radius: 50%; background: var(--accent);
+    color: #fff; font-size: 11px; font-weight: 700;
+    display: grid; place-items: center;
+  }
+  ol.steps li.escalator::before { content: "↕"; background: var(--warn); }
+  ol.steps li.arrive::before { content: "★"; background: var(--dest); }
+  .card-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+  .card-head h2 { margin:0; flex:1; }
+  .speech { display:flex; align-items:center; gap:9px; }
+  .speech .auto { font-size:11.5px; color:var(--muted); display:flex;
+                  align-items:center; gap:4px; cursor:pointer; }
+  .speech button { padding:6px 12px; font-size:12.5px; font-weight:600;
+                   border-radius:20px; }
+  .speech button.on { background:var(--accent); color:#fff; border-color:transparent; }
+  .speech button[hidden] { display:none; }
+  ol.steps li.speaking { background:var(--accent-soft); border-radius:8px;
+                         margin-left:9px; padding-left:30px;
+                         box-shadow:-2px 0 0 var(--accent); }
+  .total {
+    margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+    font-size: 13px; color: var(--muted);
+  }
+  .floorplan { margin-bottom: 6px; }
+  .floorplan h3 {
+    margin: 0 0 2px; font-size: 13px; font-weight: 650;
+  }
+  .floorplan .sub { margin-bottom: 6px; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px;
+            color: var(--muted); margin: 2px 0 14px; }
+  .legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+              margin-right: 5px; vertical-align: -1px; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .walkway { stroke: var(--line); stroke-width: 7; stroke-linecap: round; }
+  .stub { stroke: var(--line); stroke-width: 1.5; opacity: 0.7; }
+  .atrium { fill: var(--bg); stroke: var(--line); stroke-width: 1.5; stroke-dasharray: 5 4; }
+  .marker-gate { fill: var(--surface); stroke: var(--muted); stroke-width: 1.5; }
+  .unit {
+    fill: var(--surface); stroke: var(--line); stroke-width: 1.5;
+    transition: fill .2s, stroke .2s;
+  }
+  .unit.on { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2.5; }
+  .unit-label { fill: var(--muted); font-weight: 600; pointer-events: none; }
+  .unit-label.on { fill: var(--accent); font-weight: 700; }
+  .on-marker { fill: var(--surface); font-weight: 700; }
+  .route-line {
+    fill: none; stroke: var(--accent); stroke-width: 5.5;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .marker-origin { fill: var(--accent); stroke: var(--surface); stroke-width: 3; }
+  .marker-dest { fill: var(--dest); stroke: var(--surface); stroke-width: 3; }
+  .marker-esc { fill: var(--warn); }
+  ol.steps li.cross::before { content: "\21C4"; background: var(--muted); }
+  .lbl { font-size: 11px; font-weight: 650; fill: var(--text); }
+  .lbl-sm { font-size: 9.5px; fill: var(--muted); }
+  .hidden { display: none; }
+  .err { color: var(--dest); font-size: 13px; }
+  .cand { font-size: 13px; color: var(--muted); margin-top: 7px; }
+  .cand button {
+    padding: 4px 9px; font-size: 12px; margin: 3px 4px 0 0; border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+<header><h1>InVision <span>· indoor navigation</span></h1></header>
+
+<main>
+  <section class="card">
+    <h2><span class="step-num">1</span>Where are you?</h2>
+    <label class="file" for="photo" id="drop">
+      <span id="dropText">Take or choose a photo of a nearby store</span>
+    </label>
+    <input type="file" id="photo" accept="image/*" capture="environment">
+    <div class="preview" id="preview">
+      <img id="thumb" alt="">
+      <div>
+        <div class="found" id="foundName">—</div>
+        <div class="sub" id="foundWhere"></div>
+        <div class="cand" id="cands"></div>
+      </div>
+    </div>
+    <div id="locateNotice"></div>
+  </section>
+
+  <section class="card" id="destCard">
+    <h2><span class="step-num">2</span>Where do you want to go?</h2>
+    <div class="row">
+      <input type="text" id="filter" placeholder="Search store…" autocomplete="off">
+      <select id="dest" size="1"></select>
+      <button class="primary" id="go" disabled>Get directions</button>
+    </div>
+    <div id="routeErr"></div>
+  </section>
+
+  <section class="card hidden" id="mapCard">
+    <h2>Route</h2>
+    <div id="maps"></div>
+  </section>
+
+  <section class="card hidden" id="stepsCard">
+    <div class="card-head">
+      <h2>Directions</h2>
+      <div class="speech">
+        <label class="auto"><input type="checkbox" id="autoSpeak"> auto</label>
+        <button id="speak" type="button" aria-label="Read directions aloud">
+          <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
+        </button>
+      </div>
+    </div>
+    <ol class="steps" id="steps"></ol>
+    <div class="total" id="total"></div>
+    <div id="caveats"></div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+let LAYOUT = null, STORES = [], originId = null;
+
+const api = async (url, opts) => {
+  const r = await fetch(url, opts);
+  if (!r.ok) {
+    const body = await r.json().catch(() => ({}));
+    throw new Error(body.detail || `request failed (${r.status})`);
+  }
+  return r.json();
+};
+
+/* ---------- floor geometry ---------- */
+// The plan mirrors the printed floor directory: a row of shopfront boxes along
+// the top, another along the bottom, a walkway between them, and the atrium in
+// the middle. Server coordinates are normalised - x runs 0 (west) to 1 (east),
+// y is 0 on the top row and 1 on the bottom - and every unit occupies a slot of
+// width 1/row_length, so boxes tile the row exactly as drawn on the map.
+const VIEW = {
+  w: 1000, h: 380, padX: 46,
+  topBox: [14, 96], topWalk: 112,
+  mid: 190,
+  bottomWalk: 268, bottomBox: [284, 366]
+};
+const px = x => VIEW.padX + x * (VIEW.w - 2 * VIEW.padX);
+const py = y => y === 0 ? VIEW.topWalk : (y === 1 ? VIEW.bottomWalk : VIEW.mid);
+const boxBand = row => row === 'top' ? VIEW.topBox : VIEW.bottomBox;
+const boxCentreY = row => { const [a, b] = boxBand(row); return (a + b) / 2; };
+
+function svgEl(name, attrs = {}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', name);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+// Fit a shopfront name inside its box. Narrow units get vertical lettering,
+// exactly as the printed map does for slim frontages.
+function labelBox(svg, unit, geom, highlight) {
+  const { x, w, top, bottom } = geom;
+  const vertical = w < 66;
+  const room = vertical ? (bottom - top) : w;
+  const size = vertical ? 9.5 : Math.min(11, Math.max(8, w / 6));
+  const maxChars = Math.floor(room / (size * 0.58));
+  let text = unit.name;
+  if (text.length > maxChars) text = text.slice(0, Math.max(3, maxChars - 1)) + '…';
+
+  const cx = x + w / 2, cy = (top + bottom) / 2;
+  const el = svgEl('text', {
+    class: 'unit-label' + (highlight ? ' on' : ''),
+    x: cx, y: cy, 'text-anchor': 'middle', 'dominant-baseline': 'central',
+    'font-size': size
+  });
+  if (vertical) el.setAttribute('transform', `rotate(-90 ${cx} ${cy})`);
+  el.textContent = text;
+  svg.append(el);
+}
+
+function drawFloor(floorKey, opts = {}) {
+  const info = LAYOUT[String(floorKey)];
+  if (!info) return null;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'floorplan';
+  const title = document.createElement('h3');
+  title.textContent = `${info.floor_name} floor`;
+  const sub = document.createElement('div');
+  sub.className = 'sub';
+  sub.textContent = `${info.stores.length} units`;
+  wrap.append(title, sub);
+
+  const svg = svgEl('svg', { viewBox: `0 0 ${VIEW.w} ${VIEW.h}`, role: 'img' });
+  const highlight = new Set((opts.markers || []).map(m => m.store_id));
+
+  // Atrium.
+  const atrium = svgEl('ellipse', {
+    class: 'atrium', cx: VIEW.w / 2, cy: VIEW.mid,
+    rx: (VIEW.w - 2 * VIEW.padX) * 0.155, ry: 56
+  });
+  svg.append(atrium);
+  const atriumLabel = svgEl('text', {
+    class: 'lbl-sm', x: VIEW.w / 2, y: VIEW.mid + 3, 'text-anchor': 'middle'
+  });
+  atriumLabel.textContent = 'ATRIUM';
+  svg.append(atriumLabel);
+
+  // Walkways.
+  for (const y of [0, 1]) {
+    svg.append(svgEl('line', {
+      class: 'walkway', x1: px(0), y1: py(y), x2: px(1), y2: py(y)
+    }));
+  }
+  for (const c of info.crossings) {
+    svg.append(svgEl('line', {
+      class: 'walkway', x1: px(c.x), y1: py(0), x2: px(c.x), y2: py(1)
+    }));
+  }
+
+  // Shopfront boxes - one per directory unit, tiled across its row.
+  for (const unit of info.stores) {
+    const slot = 1 / unit.row_length;
+    const left = px(unit.index * slot);
+    const width = px((unit.index + 1) * slot) - left;
+    const [top, bottom] = boxBand(unit.row);
+    const on = highlight.has(unit.store_id);
+
+    const box = svgEl('rect', {
+      class: 'unit' + (on ? ' on' : ''),
+      x: left + 1, y: top, width: Math.max(width - 2, 4), height: bottom - top, rx: 3
+    });
+    const tip = svgEl('title');
+    tip.textContent = unit.name;
+    box.append(tip);
+    svg.append(box);
+    labelBox(svg, unit, { x: left + 1, w: Math.max(width - 2, 4), top, bottom }, on);
+
+    // Stub linking the shopfront to the walkway it opens onto.
+    svg.append(svgEl('line', {
+      class: 'stub', x1: left + width / 2,
+      y1: unit.row === 'top' ? bottom : top,
+      x2: px(unit.x), y2: py(unit.y)
+    }));
+  }
+
+  // Gates and escalator banks.
+  for (const c of info.crossings) {
+    const isEsc = c.kind === 'escalator';
+    svg.append(svgEl('rect', {
+      class: isEsc ? 'marker-esc' : 'marker-gate',
+      x: px(c.x) - 26, y: VIEW.mid - 12, width: 52, height: 24, rx: 4
+    }));
+    const label = svgEl('text', {
+      class: 'lbl-sm on-marker', x: px(c.x), y: VIEW.mid + 3, 'text-anchor': 'middle'
+    });
+    label.textContent = isEsc ? 'ESC' : (c.label.startsWith('front') ? 'FRONT' : 'BACK');
+    svg.append(label);
+  }
+
+  // The route: brand -> walkway -> ... -> walkway -> brand, one continuous line.
+  if (opts.leg && opts.leg.path.length > 1) {
+    const pts = opts.leg.path.map(([x, y]) => [px(x), py(y)]);
+    const origin = (opts.markers || []).find(m => m.kind === 'origin');
+    const dest = (opts.markers || []).find(m => m.kind === 'dest');
+    if (origin) pts.unshift([px(origin.x), boxCentreY(origin.row)]);
+    if (dest) pts.push([px(dest.x), boxCentreY(dest.row)]);
+
+    const line = svgEl('polyline', {
+      class: 'route-line',
+      points: pts.map(([a, b]) => `${a.toFixed(1)},${b.toFixed(1)}`).join(' ')
+    });
+    svg.append(line);
+    queueMicrotask(() => {
+      const len = line.getTotalLength ? line.getTotalLength() : 1400;
+      line.style.strokeDasharray = len;
+      line.style.strokeDashoffset = len;
+      requestAnimationFrame(() => {
+        line.style.transition = 'stroke-dashoffset 1.2s ease-in-out';
+        line.style.strokeDashoffset = 0;
+      });
+    });
+  }
+
+  // Origin and destination pins. They sit on the outer edge of the shopfront
+  // box rather than its centre, which would cover the name.
+  for (const marker of (opts.markers || [])) {
+    const [top, bottom] = boxBand(marker.row);
+    const cy = marker.row === 'top' ? top + 9 : bottom - 9;
+    svg.append(svgEl('circle', {
+      class: marker.kind === 'dest' ? 'marker-dest' : 'marker-origin',
+      cx: px(marker.x), cy, r: 6.5
+    }));
+  }
+
+  wrap.appendChild(svg);
+  return wrap;
+}
+
+const placeOf = (floor, storeId) => {
+  const info = LAYOUT[String(floor)];
+  const hit = info && info.stores.find(s => s.store_id === storeId);
+  return hit ? { x: hit.x, y: hit.y, row: hit.row, store_id: hit.store_id } : null;
+};
+
+/* ---------- destination list ---------- */
+function fillDest(filter = '') {
+  const q = filter.trim().toLowerCase();
+  const sel = $('dest');
+  sel.innerHTML = '';
+  const byFloor = {};
+  for (const s of STORES) {
+    if (!s.routable) continue;
+    if (q && !s.name.toLowerCase().includes(q)) continue;
+    (byFloor[s.floor_name] ||= []).push(s);
+  }
+  const names = Object.keys(byFloor);
+  if (!names.length) {
+    sel.append(new Option('no match', ''));
+    return;
+  }
+  for (const floorName of names) {
+    const group = document.createElement('optgroup');
+    group.label = `${floorName} floor`;
+    for (const s of byFloor[floorName]) {
+      group.append(new Option(s.name, s.store_id));
+    }
+    sel.append(group);
+  }
+}
+
+/* ---------- speech ---------- */
+// Uses the browser's built-in speech synthesis, so directions can be heard
+// while walking without any network round trip.
+const speech = {
+  supported: 'speechSynthesis' in window,
+  steps: [],
+  at: -1,
+  active: false,
+  voice: null,
+  // Cancelling an utterance still fires its onend. Without a generation stamp
+  // that stale callback chains to the next step and skips past whichever one
+  // the listener actually asked for.
+  epoch: 0
+};
+
+function pickVoice() {
+  if (!speech.supported) return null;
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  // Prefer an Indian English voice, then any English one.
+  return voices.find(v => /^en[-_]IN/i.test(v.lang))
+      || voices.find(v => /^en/i.test(v.lang))
+      || voices[0];
+}
+if (speech.supported) {
+  speech.voice = pickVoice();
+  speechSynthesis.onvoiceschanged = () => { speech.voice = pickVoice(); };
+}
+
+// Spoken form differs from written: abbreviations and arrows read badly.
+function speakable(text) {
+  return text
+    .replace(/(\d+)\s*m\b/g, '$1 metres')
+    .replace(/\bm\b/g, 'metres')
+    .replace(/·/g, ',')
+    .replace(/->|→/g, ' to ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function highlightStep(i) {
+  document.querySelectorAll('#steps li').forEach((li, n) =>
+    li.classList.toggle('speaking', n === i));
+}
+
+function stopSpeaking() {
+  if (!speech.supported) return;
+  speech.epoch += 1;          // invalidates any in-flight utterance callback
+  speech.active = false;
+  speech.at = -1;
+  speechSynthesis.cancel();
+  highlightStep(-1);
+  setSpeakButton(false);
+}
+
+function setSpeakButton(on) {
+  const btn = $('speak');
+  btn.classList.toggle('on', on);
+  $('speakIcon').innerHTML = on ? '&#9632;' : '&#9658;';
+  $('speakText').textContent = on ? 'Stop' : 'Listen';
+}
+
+function speakFrom(i, retried = false) {
+  if (!speech.supported || i >= speech.steps.length) {
+    stopSpeaking();
+    return;
+  }
+  speech.at = i;
+  highlightStep(i);
+
+  const epoch = speech.epoch;
+  const text = speakable(speech.steps[i]);
+  const utterance = new SpeechSynthesisUtterance(text);
+  if (speech.voice) utterance.voice = speech.voice;
+  utterance.rate = 0.98;
+  utterance.pitch = 1;
+
+  // Chrome sometimes returns an utterance instantly after a cancel, firing
+  // onend before a word is spoken. Chaining on that skips the step the
+  // listener asked for, so an implausibly fast finish is retried once.
+  const startedAt = Date.now();
+  const tooFastMs = Math.min(250 + text.length * 8, 1200);
+
+  utterance.onend = () => {
+    if (!speech.active || epoch !== speech.epoch) return;
+    if (Date.now() - startedAt < tooFastMs && !retried) {
+      retried = true;
+      setTimeout(() => {
+        if (speech.active && epoch === speech.epoch) speakFrom(i, true);
+      }, 220);
+      return;
+    }
+    speakFrom(i + 1);
+  };
+  utterance.onerror = () => { if (epoch === speech.epoch) stopSpeaking(); };
+  speechSynthesis.speak(utterance);
+}
+
+// Chrome processes cancel() asynchronously and swallows anything queued in the
+// same tick, so a restart has to wait a beat before speaking.
+function restartAt(i) {
+  speech.epoch += 1;
+  const epoch = speech.epoch;
+  // Only cancel when something is actually queued; a needless cancel is what
+  // puts the engine into the state that returns instant utterances.
+  const busy = speechSynthesis.speaking || speechSynthesis.pending;
+  if (busy) speechSynthesis.cancel();
+  speech.active = true;
+  setSpeakButton(true);
+  setTimeout(() => {
+    if (speech.active && epoch === speech.epoch) speakFrom(i);
+  }, busy ? 180 : 20);
+}
+
+function startSpeaking() {
+  if (!speech.supported || !speech.steps.length) return;
+  restartAt(0);
+}
+
+$('speak').addEventListener('click', () => {
+  if (!speech.supported) {
+    $('speakText').textContent = 'unavailable';
+    return;
+  }
+  if (speech.active) stopSpeaking(); else startSpeaking();
+});
+
+$('autoSpeak').addEventListener('change', e =>
+  localStorage.setItem('invision.autoSpeak', e.target.checked ? '1' : '0'));
+$('autoSpeak').checked = localStorage.getItem('invision.autoSpeak') === '1';
+
+// Speaking a step at a time lets the listener tap one to hear it again.
+document.addEventListener('click', e => {
+  const li = e.target.closest('#steps li');
+  if (!li || !speech.supported) return;
+  const i = [...li.parentNode.children].indexOf(li);
+  speech.steps = [...document.querySelectorAll('#steps li')].map(x => x.textContent);
+  highlightStep(-1);
+  restartAt(i);
+});
+
+/* ---------- actions ---------- */
+$('photo').addEventListener('change', async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  $('dropText').textContent = 'Recognising…';
+  $('locateNotice').innerHTML = '';
+  $('thumb').src = URL.createObjectURL(file);
+  $('preview').classList.add('on');
+  $('foundName').textContent = '…';
+  $('foundWhere').textContent = '';
+  $('cands').innerHTML = '';
+
+  const body = new FormData();
+  body.append('photo', file);
+  try {
+    const res = await api('/api/locate', { method: 'POST', body });
+    const top = res.predictions[0];
+    setOrigin(top);
+    if (!res.confident) {
+      $('locateNotice').innerHTML =
+        '<div class="notice">Close call — check the alternatives below if this looks wrong.</div>';
+      $('cands').innerHTML = 'Or: ' + res.predictions.slice(1, 4)
+        .filter(p => p.unit_id)
+        .map(p => `<button data-id="${p.unit_id}">${p.name}</button>`).join('');
+      $('cands').querySelectorAll('button').forEach(b => {
+        b.onclick = () => setOrigin(res.predictions.find(p => p.unit_id === b.dataset.id));
+      });
+    }
+  } catch (err) {
+    $('foundName').textContent = 'Not recognised';
+    $('locateNotice').innerHTML = `<div class="notice">${err.message}</div>`;
+  } finally {
+    $('dropText').textContent = 'Take or choose a different photo';
+  }
+});
+
+function setOrigin(p) {
+  originId = p.unit_id || p.store_id;
+  $('foundName').textContent = p.name;
+  $('foundWhere').innerHTML =
+    `${p.floor_name} floor <span class="chip">${(p.score * 100).toFixed(0)}% match</span>`;
+  $('go').disabled = false;
+}
+
+$('filter').addEventListener('input', e => fillDest(e.target.value));
+
+$('go').addEventListener('click', async () => {
+  const destination = $('dest').value;
+  $('routeErr').innerHTML = '';
+  if (!originId || !destination) return;
+  if (originId === destination) {
+    $('routeErr').innerHTML = '<div class="notice">You are already there.</div>';
+    return;
+  }
+  if (typeof stopSpeaking === 'function') stopSpeaking();
+  $('go').disabled = true;
+  $('go').textContent = 'Routing…';
+  try {
+    const r = await api('/api/route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin_id: originId, destination_id: destination })
+    });
+    renderRoute(r);
+  } catch (err) {
+    $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
+  } finally {
+    $('go').disabled = false;
+    $('go').textContent = 'Get directions';
+  }
+});
+
+function renderRoute(r) {
+  const originStore = STORES.find(s => s.store_id === r.origin_id);
+  const destStore = STORES.find(s => s.store_id === r.destination_id);
+
+  const maps = $('maps');
+  maps.innerHTML = '';
+  const floors = r.map_legs.length
+    ? r.map_legs.map(l => l.floor)
+    : [originStore.floor];
+
+  for (const floor of floors) {
+    const leg = r.map_legs.find(l => l.floor === floor);
+    const markers = [];
+    if (originStore.floor === floor) {
+      const p = placeOf(floor, r.origin_id);
+      if (p) markers.push({ ...p, label: originStore.name, kind: 'origin' });
+    }
+    if (destStore.floor === floor) {
+      const p = placeOf(floor, r.destination_id);
+      if (p) markers.push({ ...p, label: destStore.name, kind: 'dest' });
+    }
+    const el = drawFloor(floor, { leg, markers });
+    if (el) {
+      const legend = document.createElement('div');
+      legend.className = 'legend';
+      legend.innerHTML =
+        `<span><i style="background:var(--accent)"></i>${originStore.name}</span>` +
+        `<span><i style="background:var(--dest)"></i>${destStore.name}</span>` +
+        `<span><i style="background:var(--warn)"></i>escalator</span>`;
+      el.appendChild(legend);
+      maps.appendChild(el);
+    }
+  }
+  $('mapCard').classList.remove('hidden');
+
+  $('steps').innerHTML = r.steps.map(s =>
+    `<li class="${s.kind}">${s.text}</li>`).join('');
+  const levels = Math.max(r.floors_traversed.length - 1, 0);
+  $('total').textContent =
+    `About ${Math.round(r.total_distance_m)} m` +
+    (levels ? ` · ${levels} floor level${levels > 1 ? 's' : ''}` : ' · same floor');
+  $('caveats').innerHTML = r.caveats
+    .filter(c => !/reference photographs/i.test(c))
+    .map(c => `<div class="notice">${c}</div>`).join('');
+  $('stepsCard').classList.remove('hidden');
+
+  // Hand the fresh directions to the speech engine.
+  stopSpeaking();
+  speech.steps = r.steps.map(s => s.text);
+  $('speak').hidden = !speech.supported;
+  if (speech.supported && $('autoSpeak').checked) startSpeaking();
+
+  $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+(async function init() {
+  try {
+    [LAYOUT, STORES] = await Promise.all([
+      api('/api/layout'),
+      api('/api/stores').then(r => r.stores)
+    ]);
+    fillDest();
+    // Browsers without speech synthesis should never show the control at all.
+    $('speak').hidden = !speech.supported;
+  } catch (err) {
+    document.querySelector('main').innerHTML =
+      `<div class="card err">Could not load mall data: ${err.message}</div>`;
+  }
+})();
+</script>
+</body>
+</html>

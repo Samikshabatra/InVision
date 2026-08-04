@@ -1,0 +1,594 @@
+{
+  "corrections": {
+    "perfumery-f0-l": {
+      "official_name": "SPERFUMERY",
+      "confidence": 0.947,
+      "row": "bottom",
+      "note": ""
+    },
+    "metro-f0-l": {
+      "official_name": "METRO",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "mitro-f0-l": {
+      "official_name": "SPEEDO",
+      "confidence": 0.182,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "daily-f0-l": {
+      "official_name": "ONLY",
+      "confidence": 0.444,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "astic-f0-l": {
+      "official_name": "MAC",
+      "confidence": 0.5,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "dailyobiects-f0-l": {
+      "official_name": "DAILY OBJECTS",
+      "confidence": 0.917,
+      "row": "bottom",
+      "note": ""
+    },
+    "reescaperouteplan-f0-l": {
+      "official_name": "JAIPUR WATCH COMPANY",
+      "confidence": 0.286,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "ethos-f0-l": {
+      "official_name": "ETHOS",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "sunglass-f0-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "bottom",
+      "note": "no directory unit aligned to this group"
+    },
+    "swarovski-f0-l": {
+      "official_name": "SWAROVSKI",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "tira-f0-l": {
+      "official_name": "TIRA",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "gadgand-f0-r": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "imagine-f0-r": {
+      "official_name": "IMAGINE",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "sephora-f0-r": {
+      "official_name": "SEPHORA",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "secret-f0-r": {
+      "official_name": "VICTORIA'S SECRET",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "fresh-f0-r": {
+      "official_name": "FOREST ESSENTIALS",
+      "confidence": 0.381,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "locker-f0-r": {
+      "official_name": "FOOT LOCKER",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "van-f0-r": {
+      "official_name": "VAN HEUSEN",
+      "confidence": 0.92,
+      "row": "top",
+      "note": ""
+    },
+    "cluba-f0-r": {
+      "official_name": "CALVIN KLEIN",
+      "confidence": 0.25,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "dcluba-f0-r": {
+      "official_name": "TOMMY HILFIGER",
+      "confidence": 0.105,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "guess-f0-r": {
+      "official_name": "GUESS",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "forevernew-f0-r": {
+      "official_name": "FOREVER NEW",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "ethos-f0-r": {
+      "official_name": "ETHOS",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "birkenstock-f0-r": {
+      "official_name": "BIRKENSTOCK",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "estside-f0-r": {
+      "official_name": "WESTSIDE",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "estside-f1-l": {
+      "official_name": "WESTSIDE",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "blackberrys-f1-l": {
+      "official_name": "BLACKBERRYS",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "allen-f1-l": {
+      "official_name": "ALLEN SOLLY",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "gcrocs-f1-l": {
+      "official_name": "FLYING MACHINE",
+      "confidence": 0.211,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "crocs-f1-l": {
+      "official_name": "CROCS",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "estside-f1-l-2": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "rabbit-f1-l": {
+      "official_name": "RARE RABBIT",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "nautica-f1-l": {
+      "official_name": "NAUTICA",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "raymond-f1-l": {
+      "official_name": "RAYMOND",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "arrow-f1-l": {
+      "official_name": "ARROW",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "marksspencer-f1-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "bomarksspence-f1-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "marksspencer-f1-l-2": {
+      "official_name": "M&S",
+      "confidence": 0.286,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "levis-f1-l": {
+      "official_name": "LEVI'S",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "mia-f1-l": {
+      "official_name": "MIA BY TANISHQ",
+      "confidence": 0.92,
+      "row": "top",
+      "note": ""
+    },
+    "mahin-f1-r": {
+      "official_name": "PUMA",
+      "confidence": 0.444,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "endof-f1-r": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "bottom",
+      "note": "no directory unit aligned to this group"
+    },
+    "mini-f1-r": {
+      "official_name": "MINISO",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "goa-f1-r": {
+      "official_name": "AND",
+      "confidence": 0.333,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "mochi-f1-r": {
+      "official_name": "MOCHI",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "manyavar-f1-r": {
+      "official_name": "MANYAVAR",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "assn-f1-r": {
+      "official_name": "U.S. POLO ASSN.",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "helios-f1-r": {
+      "official_name": "HELIOS",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "naiis-f1-r": {
+      "official_name": "NAILS BEYOND",
+      "confidence": 0.5,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "toniguy-f1-r": {
+      "official_name": "TONI & GUY",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "penn-f1-r": {
+      "official_name": "WILLIAM PENN",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "caratlane-f1-r": {
+      "official_name": "CARATLANE",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "fossil-f1-r": {
+      "official_name": "FOSSIL",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "skechers-f1-r": {
+      "official_name": "SKECHERS",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "emiates-f1-r": {
+      "official_name": "ADIDAS",
+      "confidence": 0.462,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "dasics-f1-r": {
+      "official_name": "ASICS",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "jockey-f1-r": {
+      "official_name": "JOCKEY",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "timezone-f2-l": {
+      "official_name": "TIMEZONE",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "recovery-f2-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "sports-f2-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "decathlon-f2-l": {
+      "official_name": "DECATHLON",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "mod-f2-l": {
+      "official_name": "MOD",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "korean-f2-l": {
+      "official_name": "GOCHUJANG",
+      "confidence": 0.4,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "burrito-f2-l": {
+      "official_name": "CALIFORNIA BURRITO",
+      "confidence": 0.94,
+      "row": "top",
+      "note": ""
+    },
+    "nagas-f2-l": {
+      "official_name": "NAGA'S",
+      "confidence": 1.0,
+      "row": "top",
+      "note": ""
+    },
+    "kfc-f2-l": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "top",
+      "note": "no directory unit aligned to this group"
+    },
+    "kitchens-f2-l": {
+      "official_name": "GOOD FLIPPIN' BURGERS",
+      "confidence": 0.231,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "squeez-f2-l": {
+      "official_name": "BURGER KING",
+      "confidence": 0.25,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "vessert-f2-l": {
+      "official_name": "SHIVSAGAR",
+      "confidence": 0.375,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "mcca-f2-l": {
+      "official_name": "KFC",
+      "confidence": 0.286,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "popeves-f2-l": {
+      "official_name": "MCDONALD'S",
+      "confidence": 0.25,
+      "row": "top",
+      "note": "weak name match; ordering only"
+    },
+    "dal-f2-l": {
+      "official_name": "DAL MOROS",
+      "confidence": 0.92,
+      "row": "top",
+      "note": ""
+    },
+    "samsonite-f2-r": {
+      "official_name": "SAMSONITE",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "toscano-f2-r": {
+      "official_name": "TOSCANO",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "bose-f2-r": {
+      "official_name": "BOSE",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "gshock-f2-r": {
+      "official_name": "GO COLORS",
+      "confidence": 0.429,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "body-f2-r": {
+      "official_name": "THE BODY SHOP",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "use-f2-r": {
+      "official_name": null,
+      "confidence": 0.0,
+      "row": "bottom",
+      "note": "no directory unit aligned to this group"
+    },
+    "vaya-f2-r": {
+      "official_name": "VAYA",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "chai-f2-r": {
+      "official_name": "CHAI POINT",
+      "confidence": 0.94,
+      "row": "bottom",
+      "note": ""
+    },
+    "mothercare-f2-r": {
+      "official_name": "MOTHERCARE",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "kushals-f2-r": {
+      "official_name": "KUSHAL'S",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    },
+    "dae-f2-r": {
+      "official_name": "W",
+      "confidence": 0.0,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "koramangala-f2-r": {
+      "official_name": "ONEPLUS",
+      "confidence": 0.333,
+      "row": "bottom",
+      "note": "weak name match; ordering only"
+    },
+    "soch-f2-r": {
+      "official_name": "SOCH",
+      "confidence": 1.0,
+      "row": "bottom",
+      "note": ""
+    }
+  },
+  "alignment": [
+    {
+      "floor": 0,
+      "side": "left",
+      "row": "bottom",
+      "direction": "east-to-west",
+      "align_score": 6.68,
+      "recovered": 11,
+      "official_units": 14
+    },
+    {
+      "floor": 0,
+      "side": "right",
+      "row": "top",
+      "direction": "east-to-west",
+      "align_score": 10.24,
+      "recovered": 14,
+      "official_units": 14,
+      "confident_matches_on_floor": 16,
+      "directory_units_not_captured": [
+        "NIKE",
+        "UNITED COLORS OF BENETTON",
+        "CELIO",
+        "ORIGEM",
+        "ALDO"
+      ]
+    },
+    {
+      "floor": 1,
+      "side": "left",
+      "row": "top",
+      "direction": "west-to-east",
+      "align_score": 9.88,
+      "recovered": 15,
+      "official_units": 12
+    },
+    {
+      "floor": 1,
+      "side": "right",
+      "row": "bottom",
+      "direction": "east-to-west",
+      "align_score": 13.14,
+      "recovered": 17,
+      "official_units": 18,
+      "confident_matches_on_floor": 22,
+      "directory_units_not_captured": [
+        "SHAYA",
+        "ZEISS VISION CENTER"
+      ]
+    },
+    {
+      "floor": 2,
+      "side": "left",
+      "row": "top",
+      "direction": "west-to-east",
+      "align_score": 6.45,
+      "recovered": 15,
+      "official_units": 19
+    },
+    {
+      "floor": 2,
+      "side": "right",
+      "row": "bottom",
+      "direction": "west-to-east",
+      "align_score": 9.4,
+      "recovered": 13,
+      "official_units": 13,
+      "confident_matches_on_floor": 15,
+      "directory_units_not_captured": [
+        "THE DOGFATHER",
+        "TACO BELL",
+        "WOW! MOMO",
+        "WOW! CHINA",
+        "DINDIGUL THALAPPAKATTI",
+        "FISH N CHIPS",
+        "SUBWAY",
+        "CASIO"
+      ]
+    }
+  ]
+}

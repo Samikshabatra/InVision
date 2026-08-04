@@ -1,0 +1,86 @@
+store_id,store_name,name_confidence,floor,floor_name,side,corridor_seq,n_images,needs_review,review_reason,alt_names
+perfumery-f0-l,PERFUMERY,0.847,0,Ground,left,0,8,False,,PERFUMERY | LEGO | BHAANE | RETAIL
+metro-f0-l,METRO,0.937,0,Ground,left,1,5,False,,METRO | COLORS | BENETTON | UNITED
+mitro-f0-l,MITRO,0.706,0,Ground,left,2,5,False,,MITRO | BEASOE | SPEEDO | EAS
+daily-f0-l,DAILY,0.769,0,Ground,left,3,12,False,,DAILY | IONLY | WEAR | OBJECTS
+astic-f0-l,ASTIC,0.994,0,Ground,left,4,1,True,single image,ASTIC | JAIPUR | WATCH | COMPANY
+dailyobiects-f0-l,DAILYOBIECTS,0.985,0,Ground,left,5,1,True,single image,DAILYOBIECTS | HELMCTSFORWOMEN | YOUTH | GSTAAHCTZY
+reescaperouteplan-f0-l,REESCAPEROUTEPLAN,0.848,0,Ground,left,6,2,False,,REESCAPEROUTEPLAN | ESCAPE | ROUTE | PLAN
+ethos-f0-l,ETHOS,0.923,0,Ground,left,7,4,False,,ETHOS | ORIGEM | PATIEN | OMEGA
+sunglass-f0-l,SUNGLASS,0.995,0,Ground,left,8,3,False,,SUNGLASS | HUT | SWAROVSKI | SUNGLASSHUT
+swarovski-f0-l,SWAROVSKI,0.999,0,Ground,left,9,4,False,,SWAROVSKI | SWAROVSKIDOE | SWAROVSK | TIRA
+tira-f0-l,TIRA,0.916,0,Ground,left,10,4,False,,TIRA | FOREVERYYOU | EASYBAKE | HBODY
+gadgand-f0-r,GADGAND,0.737,0,Ground,right,0,3,False,,GADGAND | IMAGME | KORAMANGALA | ENDOF
+imagine-f0-r,IMAGINE,0.959,0,Ground,right,1,2,False,,IMAGINE | PLASTIC | GADBEGEANS | OOSH
+sephora-f0-r,SEPHORA,0.997,0,Ground,right,2,2,False,,SEPHORA | BEB | MAKEUP | SKINCARE
+secret-f0-r,SECRET,0.984,0,Ground,right,3,3,False,,SECRET | VICTORIAS | VICIORIAS | TEASE
+fresh-f0-r,FRESH,0.906,0,Ground,right,4,6,False,,FRESH | ALDO | SOMETHING | FOREST
+locker-f0-r,LOCKER,0.853,0,Ground,right,5,3,False,,LOCKER | JOEENOEFOOT | JOEENO | FOOT
+van-f0-r,VAN,0.92,0,Ground,right,6,4,False,,VAN | HEUSEN | LOU | LOUIS
+cluba-f0-r,CLUBA,0.848,0,Ground,right,7,3,False,,CLUBA | CALVIN | KLEIN | TOMMYHILFIGER
+dcluba-f0-r,DCLUBA,0.986,0,Ground,right,8,1,True,single image,DCLUBA | FIGER | CALVIN | KLEIN
+guess-f0-r,GUESS,0.999,0,Ground,right,9,3,False,,GUESS | ACCESSORIES | CALVINKLEIN | LIFESTYLE
+forevernew-f0-r,FOREVERNEW,0.898,0,Ground,right,10,3,False,,FOREVERNEW | FOREVER | AOS | FINALDAYS
+ethos-f0-r,ETHOS,0.998,0,Ground,right,11,3,False,,ETHOS | BOUTIQUES | WATCH | BIKENSTOK
+birkenstock-f0-r,BIRKENSTOCK,0.998,0,Ground,right,12,3,False,,BIRKENSTOCK | GSTINAAECEEZR | GERMAN | TRADITION
+estside-f0-r,ESTSIDE,0.993,0,Ground,right,13,4,False,,ESTSIDE | TIX
+estside-f1-l,ESTSIDE,0.897,1,First,left,0,3,False,,ESTSIDE | VESTSIDE
+blackberrys-f1-l,BLACKBERRYS,0.998,1,First,left,1,3,False,,BLACKBERRYS | SHARPCUTSALE | BUYORMOREGET | ONSELECT
+allen-f1-l,ALLEN,0.881,1,First,left,2,3,False,,ALLEN | SOLLY | EEN | OEE
+gcrocs-f1-l,GCROCS,0.783,1,First,left,3,2,False,,GCROCS | FLYING | MACHINE | LAUNDERED
+crocs-f1-l,CROCS,0.999,1,First,left,4,3,False,,CROCS | JIBBITZ | STATION | CREATION
+estside-f1-l-2,ESTSIDE,0.848,1,First,left,5,4,False,,ESTSIDE | WESTSIDE | LVI | VESTSIDE
+rabbit-f1-l,RABBIT,0.998,1,First,left,6,3,False,,RABBIT | RARE | RARERABBIT | DEO
+nautica-f1-l,NAUTICA,0.899,1,First,left,7,3,False,,NAUTICA | RABBITI | REXOTONEAR | BUYOFF
+raymond-f1-l,RAYMOND,0.782,1,First,left,8,3,False,,RAYMOND | RRAYMOND | RRAMOMD | WEAR
+arrow-f1-l,ARROW,0.998,1,First,left,9,3,False,,ARROW | BUYGETOFF | BUYGET | EDSOE
+marksspencer-f1-l,MARKSSPENCER,0.87,1,First,left,10,1,True,single image,MARKSSPENCER | UNDERWEAR | FORTHESTYESEKES | ENDOF
+bomarksspence-f1-l,BOMARKSSPENCE,0.971,1,First,left,11,1,True,single image,BOMARKSSPENCE | TSHIRTBR | GSTNAJCAK
+marksspencer-f1-l-2,MARKSSPENCER,0.987,1,First,left,12,2,False,,MARKSSPENCER | STYLE | SEEKERS | BEAUTY
+levis-f1-l,LEVIS,0.965,1,First,left,13,2,False,,LEVIS | TERMSAND | CONDTIONSAPPLY | ADCO
+mia-f1-l,MIA,0.838,1,First,left,14,2,False,,MIA | BES | SAL | BYTANISHQ
+mahin-f1-r,MAHIN,0.842,1,First,right,0,2,False,,MAHIN | DBLACKBERRYS | WILDCRAFT | STARBUCKS
+endof-f1-r,ENDOF,0.866,1,First,right,1,2,False,,ENDOF | PUMA | BENGALURU | CLIF
+mini-f1-r,MINI,0.968,1,First,right,2,1,True,single image,MINI | HANGOUZ | MINISO | RAVENCLAW
+goa-f1-r,GOA,0.773,1,First,right,3,2,False,,GOA | MINI | MOCHI | ENDOFSEASON
+mochi-f1-r,MOCHI,0.998,1,First,right,4,3,False,,MOCHI | PRC | JFONTINI | CMOCHI
+manyavar-f1-r,MANYAVAR,0.78,1,First,right,5,3,False,,MANYAVAR | JENEHUEN | CANYAKAR | MADEFOR
+assn-f1-r,ASSN,0.99,1,First,right,6,3,False,,ASSN | POLO | USPOLO | SINCE
+helios-f1-r,HELIOS,0.887,1,First,right,7,3,False,,HELIOS | XHELIOS | SEIKO | PRESAGE
+naiis-f1-r,NAIIS,0.979,1,First,right,8,1,True,single image,NAIIS | BEYOND | CUST | MER
+toniguy-f1-r,TONIGUY,0.993,1,First,right,9,1,True,single image,TONIGUY | KTONIGUY | TONIBGUT | LONDON
+penn-f1-r,PENN,0.889,1,First,right,10,3,False,,PENN | WILLIA | LLIAM | BEING
+caratlane-f1-r,CARATLANE,0.848,1,First,right,11,6,False,,CARATLANE | SHAYA | SILVER | ONEO
+fossil-f1-r,FOSSIL,0.998,1,First,right,12,3,False,,FOSSIL | WDRE | TAKE | YOUN
+skechers-f1-r,SKECHERS,0.999,1,First,right,13,4,False,,SKECHERS | SLIPINS | STEPIN | GAURIK
+emiates-f1-r,EMIATES,0.847,1,First,right,14,2,False,,EMIATES | DAS | FLIBSTER | BEE
+dasics-f1-r,DASICS,0.835,1,First,right,15,2,False,,DASICS | TTAOC | JOCKEY | ZEIS
+jockey-f1-r,JOCKEY,0.923,1,First,right,16,4,False,,JOCKEY | ZEISS | VISION | CENTER
+timezone-f2-l,TIMEZONE,0.997,2,Second,left,0,3,False,,TIMEZONE | BODOOENS | GEAEPO | DHAMAAL
+recovery-f2-l,RECOVERY,0.484,2,Second,left,1,2,True,low name confidence (0.484),RECOVERY | AUOT | EEN | UES
+sports-f2-l,SPORTS,0.989,2,Second,left,2,1,True,single image,SPORTS | HIT | REFR | REFRESL
+decathlon-f2-l,DECATHLON,0.995,2,Second,left,3,3,False,,DECATHLON | NNGWS | MONSOON | COACHING
+mod-f2-l,MOD,0.798,2,Second,left,4,3,False,,MOD | DNGFATHER | DNGATHER | ONS
+korean-f2-l,KOREAN,0.893,2,Second,left,5,6,False,,KOREAN | STREET | FOOD | KRICENOODLES
+burrito-f2-l,BURRITO,0.799,2,Second,left,6,9,False,,BURRITO | WOW | THALAPPAKATTI | FISHNCHIPS
+nagas-f2-l,NAGAS,0.849,2,Second,left,7,6,False,,NAGAS | BURGERS | JAY | GOODFLIPPIN
+kfc-f2-l,KFC,0.799,2,Second,left,8,6,False,,KFC | BURGER | KING | SHIVSAGAR
+kitchens-f2-l,KITCHENS,0.794,2,Second,left,9,3,False,,KITCHENS | CRE | HFILEYS | SBARRO
+squeez-f2-l,SQUEEZ,0.885,2,Second,left,10,8,False,,SQUEEZ | BOBA | DRICKLE | BHAI
+vessert-f2-l,VESSERT,0.754,2,Second,left,11,4,False,,VESSERT | WERKS | DESSERTWEK | DESTERT
+mcca-f2-l,MCCA,0.831,2,Second,left,12,2,False,,MCCA | NDOE | SBARI | OPENI
+popeves-f2-l,POPEVES,0.98,2,Second,left,13,2,False,,POPEVES | POPEYES | LOVE | FAMOUS
+dal-f2-l,DAL,0.966,2,Second,left,14,2,False,,DAL | MOROS | FRESHG | PASTA
+samsonite-f2-r,SAMSONITE,0.91,2,Second,right,0,4,False,,SAMSONITE | SAMSGNITE | PLEASE | MIND
+toscano-f2-r,TOSCANO,0.897,2,Second,right,1,3,False,,TOSCANO | RESTAURANT | INDIAN | RESTAURAN
+bose-f2-r,BOSE,0.897,2,Second,right,2,3,False,,BOSE | JBOSE | HOCI | LUSHCINEMATIO
+gshock-f2-r,GSHOCK,0.996,2,Second,right,3,6,False,,GSHOCK | CASIO | OCOLORS | GSTEE
+body-f2-r,BODY,0.995,2,Second,right,4,3,False,,BODY | GAGG | THEBODYSHOP | FACE
+use-f2-r,USE,0.99,2,Second,right,5,1,True,single image,USE | UNLE | INSTRUCTED | OTHERY
+vaya-f2-r,VAYA,0.997,2,Second,right,6,3,False,,VAYA | HAUTECHEF | AUTECHEF | GLOBALPRESENCE
+chai-f2-r,CHAI,0.992,2,Second,right,7,3,False,,CHAI | POINT | COFFEE | ZERO
+mothercare-f2-r,MOTHERCARE,1.0,2,Second,right,8,3,False,,MOTHERCARE | WAGEG | MOTHERCAREIN | WERE
+kushals-f2-r,KUSHALS,0.893,2,Second,right,9,3,False,,KUSHALS | KUSHAL | SAE | WEDDING
+dae-f2-r,DAE,0.762,2,Second,right,10,3,False,,DAE | KORAMANGALA | ADITYA | BIRLA
+koramangala-f2-r,KORAMANGALA,0.839,2,Second,right,11,3,False,,KORAMANGALA | ONEPLUS | EXPERIENCE | EXPERENCESTORE
+soch-f2-r,SOCH,0.989,2,Second,right,12,3,False,,SOCH | SOCN | GST | NOAAWCSAZV
