@@ -62,6 +62,36 @@
     font-weight: 600; width: 100%;
   }
   button.primary:disabled { opacity: 0.45; cursor: not-allowed; }
+  button.ghost { width: 100%; color: var(--muted); font-weight: 600; }
+  button.ghost:hover { color: var(--accent); border-color: var(--accent); }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .chips:empty { margin-top: 0; }
+  .chips button {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 9px 5px 11px; font-size: 12.5px; font-weight: 600;
+    background: var(--accent-soft); color: var(--accent); border-color: transparent;
+  }
+  .chips button::after { content: "×"; font-size: 15px; opacity: 0.7; }
+  .chips button:hover::after { opacity: 1; }
+  ol.itinerary { margin: 0; padding: 0; list-style: none; counter-reset: t; }
+  ol.itinerary li {
+    counter-increment: t; display: flex; align-items: center; gap: 11px;
+    padding: 9px 0; border-top: 1px solid var(--line);
+  }
+  ol.itinerary li:first-child { border-top: none; }
+  ol.itinerary li::before {
+    content: counter(t); flex: none;
+    width: 21px; height: 21px; border-radius: 50%;
+    background: var(--line); color: var(--text);
+    font-size: 11px; font-weight: 700; display: grid; place-items: center;
+  }
+  ol.itinerary li.start::before { content: "◉"; background: var(--accent); color: #fff; }
+  ol.itinerary li.active { color: var(--accent); }
+  ol.itinerary li.active::before { background: var(--accent); color: #fff; }
+  ol.itinerary .who { flex: 1; font-weight: 600; }
+  ol.itinerary .leg { color: var(--muted); font-size: 12.5px; font-weight: 400; }
+  ol.itinerary button { padding: 5px 11px; font-size: 12.5px; }
   label.file {
     display: flex; align-items: center; justify-content: center; gap: 9px;
     border: 1.5px dashed var(--line); border-radius: var(--radius);
@@ -200,9 +230,19 @@
     <div class="row">
       <input type="text" id="filter" placeholder="Search store…" autocomplete="off">
       <select id="dest" size="1"></select>
-      <button class="primary" id="go" disabled>Get directions</button>
+      <div class="pair">
+        <button class="ghost" id="addStop" type="button">Add to list</button>
+        <button class="primary" id="go" disabled>Get directions</button>
+      </div>
     </div>
+    <div class="chips" id="stopList"></div>
     <div id="routeErr"></div>
+  </section>
+
+  <section class="card hidden" id="tripCard">
+    <h2>Your trip</h2>
+    <p class="hint" id="tripSummary"></p>
+    <ol class="itinerary" id="itinerary"></ol>
   </section>
 
   <section class="card hidden" id="mapCard">
@@ -712,9 +752,19 @@ async function checkProgress(file) {
       : `At ${here} · ${left} m to go · about ${Math.ceil(r.minutes_left)} min`;
 
     if (r.state === 'arrived') {
-      $('trackNotice').innerHTML =
-        `<div class="notice done">You are there. ${here} is the destination.</div>`;
       stopSpeaking();
+      // On a shopping list, arriving at one stop starts the walk to the next.
+      const next = trip && trip.legs[legIndex + 1];
+      if (next) {
+        showLeg(legIndex + 1);
+        $('trackNotice').innerHTML =
+          `<div class="notice done">${here} done. Next stop: ` +
+          `${next.destination_name}.</div>`;
+      } else {
+        $('trackNotice').innerHTML =
+          `<div class="notice done">You are there. ${here} is the ` +
+          `${trip ? 'last stop' : 'destination'}.</div>`;
+      }
     } else if (r.state === 'on_route') {
       $('trackNotice').innerHTML =
         `<div class="notice good">On track at ${here}. ${left} m left.</div>`;
@@ -749,31 +799,126 @@ function setOrigin(p) {
 
 $('filter').addEventListener('input', e => fillDest(e.target.value));
 
+/* ---------- shopping list ---------- */
+// Stops the shopper wants to hit, in the order they thought of them. The
+// server decides the order they should walk them in.
+let stops = [];
+let trip = null;
+let legIndex = 0;
+
+function nameOf(unitId) {
+  const store = STORES.find(s => s.store_id === unitId);
+  return store ? store.name : unitId;
+}
+
+function renderStops() {
+  $('stopList').innerHTML = stops
+    .map(id => `<button type="button" data-id="${id}">${nameOf(id)}</button>`)
+    .join('');
+  $('stopList').querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      stops = stops.filter(id => id !== b.dataset.id);
+      renderStops();
+    };
+  });
+  $('go').textContent = stops.length
+    ? `Plan trip · ${stops.length} stop${stops.length > 1 ? 's' : ''}`
+    : 'Get directions';
+}
+
+$('addStop').addEventListener('click', () => {
+  const pick = $('dest').value;
+  $('routeErr').innerHTML = '';
+  if (!pick || stops.includes(pick)) return;
+  if (stops.length >= 8) {
+    $('routeErr').innerHTML = '<div class="notice">Eight stops is the limit.</div>';
+    return;
+  }
+  stops.push(pick);
+  renderStops();
+});
+
 $('go').addEventListener('click', async () => {
   const destination = $('dest').value;
   $('routeErr').innerHTML = '';
-  if (!originId || !destination) return;
-  if (originId === destination) {
-    $('routeErr').innerHTML = '<div class="notice">You are already there.</div>';
+  if (!originId) return;
+
+  // A list beats the dropdown: if stops have been added, walk those.
+  const list = stops.length
+    ? stops
+    : (destination && destination !== originId ? [destination] : []);
+
+  if (!list.length) {
+    if (destination === originId) {
+      $('routeErr').innerHTML = '<div class="notice">You are already there.</div>';
+    }
     return;
   }
+
   if (typeof stopSpeaking === 'function') stopSpeaking();
+  const label = $('go').textContent;
   $('go').disabled = true;
   $('go').textContent = 'Routing…';
   try {
-    const r = await api('/api/route', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ origin_id: originId, destination_id: destination })
-    });
-    renderRoute(r);
+    if (list.length === 1) {
+      trip = null;
+      $('tripCard').classList.add('hidden');
+      renderRoute(await api('/api/route', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin_id: originId, destination_id: list[0] })
+      }));
+    } else {
+      trip = await api('/api/tour', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ origin_id: originId, stops: list })
+      });
+      renderTrip(trip);
+    }
   } catch (err) {
     $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
   } finally {
     $('go').disabled = false;
-    $('go').textContent = 'Get directions';
+    $('go').textContent = label;
   }
 });
+
+function renderTrip(t) {
+  const saved = t.saved_m >= 5
+    ? ` Ordering the list this way saves about ${Math.round(t.saved_m)} m.`
+    : '';
+  $('tripSummary').textContent =
+    `${t.order.length - 1} stops · about ${Math.round(t.total_distance_m)} m` +
+    ` · roughly ${Math.ceil(t.minutes)} min of walking.${saved}`;
+
+  $('itinerary').innerHTML = t.order.map((stop, i) => {
+    const leg = i ? t.legs[i - 1] : null;
+    const detail = leg
+      ? `<span class="leg">${Math.round(leg.total_distance_m)} m · ${stop.floor_name.toLowerCase()} floor</span>`
+      : '<span class="leg">you are here</span>';
+    const action = i
+      ? `<button type="button" data-leg="${i - 1}">Directions</button>`
+      : '';
+    return `<li class="${i ? '' : 'start'}">` +
+      `<span class="who">${stop.name} ${detail}</span>${action}</li>`;
+  }).join('');
+
+  $('itinerary').querySelectorAll('button').forEach(b => {
+    b.onclick = () => showLeg(Number(b.dataset.leg));
+  });
+  $('tripCard').classList.remove('hidden');
+  showLeg(0);
+  $('tripCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showLeg(index) {
+  if (!trip || !trip.legs[index]) return;
+  legIndex = index;
+  const rows = $('itinerary').querySelectorAll('li');
+  rows.forEach((li, i) => li.classList.toggle('active', i === index + 1));
+  renderRoute(trip.legs[index], { noScroll: true });
+}
 
 function renderRoute(r, opts = {}) {
   const originStore = STORES.find(s => s.store_id === r.origin_id);
@@ -836,7 +981,9 @@ function renderRoute(r, opts = {}) {
     $('progressLabel').textContent = 'Not checked yet';
     $('checkText').textContent = 'Take a photo, or drop one here';
     $('trackNotice').innerHTML = '';
-    $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!opts.noScroll) {
+      $('mapCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }
   $('trackCard').classList.remove('hidden');
 }

@@ -51,6 +51,10 @@ ARRIVAL_RADIUS_M = 6.0
 
 WALKING_SPEED_M_PER_MIN = 55.0  # unhurried indoor pace
 
+# Held-Karp is exact but costs 2^n * n^2. Eight stops is instant and already
+# more than anyone walks in one trip.
+MAX_TOUR_STOPS = 8
+
 GATE_WEST_X, GATE_EAST_X = 0.0, 1.0
 ESC_WEST_X, ESC_EAST_X = 0.28, 0.72
 
@@ -79,6 +83,21 @@ class Route:
     floors_traversed: list[int]
     caveats: list[str]
     map_legs: list[dict] = field(default_factory=list)
+
+
+@dataclass
+class Tour:
+    """A shopping list walked in the cheapest order.
+
+    Open ended: it starts where the shopper is and finishes at whichever stop
+    falls last, since nobody wants to be walked back to where they began.
+    """
+    order: list[str]            # unit ids, in visiting order
+    legs: list[Route]           # one per hop, order[i-1] to order[i]
+    total_distance_m: float
+    minutes: float
+    naive_distance_m: float     # the list walked in the order it was written
+    saved_m: float
 
 
 @dataclass
@@ -261,6 +280,95 @@ class MallGraph:
             self.graph, unit_node(a), unit_node(b), weight="weight"
         )
         return self._describe(path, distance, a, b)
+
+    def tour(self, origin: str, stops: list[str]) -> Tour:
+        """Order a shopping list so the walk is as short as it can be.
+
+        Exact rather than greedy: with a handful of stops the optimal order is
+        cheap to find, and "nearest next" gets it wrong often enough on a
+        two-row floor plan to be worth avoiding.
+        """
+        start = self.resolve(origin)
+        if start is None:
+            raise KeyError(f"unknown origin: {origin}")
+
+        targets: list[str] = []
+        for stop in stops:
+            unit = self.resolve(stop)
+            if unit is None:
+                raise KeyError(f"unknown stop: {stop}")
+            if unit != start and unit not in targets:
+                targets.append(unit)
+
+        if not targets:
+            raise ValueError("no stops to visit")
+        if len(targets) > MAX_TOUR_STOPS:
+            raise ValueError(f"at most {MAX_TOUR_STOPS} stops per trip")
+
+        order = ([start] + targets if len(targets) == 1
+                 else [start] + self._cheapest_order(start, targets))
+
+        legs = [self.route(a, b) for a, b in zip(order, order[1:])]
+        total = sum(leg.total_distance_m for leg in legs)
+
+        as_written = [start] + targets
+        naive = sum(self._walk_length(a, b)
+                    for a, b in zip(as_written, as_written[1:]))
+
+        return Tour(
+            order=order,
+            legs=legs,
+            total_distance_m=round(total, 1),
+            minutes=round(total / WALKING_SPEED_M_PER_MIN, 1),
+            naive_distance_m=round(naive, 1),
+            saved_m=round(max(0.0, naive - total), 1),
+        )
+
+    def _walk_length(self, a: str, b: str) -> float:
+        return nx.shortest_path_length(
+            self.graph, unit_node(a), unit_node(b), weight="weight")
+
+    def _cheapest_order(self, start: str, targets: list[str]) -> list[str]:
+        """Held-Karp over an open path: fixed start, free finish."""
+        points = [start] + targets
+        cost = [[0.0] * len(points) for _ in points]
+        for i, unit in enumerate(points):
+            reach = nx.single_source_dijkstra_path_length(
+                self.graph, unit_node(unit), weight="weight")
+            for j, other in enumerate(points):
+                cost[i][j] = reach.get(unit_node(other), float("inf"))
+
+        n = len(targets)
+        full = (1 << n) - 1
+        # best[mask][j]: cheapest walk covering `mask`, standing at targets[j].
+        best = [[float("inf")] * n for _ in range(1 << n)]
+        came_from = [[-1] * n for _ in range(1 << n)]
+
+        for j in range(n):
+            best[1 << j][j] = cost[0][j + 1]
+
+        for mask in range(1 << n):
+            for j in range(n):
+                if not mask & (1 << j) or best[mask][j] == float("inf"):
+                    continue
+                for k in range(n):
+                    if mask & (1 << k):
+                        continue
+                    nxt = mask | (1 << k)
+                    through = best[mask][j] + cost[j + 1][k + 1]
+                    if through < best[nxt][k]:
+                        best[nxt][k] = through
+                        came_from[nxt][k] = j
+
+        last = min(range(n), key=lambda j: best[full][j])
+        sequence, mask, j = [], full, last
+        while j != -1:
+            sequence.append(targets[j])
+            previous = came_from[mask][j]
+            mask ^= 1 << j
+            j = previous
+        sequence.reverse()
+        return sequence
 
     def progress(self, origin: str, current: str, destination: str) -> Progress:
         """Judge a mid-walk sighting against the route the shopper was given.

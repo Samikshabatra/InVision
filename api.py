@@ -53,6 +53,11 @@ class RouteRequest(BaseModel):
     destination_id: str
 
 
+class TourRequest(BaseModel):
+    origin_id: str
+    stops: list[str]
+
+
 @app.get("/api/stores")
 def list_stores():
     """Every unit on the floor directory. All of them are routable."""
@@ -194,6 +199,43 @@ def route(request: RouteRequest):
         "map_legs": result.map_legs,
         "origin_id": request.origin_id,
         "destination_id": request.destination_id,
+    }
+
+
+@app.post("/api/tour")
+def tour(request: TourRequest):
+    """A shopping list, ordered so the walk is as short as it can be."""
+    graph: MallGraph = state["graph"]
+    try:
+        result = graph.tour(request.origin_id, request.stops)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+    legs = []
+    for start, end, leg in zip(result.order, result.order[1:], result.legs):
+        row = asdict(leg)
+        row["origin_id"] = start
+        row["destination_id"] = end
+        row["destination_name"] = graph.units[end]["name"]
+        legs.append(row)
+
+    return {
+        "order": [
+            {
+                "unit_id": unit_id,
+                "name": graph.units[unit_id]["name"],
+                "floor": graph.units[unit_id]["floor"],
+                "floor_name": graph.units[unit_id]["floor_name"],
+            }
+            for unit_id in result.order
+        ],
+        "legs": legs,
+        "total_distance_m": result.total_distance_m,
+        "minutes": result.minutes,
+        "naive_distance_m": result.naive_distance_m,
+        "saved_m": result.saved_m,
     }
 
 
