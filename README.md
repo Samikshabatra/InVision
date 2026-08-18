@@ -53,6 +53,11 @@ points, and legible signage is allowed to override the visual channel outright.
   with landmarks, floor changes, and an estimated distance.
 - **Draws the plan.** Each floor on the route is rendered as an SVG of the real
   directory layout, with the walk drawn on it and pins at both ends.
+- **Says what is near you.** One capped Dijkstra sweep from the recognised unit
+  lists what is within a short walk, ranked by walking distance rather than by
+  position in the directory, so the shop across the walkway is correctly further
+  away than the one next door. Widen the radius and the floor above appears once
+  it covers an escalator.
 - **Walks a shopping list in the cheapest order.** Give it up to eight stops and
   it solves the visiting order exactly with Held-Karp, which on a two-row floor
   plan regularly beats nearest-next by a comfortable margin.
@@ -306,6 +311,7 @@ about a second and only pays for the model when a photograph actually arrives.
 | `POST` | `/api/route` | Origin and destination in, steps and map legs out. |
 | `POST` | `/api/tour` | An origin and up to eight stops, ordered and routed. |
 | `POST` | `/api/progress` | A mid-walk photograph judged against the plan. |
+| `GET` | `/api/nearby` | Units within a walking radius of one unit, nearest first. |
 | `GET` | `/review` | The label review interface. |
 | `GET` | `/api/review` | Every frame in walk order with its assignment. |
 | `POST` | `/api/review` | Save corrected assignments. |

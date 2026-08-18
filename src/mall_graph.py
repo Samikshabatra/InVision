@@ -51,6 +51,14 @@ ARRIVAL_RADIUS_M = 6.0
 
 WALKING_SPEED_M_PER_MIN = 55.0  # unhurried indoor pace
 
+# What counts as "near me". Roughly five storefronts of frontage, which on a
+# two-row floor also reaches across the walkway to the shops opposite. The
+# radius is walking distance, not straight-line, so an escalator level spends
+# most of the allowance and the floor above only shows up at wider settings.
+NEARBY_RADIUS_M = 45.0
+NEARBY_MAX_RADIUS_M = 300.0
+NEARBY_LIMIT = 8
+
 # Held-Karp is exact but costs 2^n * n^2. Eight stops is instant and already
 # more than anyone walks in one trip.
 MAX_TOUR_STOPS = 8
@@ -101,6 +109,19 @@ class Tour:
 
 
 @dataclass
+class Nearby:
+    """A unit within walking reach of where the shopper is standing."""
+    unit_id: str
+    name: str
+    floor: int
+    floor_name: str
+    row: str
+    distance_m: float
+    minutes: float
+    same_floor: bool
+
+
+@dataclass
 class Progress:
     """Where a shopper turned out to be, measured against where they were sent.
 
@@ -125,6 +146,11 @@ def walk_node(floor: int, row: str, x: float) -> str:
 
 def cross_node(floor: int, name: str) -> str:
     return f"cross:{floor}:{name}"
+
+
+def walking_minutes(distance_m: float) -> float:
+    """Walking time for a distance, rounded the way the interface shows it."""
+    return round(max(0.0, distance_m) / WALKING_SPEED_M_PER_MIN, 1)
 
 
 def _slug(text: str) -> str:
@@ -280,6 +306,45 @@ class MallGraph:
             self.graph, unit_node(a), unit_node(b), weight="weight"
         )
         return self._describe(path, distance, a, b)
+
+    def nearby(self, origin: str, radius_m: float = NEARBY_RADIUS_M,
+               limit: int = NEARBY_LIMIT) -> list[Nearby]:
+        """What is within walking reach of a unit, nearest first.
+
+        One capped sweep out from the origin answers the whole question: the
+        cutoff prunes the search rather than filtering afterwards, so a small
+        radius costs a small walk of the graph however large the mall gets.
+
+        Distances are the same walking-equivalent metres the router quotes, so
+        a shop across the walkway is further than the one next door and the
+        floor above only appears once the radius covers an escalator.
+        """
+        start = self.resolve(origin)
+        if start is None:
+            raise KeyError(f"unknown origin: {origin}")
+
+        here = self.units[start]
+        reach = nx.single_source_dijkstra_path_length(
+            self.graph, unit_node(start), cutoff=max(0.0, radius_m), weight="weight")
+
+        found: list[Nearby] = []
+        for node, distance in reach.items():
+            data = self.graph.nodes[node]
+            if data.get("kind") != "unit" or data["unit_id"] == start:
+                continue
+            found.append(Nearby(
+                unit_id=data["unit_id"],
+                name=data["name"],
+                floor=data["floor"],
+                floor_name=data["floor_name"],
+                row=data["row"],
+                distance_m=round(distance, 1),
+                minutes=walking_minutes(distance),
+                same_floor=data["floor"] == here["floor"],
+            ))
+
+        found.sort(key=lambda n: (n.distance_m, n.name))
+        return found[:max(0, limit)]
 
     def tour(self, origin: str, stops: list[str]) -> Tour:
         """Order a shopping list so the walk is as short as it can be.

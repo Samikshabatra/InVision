@@ -215,6 +215,21 @@
   ol.itinerary button { padding: 7px 13px; font-size: 13px; color: var(--muted); }
   ol.itinerary button:hover { color: var(--you); border-color: var(--you); }
 
+  /* What is near you is a ranked list, not a sequence, so it is not numbered. */
+  ul.nearby { margin: 0; padding: 0; list-style: none; }
+  ul.nearby li {
+    display: flex; align-items: center; gap: 13px;
+    padding: 10px 0; border-top: 1px solid var(--steel);
+  }
+  ul.nearby li:first-child { border-top: none; }
+  ul.nearby .who { flex: 1; }
+  ul.nearby .leg { display: block; font-size: 12.5px; color: var(--muted); }
+  ul.nearby .off { color: var(--transit); }
+  ul.nearby li.empty { color: var(--muted); font-size: 14px; }
+  ul.nearby button { padding: 7px 13px; font-size: 13px; color: var(--muted); }
+  ul.nearby button:hover { color: var(--you); border-color: var(--you); }
+  #nearbyMore { margin-top: 13px; }
+
   label.file {
     display: flex; flex-direction: column; align-items: center; gap: 4px;
     border: 1px dashed #d8d2c4; border-radius: 14px; background: var(--well);
@@ -509,6 +524,21 @@
         <input type="file" id="photo" accept="image/*" capture="environment">
         <div class="cand" id="cands"></div>
         <div id="locateNotice"></div>
+      </section>
+
+      <section class="bay hidden" id="nearbyCard">
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="10" cy="10" r="7.5"/><circle cx="10" cy="10" r="2.4"/>
+              <path d="M10 1.2v2.4M10 16.4v2.4M1.2 10h2.4M16.4 10h2.4"/>
+            </svg>
+          </span>Near you
+        </h2>
+        <p class="hint" id="nearbyHint">Shops within a short walk of here.</p>
+        <ul class="nearby" id="nearbyList"></ul>
+        <button class="ghost hidden" id="nearbyMore" type="button">Look further</button>
       </section>
 
       <section class="bay" id="destCard">
@@ -1246,6 +1276,9 @@ function setPosition(unitId, source, extra = {}) {
     } catch { /* private browsing; the position just will not outlive the tab */ }
   }
   refreshArrivedButton();
+  // Moving resets how far the shopper was willing to look.
+  nearbyRadius = NEARBY_STEP_M;
+  loadNearby();
 }
 
 function restorePosition() {
@@ -1296,6 +1329,84 @@ $('arrived').addEventListener('click', () => {
 });
 
 $('filter').addEventListener('input', e => fillDest(e.target.value));
+
+/* ---------- what is near you ---------- */
+// Asked of the server rather than worked out from the directory: "near" here
+// means walking distance around the atrium, which is not the same as being
+// next to something in a list of names. The shop directly opposite is 30-odd
+// metres away because you have to reach a crossing point to get to it.
+const NEARBY_STEP_M = 45;
+const NEARBY_MAX_M = 300;
+let nearbyRadius = NEARBY_STEP_M;
+
+async function loadNearby() {
+  if (!originId) {
+    $('nearbyCard').classList.add('hidden');
+    return;
+  }
+  try {
+    renderNearby(await api(
+      `/api/nearby?unit_id=${encodeURIComponent(originId)}&radius_m=${nearbyRadius}`));
+  } catch {
+    // Nothing to say and nothing broken enough to interrupt the walk over.
+    $('nearbyCard').classList.add('hidden');
+  }
+}
+
+function renderNearby(r) {
+  const list = $('nearbyList');
+  if (!r.nearby.length) {
+    list.innerHTML = '<li class="empty">Nothing else within that walk.</li>';
+  } else {
+    list.innerHTML = r.nearby.map(n => {
+      const floor = n.same_floor
+        ? '' : ` <span class="off">· ${n.floor_name.toLowerCase()} floor</span>`;
+      const time = n.minutes >= 1 ? ` · ${Math.ceil(n.minutes)} min` : '';
+      return '<li><span class="who">' + n.name +
+        `<span class="leg">about ${Math.round(n.distance_m)} m${time}${floor}</span>` +
+        `</span><button type="button" data-id="${n.unit_id}">Directions</button></li>`;
+    }).join('');
+    list.querySelectorAll('button').forEach(b => {
+      b.onclick = () => routeToNearby(b.dataset.id);
+    });
+  }
+  $('nearbyHint').textContent =
+    `Within about ${Math.round(r.radius_m)} m of ${nameOf(r.origin_id)}.`;
+  $('nearbyMore').classList.toggle('hidden', nearbyRadius >= NEARBY_MAX_M);
+  $('nearbyCard').classList.remove('hidden');
+}
+
+$('nearbyMore').addEventListener('click', () => {
+  nearbyRadius = Math.min(nearbyRadius * 2, NEARBY_MAX_M);
+  loadNearby();
+});
+
+// One route, whatever is on the shopping list: picking a shop off this panel
+// is a decision about where to go now, not an edit to the list.
+async function routeToNearby(unitId) {
+  if (!originId || unitId === originId) return;
+  $('routeErr').innerHTML = '';
+  const assumption = assumeWalked();
+  stopSpeaking();
+
+  // Keep the destination panel agreeing with the map.
+  $('filter').value = '';
+  fillDest();
+  $('dest').value = unitId;
+
+  try {
+    trip = null;
+    $('tripCard').classList.add('hidden');
+    renderRoute(await api('/api/route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ origin_id: originId, destination_id: unitId })
+    }));
+    showAssumption(assumption, () => routeToNearby(unitId));
+  } catch (err) {
+    $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
+  }
+}
 
 /* ---------- shopping list ---------- */
 // Stops the shopper wants to hit, in the order they thought of them. The

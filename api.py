@@ -25,7 +25,12 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
 
-from src.mall_graph import MallGraph
+from src.mall_graph import (
+    NEARBY_LIMIT,
+    NEARBY_MAX_RADIUS_M,
+    NEARBY_RADIUS_M,
+    MallGraph,
+)
 
 WEB_DIR = Path(__file__).parent / "web"
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
@@ -199,6 +204,33 @@ def route(request: RouteRequest):
         "map_legs": result.map_legs,
         "origin_id": request.origin_id,
         "destination_id": request.destination_id,
+    }
+
+
+@app.get("/api/nearby")
+def nearby(
+    unit_id: str,
+    radius_m: float = NEARBY_RADIUS_M,
+    limit: int = NEARBY_LIMIT,
+):
+    """What a shopper can reach on foot from where they are standing.
+
+    The radius and the count are clamped rather than rejected: this is asked
+    on every recognised sighting, and a silly query should still answer.
+    """
+    graph: MallGraph = state["graph"]
+    radius = min(max(float(radius_m), 0.0), NEARBY_MAX_RADIUS_M)
+    count = min(max(int(limit), 1), 50)
+
+    try:
+        found = graph.nearby(unit_id, radius_m=radius, limit=count)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+
+    return {
+        "origin_id": graph.resolve(unit_id),
+        "radius_m": radius,
+        "nearby": [asdict(n) for n in found],
     }
 
 
