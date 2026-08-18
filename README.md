@@ -225,6 +225,43 @@ and how far the plan is, giving three states: arrived within 6 m, on route withi
 The plan is recomputed server side from the two endpoints rather than carried by
 the client, so a stale payload cannot move the line being measured against.
 
+## What the wait is made of
+
+Measured, not asserted. Median of three runs over five held-out query
+photographs, on a laptop CPU with no GPU, after the models are warm:
+
+| Stage | Median | Notes |
+|---|---|---|
+| Build the graph | 3.2 ms | 268 nodes, once at startup |
+| Load the gallery | 2.8 ms | embeddings and the directory, once at startup |
+| Load CLIP | 24 s | first photograph only, lazily |
+| Load RapidOCR | 6.9 s | first photograph only, lazily |
+| Embed one photograph | 492 ms | CLIP forward pass |
+| Read the signage | 3.5 s | RapidOCR |
+| Score every unit visually | 0.19 ms | 104 units against the gallery |
+| Score every unit on text | 132 ms | fuzzy matching over tokens already read |
+| **Locate, end to end** | **3.9 s** | embed, OCR, score both channels, fuse |
+| Route between two units | 0.76 ms | Dijkstra plus the written directions |
+| Nearby, 45 m | 0.06 ms | one capped sweep |
+| Order a four stop trip | 2.8 ms | Held-Karp, exact |
+
+```bash
+python tools/timings.py --images 5 --runs 3
+```
+
+**OCR is the wait.** It is nine tenths of the four seconds a shopper spends
+looking at a spinner, and the CLIP forward pass is most of the rest. Everything
+this project actually contributes - the fusion, the graph, the exact tour
+ordering, the nearby sweep - together costs under a fifth of a second, which is
+the sort of ratio worth knowing before optimising anything.
+
+**The model load is paid once, by the first photograph.** Both encoders load
+lazily, so the service is answering directory and routing requests about a
+second after it starts and only pays for CLIP when a photograph actually
+arrives. The 24 seconds is cold disk on this machine; a second run of the same
+command is far quicker, which is why it is reported separately rather than
+folded into the per-photograph figures.
+
 ## Project layout
 
 ```
@@ -248,7 +285,7 @@ CV_Project/
 ├── tools/                 # one-shot pipeline stages, cached
 │   ├── extract_zips.py    ├── embed_all.py      ├── ocr_all.py
 │   ├── apply_directory.py ├── find_brands.py    ├── export_dataset.py
-│   ├── calibrate_threshold.py                   └── probe_data.py
+│   ├── calibrate_threshold.py ├── timings.py    └── probe_data.py
 ├── web/
 │   ├── index.html         # the interface: one page, no build step, no framework
 │   ├── review.html        # the label review pass
