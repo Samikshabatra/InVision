@@ -1182,7 +1182,7 @@ async function checkProgress(file) {
     $('progressFill').style.width = `${Math.round(r.done_fraction * 100)}%`;
     $('progressLabel').textContent = r.state === 'arrived'
       ? `At ${here}.`
-      : `At ${here} · ${left} m to go · about ${Math.ceil(r.minutes_left)} min`;
+      : `At ${here} · ${left} m to go · ${walkTime(r.minutes_left)}`;
 
     if (r.state === 'arrived') {
       stopSpeaking();
@@ -1361,7 +1361,8 @@ function renderNearby(r) {
     list.innerHTML = r.nearby.map(n => {
       const floor = n.same_floor
         ? '' : ` <span class="off">· ${n.floor_name.toLowerCase()} floor</span>`;
-      const time = n.minutes >= 1 ? ` · ${Math.ceil(n.minutes)} min` : '';
+      // Under a minute is every second shop; saying so on each of them is noise.
+      const time = n.minutes >= 1 ? ` · ${walkTime(n.minutes)}` : '';
       return '<li><span class="who">' + n.name +
         `<span class="leg">about ${Math.round(n.distance_m)} m${time}${floor}</span>` +
         `</span><button type="button" data-id="${n.unit_id}">Directions</button></li>`;
@@ -1526,6 +1527,13 @@ $('go').addEventListener('click', async () => {
   }
 });
 
+// Walking time is rounded up and hedged, because it is derived from modelled
+// distances and nobody should read it as an arrival time.
+function walkTime(minutes) {
+  if (!minutes || minutes < 1) return 'under a minute';
+  return `about ${Math.ceil(minutes)} min`;
+}
+
 function renderTrip(t) {
   const saved = t.saved_m >= 5
     ? ` Ordering the list this way saves about ${Math.round(t.saved_m)} m.`
@@ -1537,7 +1545,8 @@ function renderTrip(t) {
   $('itinerary').innerHTML = t.order.map((stop, i) => {
     const leg = i ? t.legs[i - 1] : null;
     const detail = leg
-      ? `<span class="leg">${Math.round(leg.total_distance_m)} m · ${stop.floor_name.toLowerCase()} floor</span>`
+      ? `<span class="leg">${Math.round(leg.total_distance_m)} m · ` +
+        `${walkTime(leg.minutes)} · ${stop.floor_name.toLowerCase()} floor</span>`
       : '<span class="leg">you are here</span>';
     const action = i
       ? `<button type="button" data-leg="${i - 1}">Directions</button>`
@@ -1600,9 +1609,11 @@ function renderRoute(r, opts = {}) {
   $('steps').innerHTML = r.steps.map(s =>
     `<li class="${s.kind}">${s.text}</li>`).join('');
   const levels = Math.max(r.floors_traversed.length - 1, 0);
-  $('total').textContent =
-    `About ${Math.round(r.total_distance_m)} m` +
-    (levels ? ` · ${levels} floor level${levels > 1 ? 's' : ''}` : ' · same floor');
+  const levelNote = levels
+    ? ` · ${levels} floor level${levels > 1 ? 's' : ''}` : ' · same floor';
+  $('total').textContent = r.total_distance_m > 0
+    ? `About ${Math.round(r.total_distance_m)} m · ${walkTime(r.minutes)}${levelNote}`
+    : 'You are there.';
   $('caveats').innerHTML = r.caveats
     .filter(c => !/reference photographs/i.test(c))
     .map(c => `<div class="notice">${c}</div>`).join('');

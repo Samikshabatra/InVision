@@ -69,7 +69,8 @@ def main() -> int:
     for i, step in enumerate(route.steps, 1):
         print(f"  {i}. {step.text}")
     levels = max(len(route.floors_traversed) - 1, 0)
-    print(f"\n  total: ~{route.total_distance_m:.0f}m", end="")
+    print(f"\n  total: ~{route.total_distance_m:.0f}m, "
+          f"about {max(1, round(route.minutes))} min on foot", end="")
     if levels:
         print(f", crossing {levels} floor level{'s' if levels != 1 else ''}")
     else:

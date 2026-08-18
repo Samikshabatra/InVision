@@ -50,7 +50,8 @@ points, and legible signage is allowed to override the visual channel outright.
 - **Routes across the whole building.** The floor directory becomes a graph of
   268 nodes: shopfront units, walkway points, gates and escalator banks on every
   level. Dijkstra over walking-equivalent metres produces turn-by-turn directions
-  with landmarks, floor changes, and an estimated distance.
+  with landmarks, floor changes, an estimated distance, and the walking time that
+  distance implies at an unhurried 55 m per minute.
 - **Draws the plan.** Each floor on the route is rendered as an SVG of the real
   directory layout, with the walk drawn on it and pins at both ends.
 - **Says what is near you.** One capped Dijkstra sweep from the recognised unit
@@ -333,7 +334,9 @@ Found by using it, not imagined while designing it.
   score. The system cannot currently say "that is not a shopfront".
 - **Distances are modelled, not measured.** Storefront frontages are assumed
   equal at 8 m. Ordering, direction and floor changes are reliable; the metre
-  figures are estimates and are presented as "about".
+  figures are estimates and are presented as "about". Walking times are derived
+  from those metres at a fixed pace, so they inherit the same slack and do not
+  model escalator queues, crowds, or stopping to look at a window.
 - **21 of 104 directory units have no photographs**, mostly on the two upper
   floors that were excluded at ingest for having too few frames. They can be
   routed to but never recognised, which is the right asymmetry but still a gap.

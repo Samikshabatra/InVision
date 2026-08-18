@@ -91,6 +91,10 @@ class Route:
     floors_traversed: list[int]
     caveats: list[str]
     map_legs: list[dict] = field(default_factory=list)
+    # Walking time at an unhurried pace. Derived from the distance, and so as
+    # approximate as the distance is: it is offered as "about", never as an
+    # arrival time, because escalator queues and shop windows are not modelled.
+    minutes: float = 0.0
 
 
 @dataclass
@@ -384,7 +388,7 @@ class MallGraph:
             order=order,
             legs=legs,
             total_distance_m=round(total, 1),
-            minutes=round(total / WALKING_SPEED_M_PER_MIN, 1),
+            minutes=walking_minutes(total),
             naive_distance_m=round(naive, 1),
             saved_m=round(max(0.0, naive - total), 1),
         )
@@ -482,8 +486,7 @@ class MallGraph:
             remaining_m=round(0.0 if state == "arrived" else remaining, 1),
             original_m=round(original, 1),
             done_fraction=round(1.0 if state == "arrived" else done, 3),
-            minutes_left=round(max(0.0, remaining) / WALKING_SPEED_M_PER_MIN, 1)
-            if state != "arrived" else 0.0,
+            minutes_left=0.0 if state == "arrived" else walking_minutes(remaining),
             route=route,
         )
 
@@ -574,7 +577,7 @@ class MallGraph:
             d["floor"] for d in nodes if d.get("floor") is not None
         ))
         return Route(steps, round(distance, 1), floors_traversed, caveats,
-                     self._map_legs(nodes))
+                     self._map_legs(nodes), walking_minutes(distance))
 
     def _map_legs(self, nodes: list[dict]) -> list[dict]:
         legs: list[dict] = []

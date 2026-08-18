@@ -199,6 +199,7 @@ def route(request: RouteRequest):
     return {
         "steps": [asdict(s) for s in result.steps],
         "total_distance_m": result.total_distance_m,
+        "minutes": result.minutes,
         "floors_traversed": result.floors_traversed,
         "caveats": result.caveats,
         "map_legs": result.map_legs,
