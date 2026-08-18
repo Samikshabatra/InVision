@@ -668,8 +668,11 @@
             <button id="speak" type="button" aria-label="Read directions aloud">
               <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
             </button>
-            <button id="share" type="button" aria-label="Copy a link to this destination">
-              <span id="shareText">Copy link</span>
+            <button id="copyCard" type="button" aria-label="Copy the plan and directions as an image">
+              <span id="copyCardText">Copy card</span>
+            </button>
+            <button id="saveCard" type="button" aria-label="Save the plan and directions as an image">
+              <span id="saveCardText">Save card</span>
             </button>
           </div>
         </div>
@@ -712,7 +715,7 @@
 
 <script>
 const $ = id => document.getElementById(id);
-let LAYOUT = null, STORES = [], originId = null;
+let LAYOUT = null, STORES = [], MALL = '', originId = null;
 
 const api = async (url, opts) => {
   const r = await fetch(url, opts);
@@ -1418,31 +1421,267 @@ $('nearbyMore').addEventListener('click', () => {
   loadNearby();
 });
 
-/* ---------- a link to a destination ---------- */
-// The link carries where someone is going, never where they are standing.
-// A position is evidence the shopper gave, and it does not belong in a URL
-// that gets pasted into a group chat.
-function destinationLink(unitId) {
-  const url = new URL(location.href);
-  url.search = `to=${encodeURIComponent(unitId)}`;
-  url.hash = '';
-  return url.toString();
+/* ---------- the route as a picture ---------- */
+// What gets sent to someone standing in the mall is the plan, not a link: the
+// service runs on a laptop, so its address means nothing to anybody else. The
+// card is drawn from the same SVG that is already on screen, rasterised, and
+// handed over as a PNG that can be pasted or saved.
+const CARD = { width: 1040, pad: 32, scale: 2, planRatio: 0.38 };
+
+const xmlEscape = text => String(text)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// SVG has no text flow, so lines are broken here. The estimate is by character
+// width, which is close enough for a caption set in one size.
+function wrapLine(text, maxChars) {
+  const lines = [];
+  let line = '';
+  for (const word of text.split(/\s+/)) {
+    const candidate = line ? `${line} ${word}` : word;
+    if (candidate.length > maxChars && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = candidate;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
 }
 
-$('share').addEventListener('click', async () => {
-  const destination = shownRoute && shownRoute.destination_id;
-  if (!destination) return;
-  const link = destinationLink(destination);
-  try {
-    await navigator.clipboard.writeText(link);
-    $('shareText').textContent = 'Copied';
-    setTimeout(() => { $('shareText').textContent = 'Copy link'; }, 2000);
-  } catch {
-    // No clipboard permission, or an insecure origin. Show the link so it can
-    // still be copied by hand rather than failing silently.
-    $('caveats').innerHTML =
-      `<div class="notice">Copy this link: <code>${link}</code></div>`;
+// The plan's colours and strokes live in the page stylesheet, which a detached
+// SVG cannot see. The rules it needs, including the custom properties they are
+// written in terms of, are copied into the card itself.
+function planStyles() {
+  const wanted = /(^:root|\.unit|\.walkway|\.stub|\.atrium|\.marker-|\.route-line|\.lbl|\.on-marker)/;
+  const rules = [];
+  for (const sheet of document.styleSheets) {
+    let list;
+    try { list = sheet.cssRules; } catch { continue; }
+    for (const rule of list) {
+      if (rule.selectorText && wanted.test(rule.selectorText)) rules.push(rule.cssText);
+    }
   }
+  return rules.join('\n');
+}
+
+function buildCard() {
+  if (!shownRoute) return null;
+  const route = shownRoute;
+  const from = nameOf(route.origin_id);
+  const to = nameOf(route.destination_id);
+  const innerW = CARD.width - CARD.pad * 2;
+  const planH = Math.round(innerW * CARD.planRatio);
+
+  const levels = Math.max(route.floors_traversed.length - 1, 0);
+  const subtitle = `About ${Math.round(route.total_distance_m)} m · ` +
+    `${walkTime(route.minutes)}` +
+    (levels ? ` · crosses ${levels} floor${levels > 1 ? 's' : ''}` : ' · same floor');
+
+  const parts = [];
+  let y = CARD.pad;
+
+  parts.push(`<text x="${CARD.pad}" y="${y + 12}" class="card-eyebrow">` +
+    `${xmlEscape((MALL || 'InVision').toUpperCase())}</text>`);
+  y += 34;
+  parts.push(`<text x="${CARD.pad}" y="${y + 20}" class="card-title">` +
+    `${xmlEscape(from)} to ${xmlEscape(to)}</text>`);
+  y += 44;
+  parts.push(`<text x="${CARD.pad}" y="${y + 8}" class="card-sub">` +
+    `${xmlEscape(subtitle)}</text>`);
+  y += 30;
+
+  for (const plan of document.querySelectorAll('#maps .floorplan')) {
+    const heading = plan.querySelector('h3');
+    const svg = plan.querySelector('svg');
+    if (!svg) continue;
+
+    if (heading) {
+      parts.push(`<text x="${CARD.pad}" y="${y + 12}" class="card-floor">` +
+        `${xmlEscape(heading.textContent)}</text>`);
+      y += 24;
+    }
+
+    const clone = svg.cloneNode(true);
+    // The route draws itself on with a dash animation. A card copied while
+    // that is still running would show half a walk.
+    clone.querySelectorAll('.route-line').forEach(line => {
+      line.removeAttribute('style');
+    });
+    clone.setAttribute('x', CARD.pad);
+    clone.setAttribute('y', y);
+    clone.setAttribute('width', innerW);
+    clone.setAttribute('height', planH);
+    parts.push(new XMLSerializer().serializeToString(clone));
+    y += planH + 18;
+  }
+
+  parts.push(`<text x="${CARD.pad}" y="${y + 12}" class="card-floor">DIRECTIONS</text>`);
+  y += 30;
+  route.steps.forEach((step, i) => {
+    for (const line of wrapLine(`${i + 1}.  ${step.text}`, 92)) {
+      parts.push(`<text x="${CARD.pad}" y="${y + 12}" class="card-step">` +
+        `${xmlEscape(line)}</text>`);
+      y += 23;
+    }
+  });
+  y += 14;
+
+  parts.push(`<text x="${CARD.pad}" y="${y + 10}" class="card-foot">` +
+    `Plotted by InVision. Distances and times are estimates.</text>`);
+  const height = y + 22 + CARD.pad;
+
+  const markup =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${CARD.width}" height="${height}" ` +
+    `viewBox="0 0 ${CARD.width} ${height}">` +
+    `<style>${planStyles()}
+      .card-bg { fill: #fdfcfa; }
+      .card-eyebrow { font-family: ${'"Segoe UI", system-ui, sans-serif'};
+        font-size: 12px; letter-spacing: 0.18em; fill: #656b5e; }
+      .card-title { font-family: Georgia, "Times New Roman", serif;
+        font-size: 30px; fill: #1f4a32; }
+      .card-sub { font-family: ${'"Segoe UI", system-ui, sans-serif'};
+        font-size: 15px; fill: #2a2f26; }
+      .card-floor { font-family: ${'"Segoe UI", system-ui, sans-serif'};
+        font-size: 12px; letter-spacing: 0.16em; fill: #656b5e; }
+      .card-step { font-family: ${'"Segoe UI", system-ui, sans-serif'};
+        font-size: 15px; fill: #2a2f26; }
+      .card-foot { font-family: ${'"Segoe UI", system-ui, sans-serif'};
+        font-size: 12px; fill: #8a9584; }
+    </style>` +
+    `<rect class="card-bg" x="0" y="0" width="${CARD.width}" height="${height}"/>` +
+    parts.join('') +
+    `</svg>`;
+
+  return { markup, width: CARD.width, height, from, to };
+}
+
+// Rasterised rather than shared as SVG: a PNG is what a phone gallery, a chat
+// app and a slide all accept without asking questions.
+async function cardImage() {
+  const card = buildCard();
+  if (!card) return null;
+
+  const source = URL.createObjectURL(
+    new Blob([card.markup], { type: 'image/svg+xml;charset=utf-8' }));
+  try {
+    const image = await new Promise((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error('the plan could not be drawn'));
+      el.src = source;
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = card.width * CARD.scale;
+    canvas.height = card.height * CARD.scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(CARD.scale, CARD.scale);
+    ctx.drawImage(image, 0, 0, card.width, card.height);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    return { blob, card };
+  } finally {
+    URL.revokeObjectURL(source);
+  }
+}
+
+const cardFileName = card => 'invision-' +
+  `${card.from}-to-${card.to}`.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '') + '.png';
+
+function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+// A phone pointed at a laptop over the local network is on an insecure
+// origin, where the share sheet, the clipboard and sometimes the download
+// itself are all switched off. The card is offered as a page of its own as
+// well, because pressing and holding a picture is how a phone saves one.
+let offeredCard = null;
+function offerCard(blob) {
+  if (offeredCard) URL.revokeObjectURL(offeredCard);
+  offeredCard = URL.createObjectURL(blob);
+  $('caveats').innerHTML =
+    `<div class="notice">If nothing was saved, ` +
+    `<a href="${offeredCard}" target="_blank" rel="noopener">open the card</a>` +
+    ` and press and hold it.</div>`;
+}
+
+// The revert text is whatever the control said to begin with, so a label that
+// was renamed for the share sheet is not overwritten with the desktop wording.
+function flashLabel(id, text) {
+  const el = $(id);
+  el.dataset.label = el.dataset.label || el.textContent;
+  el.textContent = text;
+  setTimeout(() => { el.textContent = el.dataset.label; }, 2000);
+}
+
+const cardFile = made =>
+  new File([made.blob], cardFileName(made.card), { type: 'image/png' });
+
+// Desktop Chrome will also offer a share sheet, but on a laptop the clipboard
+// is the better answer: the card is usually going into a slide or a document.
+// Touch devices are the ones routed to the sheet.
+const canShareImages = () => Boolean(
+  navigator.canShare &&
+  matchMedia('(pointer: coarse)').matches &&
+  navigator.canShare({ files: [new File([''], 'card.png', { type: 'image/png' })] })
+);
+
+// A phone has a share sheet, and that is what a shopper standing in the mall
+// wants: the card goes straight into whatever chat they already have open.
+// The control is renamed to say so rather than promising a clipboard that
+// phones largely do not offer.
+if (canShareImages()) {
+  $('copyCardText').textContent = 'Share card';
+  $('copyCard').setAttribute(
+    'aria-label', 'Share the plan and directions as an image');
+}
+
+$('copyCard').addEventListener('click', async () => {
+  const made = await cardImage().catch(() => null);
+  if (!made) return;
+  const file = cardFile(made);
+
+  if (canShareImages()) {
+    try {
+      await navigator.share({
+        files: [file],
+        title: `${made.card.from} to ${made.card.to}`
+      });
+      flashLabel('copyCardText', 'Shared');
+      return;
+    } catch (err) {
+      // A share sheet the shopper dismissed is a decision, not a failure.
+      if (err && err.name === 'AbortError') return;
+    }
+  }
+
+  try {
+    if (typeof ClipboardItem === 'undefined') throw new Error('no clipboard images');
+    await navigator.clipboard.write([new ClipboardItem({ 'image/png': made.blob })]);
+    flashLabel('copyCardText', 'Copied');
+  } catch {
+    // Some browsers will not put an image on the clipboard at all. Saving it
+    // gets the shopper the same picture by the other route.
+    saveBlob(made.blob, file.name);
+    offerCard(made.blob);
+    flashLabel('copyCardText', 'Saved instead');
+  }
+});
+
+$('saveCard').addEventListener('click', async () => {
+  const made = await cardImage().catch(() => null);
+  if (!made) return;
+  saveBlob(made.blob, cardFileName(made.card));
+  offerCard(made.blob);
+  flashLabel('saveCardText', 'Saved');
 });
 
 // ?to= accepts a unit id or a name the search box would have found, so a link
@@ -1748,10 +1987,15 @@ function renderRoute(r, opts = {}) {
 
 (async function init() {
   try {
-    [LAYOUT, STORES] = await Promise.all([
+    let directory;
+    [LAYOUT, directory] = await Promise.all([
       api('/api/layout'),
-      api('/api/stores').then(r => r.stores)
+      api('/api/stores')
     ]);
+    STORES = directory.stores;
+    // The mall's own name heads the card, so a saved plan says which building
+    // it is a plan of.
+    MALL = directory.mall || '';
     fillDest();
     // Pick the shopper up where they left off, so a reload is not a re-shoot.
     restorePosition();

@@ -72,6 +72,9 @@ def list_stores():
         key=lambda u: (u["floor"], u["row"], u["index"]),
     )
     return {
+        # Named so a card saved out of the interface says which building it is
+        # a plan of, rather than being a floor of anywhere.
+        "mall": graph.directory.get("mall", ""),
         "stores": [
             {
                 "store_id": u["unit_id"],
