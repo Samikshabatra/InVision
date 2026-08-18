@@ -367,6 +367,12 @@
     transition: fill .2s, stroke .2s;
   }
   .unit.on { fill: var(--you-wash); stroke: var(--you); stroke-width: 1.5; }
+  /* Every shopfront on the plan is a way of asking to be taken there. */
+  .unit.tappable { cursor: pointer; }
+  .unit.tappable:hover, .unit.tappable:focus-visible {
+    fill: var(--you-wash); stroke: var(--you);
+  }
+  .unit.tappable:focus-visible { outline: none; stroke-width: 2; }
   .unit-label { fill: var(--muted); pointer-events: none; }
   .unit-label.on { fill: var(--you); }
   .on-marker { fill: var(--vapour); letter-spacing: 0.06em; }
@@ -815,12 +821,20 @@ function drawFloor(floorKey, opts = {}) {
     const on = highlight.has(unit.store_id);
 
     const box = svgEl('rect', {
-      class: 'unit' + (on ? ' on' : ''),
-      x: left + 1, y: top, width: Math.max(width - 2, 4), height: bottom - top, rx: 3
+      class: 'unit tappable' + (on ? ' on' : ''),
+      x: left + 1, y: top, width: Math.max(width - 2, 4), height: bottom - top, rx: 3,
+      role: 'button', tabindex: 0,
+      'aria-label': `Directions to ${unit.name}`
     });
     const tip = svgEl('title');
-    tip.textContent = unit.name;
+    tip.textContent = `${unit.name} - click for directions`;
     box.append(tip);
+    box.addEventListener('click', () => routeFromPlan(unit.store_id));
+    box.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      e.preventDefault();
+      routeFromPlan(unit.store_id);
+    });
     svg.append(box);
     labels.push(labelBox(svg, unit, { x: left + 1, w: Math.max(width - 2, 4), top, bottom }, on));
 
@@ -1400,6 +1414,20 @@ $('nearbyMore').addEventListener('click', () => {
   nearbyRadius = Math.min(nearbyRadius * 2, NEARBY_MAX_M);
   loadNearby();
 });
+
+// Tapping a shopfront on the plan asks for the same thing the nearby panel
+// does. Without a position there is nowhere to walk from, and saying so beats
+// a click that silently does nothing.
+function routeFromPlan(unitId) {
+  if (!originId) {
+    $('locateNotice').innerHTML =
+      '<div class="notice">Photograph a shopfront first, so the walk has ' +
+      'somewhere to start.</div>';
+    $('drop').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  routeToNearby(unitId);
+}
 
 // One route, whatever is on the shopping list: picking a shop off this panel
 // is a decision about where to go now, not an edit to the list.
