@@ -34,7 +34,7 @@ from pathlib import Path
 import networkx as nx
 
 from . import config
-from .directory import load_directory
+from .directory import load_directory, normalise
 
 STORE_SPACING_M = 8.0     # average storefront frontage
 STORE_STUB_M = 2.0        # walkway centreline to shop entrance
@@ -184,6 +184,10 @@ class MallGraph:
     # ---------- units ----------
 
     def _build_units(self) -> None:
+        # The directory's alias table is what the localiser reads signage
+        # against. Search should see the same names: a shopper typing what is
+        # on the bag rather than what is on the map is not a failed query.
+        aliases = self.directory.get("aliases", {})
         for entry in self.directory["floors"]:
             floor = entry["floor"]
             rows = entry["rows"]
@@ -211,6 +215,7 @@ class MallGraph:
                         "y": 0.0 if row == "top" else 1.0,
                         "image_count": 0,
                         "store_ids": [],
+                        "aliases": list(aliases.get(name, [])),
                     }
 
     def _attach_stores(self, stores: list[dict]) -> None:
@@ -634,11 +639,27 @@ class MallGraph:
         return out
 
     def find_units(self, query: str) -> list[dict]:
-        q = query.strip().lower()
-        return sorted(
-            (u for u in self.units.values() if q in u["name"].lower()),
-            key=lambda u: (len(u["name"]), u["floor"], u["index"]),
-        )
+        """Search by the name on the map or by any spelling listed for it.
+
+        Punctuation and spacing are dropped from both sides, so 'm & s' finds
+        M&S and 'marks and spencer' finds it through the alias table. A unit
+        whose own name matches ranks above one matched only by an alias, since
+        `resolve` takes the first answer.
+        """
+        q = normalise(query)
+        if not q:
+            return []
+
+        matched: list[tuple[int, dict]] = []
+        for unit in self.units.values():
+            if q in normalise(unit["name"]):
+                matched.append((0, unit))
+            elif any(q in normalise(alt) for alt in unit.get("aliases", [])):
+                matched.append((1, unit))
+
+        matched.sort(key=lambda pair: (pair[0], len(pair[1]["name"]),
+                                       pair[1]["floor"], pair[1]["index"]))
+        return [unit for _, unit in matched]
 
     # Backwards-compatible aliases used by the CLI.
     find_stores = find_units

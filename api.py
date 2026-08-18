@@ -81,6 +81,9 @@ def list_stores():
                 "row": u["row"],
                 "index": u["index"],
                 "has_images": u["image_count"] > 0,
+                # Alternate spellings, so the search box finds what is on the
+                # shopping bag rather than only what is printed on the map.
+                "aliases": u["aliases"],
                 "routable": True,
             }
             for u in units

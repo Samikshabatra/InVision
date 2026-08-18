@@ -893,14 +893,22 @@ const placeOf = (floor, storeId) => {
 };
 
 /* ---------- destination list ---------- */
+// Punctuation and spacing carry no meaning in a shop name typed in a hurry.
+const searchKey = text => text.toLowerCase().replace(/[^a-z0-9]+/g, '');
+
+// The name on the map, plus every alternate spelling the directory lists, so
+// "M&S" and "marks and spencer" both reach the same unit.
+const matchesQuery = (store, q) =>
+  [store.name, ...(store.aliases || [])].some(n => searchKey(n).includes(q));
+
 function fillDest(filter = '') {
-  const q = filter.trim().toLowerCase();
+  const q = searchKey(filter);
   const sel = $('dest');
   sel.innerHTML = '';
   const byFloor = {};
   for (const s of STORES) {
     if (!s.routable) continue;
-    if (q && !s.name.toLowerCase().includes(q)) continue;
+    if (q && !matchesQuery(s, q)) continue;
     (byFloor[s.floor_name] ||= []).push(s);
   }
   const names = Object.keys(byFloor);
