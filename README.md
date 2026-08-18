@@ -71,6 +71,15 @@ points, and legible signage is allowed to override the visual channel outright.
   route, or carried over from earlier.
 - **Reads the directions aloud**, because a shopper walking a corridor is not
   looking at a screen.
+- **Hands the route over as a picture or as plain text.** The plan and the
+  written steps are drawn into a card that copies to the clipboard, saves as a
+  PNG, or goes to a phone's share sheet. A link would only carry the address of
+  the machine the service is running on, which is no use to anyone standing in
+  the mall.
+- **Reverses a route, and offers back where you went.** The way home is one
+  control rather than a fresh search, and the last five destinations sit as
+  chips under the search box. That history stays in the browser: the service is
+  never told where anybody has been.
 
 ## Localisation, in detail
 
@@ -343,7 +352,7 @@ about a second and only pays for the model when a photograph actually arrives.
 | Method | Path | Purpose |
 |---|---|---|
 | `GET` | `/` | The interface. |
-| `GET` | `/api/stores` | Every routable unit on the directory. |
+| `GET` | `/api/stores` | Every routable unit on the directory, and the mall's name. |
 | `GET` | `/api/layout` | Floor geometry for the plan drawing. |
 | `POST` | `/api/locate` | A photograph in, ranked units out, with a confidence verdict. |
 | `POST` | `/api/route` | Origin and destination in, steps and map legs out. |
