@@ -668,6 +668,9 @@
             <button id="speak" type="button" aria-label="Read directions aloud">
               <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
             </button>
+            <button id="share" type="button" aria-label="Copy a link to this destination">
+              <span id="shareText">Copy link</span>
+            </button>
           </div>
         </div>
         <ol class="steps" id="steps"></ol>
@@ -1415,6 +1418,57 @@ $('nearbyMore').addEventListener('click', () => {
   loadNearby();
 });
 
+/* ---------- a link to a destination ---------- */
+// The link carries where someone is going, never where they are standing.
+// A position is evidence the shopper gave, and it does not belong in a URL
+// that gets pasted into a group chat.
+function destinationLink(unitId) {
+  const url = new URL(location.href);
+  url.search = `to=${encodeURIComponent(unitId)}`;
+  url.hash = '';
+  return url.toString();
+}
+
+$('share').addEventListener('click', async () => {
+  const destination = shownRoute && shownRoute.destination_id;
+  if (!destination) return;
+  const link = destinationLink(destination);
+  try {
+    await navigator.clipboard.writeText(link);
+    $('shareText').textContent = 'Copied';
+    setTimeout(() => { $('shareText').textContent = 'Copy link'; }, 2000);
+  } catch {
+    // No clipboard permission, or an insecure origin. Show the link so it can
+    // still be copied by hand rather than failing silently.
+    $('caveats').innerHTML =
+      `<div class="notice">Copy this link: <code>${link}</code></div>`;
+  }
+});
+
+// ?to= accepts a unit id or a name the search box would have found, so a link
+// survives being retyped from memory.
+function openRequestedDestination() {
+  const asked = new URLSearchParams(location.search).get('to');
+  if (!asked) return;
+
+  const store = storeOf(asked)
+    || STORES.find(s => s.routable && matchesQuery(s, searchKey(asked)));
+  if (!store) {
+    $('routeErr').innerHTML =
+      `<div class="notice">No unit here matches “${asked}”.</div>`;
+    return;
+  }
+
+  $('dest').value = store.store_id;
+  if (originId) {
+    routeToNearby(store.store_id);
+    return;
+  }
+  $('locateNotice').innerHTML =
+    `<div class="notice">Heading for ${store.name}. Photograph a shopfront ` +
+    `and the walk starts from there.</div>`;
+}
+
 // Tapping a shopfront on the plan asks for the same thing the nearby panel
 // does. Without a position there is nowhere to walk from, and saying so beats
 // a click that silently does nothing.
@@ -1701,6 +1755,9 @@ function renderRoute(r, opts = {}) {
     fillDest();
     // Pick the shopper up where they left off, so a reload is not a re-shoot.
     restorePosition();
+    // A shared link names a destination; act on it once there is a directory
+    // to resolve it against and a position to walk from.
+    openRequestedDestination();
     // Browsers without speech synthesis should never show the control at all.
     $('speak').hidden = !speech.supported;
   } catch (err) {
