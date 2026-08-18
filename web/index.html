@@ -397,7 +397,9 @@
   /* While it is the only thing on the wide card, it takes the whole card and
      sits in the middle of it. */
   .stage:has(#heroBay:not(.hidden)) { align-content: stretch; }
-  #heroBay { display: flex; flex-direction: column; justify-content: center; }
+  /* Qualified, because an id beats .hidden on specificity and the panel would
+     otherwise still be sitting above the plan once there is a route to show. */
+  #heroBay:not(.hidden) { display: flex; flex-direction: column; justify-content: center; }
   .hero { display: grid; gap: 26px; }
   @media (min-width: 1040px) {
     .hero { grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: center; }
