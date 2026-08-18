@@ -1337,6 +1337,8 @@ $('filter').addEventListener('input', e => fillDest(e.target.value));
 // metres away because you have to reach a crossing point to get to it.
 const NEARBY_STEP_M = 45;
 const NEARBY_MAX_M = 300;
+const NEARBY_ROWS = 8;      // at the opening radius
+const NEARBY_MAX_ROWS = 24; // past this the panel is a directory, not a glance
 let nearbyRadius = NEARBY_STEP_M;
 
 async function loadNearby() {
@@ -1344,9 +1346,14 @@ async function loadNearby() {
     $('nearbyCard').classList.add('hidden');
     return;
   }
+  // The count grows with the radius. Asking for a wider walk and being handed
+  // the same eight shops back is the button doing nothing.
+  const limit = Math.min(NEARBY_ROWS * Math.round(nearbyRadius / NEARBY_STEP_M),
+                         NEARBY_MAX_ROWS);
   try {
     renderNearby(await api(
-      `/api/nearby?unit_id=${encodeURIComponent(originId)}&radius_m=${nearbyRadius}`));
+      `/api/nearby?unit_id=${encodeURIComponent(originId)}` +
+      `&radius_m=${nearbyRadius}&limit=${limit}`));
   } catch {
     // Nothing to say and nothing broken enough to interrupt the walk over.
     $('nearbyCard').classList.add('hidden');
@@ -1373,7 +1380,9 @@ function renderNearby(r) {
   }
   $('nearbyHint').textContent =
     `Within about ${Math.round(r.radius_m)} m of ${nameOf(r.origin_id)}.`;
-  $('nearbyMore').classList.toggle('hidden', nearbyRadius >= NEARBY_MAX_M);
+  // Nothing to widen into once the panel is full or the radius is at its limit.
+  $('nearbyMore').classList.toggle(
+    'hidden', nearbyRadius >= NEARBY_MAX_M || r.nearby.length >= NEARBY_MAX_ROWS);
   $('nearbyCard').classList.remove('hidden');
 }
 
