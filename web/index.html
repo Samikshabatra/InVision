@@ -185,6 +185,15 @@
   }
   .chips button::after { content: "\00d7"; font-size: 15px; opacity: 0.55; }
   .chips button:hover::after { opacity: 1; }
+  /* A stop can be taken off the list, so its chip carries a cross. A place
+     the shopper went before is an offer, not something to delete. */
+  .chips.recent button::after { content: none; }
+  .chips.recent button { padding: 6px 13px; }
+  textarea.handoff {
+    display: block; width: 100%; margin-top: 9px; padding: 9px 11px;
+    font: 13px/1.5 var(--ui); color: var(--vapour); background: var(--panel);
+    border: 1px solid var(--steel); border-radius: 10px; resize: vertical;
+  }
 
   /* The itinerary is a real sequence - the order the stops get walked - so it
      is numbered. Nothing else here is. */
@@ -321,7 +330,10 @@
   ol.steps li.speaking { color: var(--you); }
   .bay-head { display: flex; align-items: center; gap: 12px; }
   .bay-head h2 { margin: 0 0 14px; flex: 1; }
-  .speech { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
+  .speech {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 11px;
+    margin-bottom: 14px;
+  }
   .speech .auto {
     font-size: 13px; color: var(--muted);
     display: flex; align-items: center; gap: 6px; cursor: pointer;
@@ -578,6 +590,8 @@
             <button class="primary" id="go" disabled>Get directions</button>
           </div>
         </div>
+        <p class="hint hidden" id="recentHint">Back to somewhere you looked up before:</p>
+        <div class="chips recent" id="recentList"></div>
         <div class="chips" id="stopList"></div>
         <div id="routeErr"></div>
       </section>
@@ -667,6 +681,12 @@
             <label class="auto"><input type="checkbox" id="autoSpeak"> auto</label>
             <button id="speak" type="button" aria-label="Read directions aloud">
               <span id="speakIcon">&#9658;</span> <span id="speakText">Listen</span>
+            </button>
+            <button id="flip" type="button" aria-label="Directions the other way around">
+              <span id="flipText">Reverse</span>
+            </button>
+            <button id="copySteps" type="button" aria-label="Copy the written directions as text">
+              <span id="copyStepsText">Copy text</span>
             </button>
             <button id="copyCard" type="button" aria-label="Copy the plan and directions as an image">
               <span id="copyCardText">Copy card</span>
@@ -1405,7 +1425,7 @@ function renderNearby(r) {
         `</span><button type="button" data-id="${n.unit_id}">Directions</button></li>`;
     }).join('');
     list.querySelectorAll('button').forEach(b => {
-      b.onclick = () => routeToNearby(b.dataset.id);
+      b.onclick = () => routeTo(b.dataset.id);
     });
   }
   $('nearbyHint').textContent =
@@ -1473,10 +1493,7 @@ function buildCard() {
   const innerW = CARD.width - CARD.pad * 2;
   const planH = Math.round(innerW * CARD.planRatio);
 
-  const levels = Math.max(route.floors_traversed.length - 1, 0);
-  const subtitle = `About ${Math.round(route.total_distance_m)} m · ` +
-    `${walkTime(route.minutes)}` +
-    (levels ? ` · crosses ${levels} floor${levels > 1 ? 's' : ''}` : ' · same floor');
+  const subtitle = routeSummary(route);
 
   const parts = [];
   let y = CARD.pad;
@@ -1676,6 +1693,60 @@ $('copyCard').addEventListener('click', async () => {
   }
 });
 
+// The way back. The position on file is left alone: this is the return leg
+// being read, not a claim that the shopper has already walked it.
+$('flip').addEventListener('click', async () => {
+  if (!shownRoute) return;
+  const back = { origin_id: shownRoute.destination_id,
+                 destination_id: shownRoute.origin_id };
+  stopSpeaking();
+  $('routeErr').innerHTML = '';
+  try {
+    trip = null;
+    $('tripCard').classList.add('hidden');
+    renderRoute(await api('/api/route', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(back)
+    }));
+  } catch (err) {
+    $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
+  }
+});
+
+// The card is a picture, and a picture is a poor thing to send over a thin
+// connection or paste into a message someone will read one-handed. The same
+// directions go out as text for that.
+function routeText(route) {
+  const heading = `${nameOf(route.origin_id)} to ${nameOf(route.destination_id)}`;
+  return [
+    MALL ? `${heading}, ${MALL}` : heading,
+    routeSummary(route),
+    '',
+    ...route.steps.map((step, i) => `${i + 1}. ${step.text}`),
+    '',
+    'Plotted by InVision. Distances and times are estimates.'
+  ].join('\n');
+}
+
+$('copySteps').addEventListener('click', async () => {
+  if (!shownRoute) return;
+  const text = routeText(shownRoute);
+  try {
+    await navigator.clipboard.writeText(text);
+    flashLabel('copyStepsText', 'Copied');
+  } catch {
+    // Insecure origin, or no permission. The directions go on the page ready
+    // selected so they can still be taken by hand.
+    $('caveats').innerHTML =
+      '<div class="notice">Copy the directions from here:' +
+      `<textarea class="handoff" id="handoff" readonly rows="${
+        Math.min(text.split('\n').length, 12)}">${xmlEscape(text)}</textarea></div>`;
+    $('handoff').select();
+    flashLabel('copyStepsText', 'Select and copy');
+  }
+});
+
 $('saveCard').addEventListener('click', async () => {
   const made = await cardImage().catch(() => null);
   if (!made) return;
@@ -1700,7 +1771,7 @@ function openRequestedDestination() {
 
   $('dest').value = store.store_id;
   if (originId) {
-    routeToNearby(store.store_id);
+    routeTo(store.store_id);
     return;
   }
   $('locateNotice').innerHTML =
@@ -1719,12 +1790,12 @@ function routeFromPlan(unitId) {
     $('drop').scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
-  routeToNearby(unitId);
+  routeTo(unitId);
 }
 
 // One route, whatever is on the shopping list: picking a shop off this panel
 // is a decision about where to go now, not an edit to the list.
-async function routeToNearby(unitId) {
+async function routeTo(unitId) {
   if (!originId || unitId === originId) return;
   $('routeErr').innerHTML = '';
   const assumption = assumeWalked();
@@ -1743,10 +1814,55 @@ async function routeToNearby(unitId) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ origin_id: originId, destination_id: unitId })
     }));
-    showAssumption(assumption, () => routeToNearby(unitId));
+    showAssumption(assumption, () => routeTo(unitId));
   } catch (err) {
     $('routeErr').innerHTML = `<div class="notice">${err.message}</div>`;
   }
+}
+
+/* ---------- somewhere you went before ---------- */
+// Only places the shopper actually routed to are kept, which is what makes
+// the list worth showing back to them. The ids live in the browser: the
+// service is never told where anybody has been.
+const RECENT_KEY = 'invision.recent';
+const RECENT_MAX = 5;
+
+function readRecent() {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function rememberDestination(unitId) {
+  const kept = [unitId, ...readRecent().filter(id => id !== unitId)]
+    .slice(0, RECENT_MAX);
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(kept)); }
+  catch { /* private browsing; the list just will not outlive the tab */ }
+  renderRecent();
+}
+
+function renderRecent() {
+  // Where the shopper is being sent right now is not a suggestion, and neither
+  // is a unit that has since left the directory.
+  const heading = shownRoute && shownRoute.destination_id;
+  const ids = readRecent().filter(id => storeOf(id) && id !== heading);
+
+  $('recentHint').classList.toggle('hidden', !ids.length);
+  $('recentList').innerHTML = ids
+    .map(id => `<button type="button" data-id="${id}">${nameOf(id)}</button>`)
+    .join('');
+  $('recentList').querySelectorAll('button').forEach(b => {
+    b.onclick = () => {
+      if (!originId) {
+        // Nothing to route from yet. Load the choice into the panel so the
+        // shopper only has to say where they are.
+        $('dest').value = b.dataset.id;
+        $('routeErr').innerHTML =
+          '<div class="notice">Say where you are first and this will route.</div>';
+        return;
+      }
+      routeTo(b.dataset.id);
+    };
+  });
 }
 
 /* ---------- shopping list ---------- */
@@ -1874,6 +1990,15 @@ function walkTime(minutes) {
   return `about ${Math.ceil(minutes)} min`;
 }
 
+// The one line that says how far and how long. The panel, the card and the
+// copied text all read it from here so the three cannot drift apart.
+function routeSummary(route) {
+  if (route.total_distance_m <= 0) return 'You are there.';
+  const levels = Math.max(route.floors_traversed.length - 1, 0);
+  return `About ${Math.round(route.total_distance_m)} m · ${walkTime(route.minutes)}` +
+    (levels ? ` · crosses ${levels} floor${levels > 1 ? 's' : ''}` : ' · same floor');
+}
+
 function renderTrip(t) {
   const saved = t.saved_m >= 5
     ? ` Ordering the list this way saves about ${Math.round(t.saved_m)} m.`
@@ -1948,12 +2073,7 @@ function renderRoute(r, opts = {}) {
 
   $('steps').innerHTML = r.steps.map(s =>
     `<li class="${s.kind}">${s.text}</li>`).join('');
-  const levels = Math.max(r.floors_traversed.length - 1, 0);
-  const levelNote = levels
-    ? ` · ${levels} floor level${levels > 1 ? 's' : ''}` : ' · same floor';
-  $('total').textContent = r.total_distance_m > 0
-    ? `About ${Math.round(r.total_distance_m)} m · ${walkTime(r.minutes)}${levelNote}`
-    : 'You are there.';
+  $('total').textContent = routeSummary(r);
   $('caveats').innerHTML = r.caveats
     .filter(c => !/reference photographs/i.test(c))
     .map(c => `<div class="notice">${c}</div>`).join('');
@@ -1969,6 +2089,7 @@ function renderRoute(r, opts = {}) {
   // reroute becomes the new plan rather than being judged against the old one.
   journey = { origin: r.origin_id, destination: r.destination_id };
   shownRoute = r;
+  rememberDestination(r.destination_id);
   refreshArrivedButton();
   // The opening panel has done its job once there is a route to show.
   $('heroBay').classList.add('hidden');
@@ -1997,6 +2118,7 @@ function renderRoute(r, opts = {}) {
     // it is a plan of.
     MALL = directory.mall || '';
     fillDest();
+    renderRecent();
     // Pick the shopper up where they left off, so a reload is not a re-shoot.
     restorePosition();
     // A shared link names a destination; act on it once there is a directory
