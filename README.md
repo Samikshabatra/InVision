@@ -15,6 +15,8 @@
 
 ---
 
+## Problem
+
 Indoor positioning is the awkward gap in navigation. GPS stops at the door, and
 the alternatives all want infrastructure: beacons bolted to ceilings, wifi
 fingerprints resurveyed every time a shop refits, a floor plan nobody has in a
@@ -36,6 +38,24 @@ storefronts that are glass, white, and lit the same way. Signage text alone fail
 whenever a logo mark eats the first letter or a survey shot frames two shops at
 once. Fusing them at 0.7 visual to 0.3 text beats either signal alone by nine
 points, and legible signage is allowed to override the visual channel outright.
+
+## Objectives
+
+1. **Locate a shopper to a single directory unit from one photograph**, using
+   only what a mall already has on its walls, with no beacons, no wifi survey
+   and no instrumented floor plan.
+2. **Fuse two independent signals** - storefront appearance and signage text -
+   and measure what each one is worth, rather than assuming the combination
+   helps.
+3. **Refuse to guess.** A close call is reported as a close call, with the
+   runners-up, because a confident wrong unit sends someone down the wrong
+   corridor.
+4. **Turn the printed floor directory into something routable**, so a recognised
+   unit becomes turn-by-turn directions across floors, escalators and gates.
+5. **Put it in front of a shopper**, on a phone, at the moment they are lost:
+   one page, no install, and a route they can take away as a picture or as text.
+6. **Keep the whole project runnable without republishing the photographs**, in
+   keeping with the permission under which they were captured.
 
 ## What it does
 
@@ -81,6 +101,51 @@ points, and legible signage is allowed to override the visual channel outright.
   chips under the search box. That history stays in the browser: the service is
   never told where anybody has been.
 
+## Technologies and libraries used
+
+| Layer | What | Used for |
+|---|---|---|
+| Language | Python 3.11+ | everything server side |
+| Vision | `torch` >= 2.2, `transformers` >= 4.40, `openai/clip-vit-base-patch32` | 512-dimensional storefront embeddings |
+| Text | `rapidocr_onnxruntime` >= 1.3 | signage tokens with bounding boxes, so cap height can rank them |
+| Graph | `networkx` >= 3.3 | Dijkstra over the walkway graph; leg costs for the tour ordering |
+| Numerics | `numpy` >= 1.26, `pillow` >= 10.3 | cosine similarity across the gallery, image decoding |
+| Service | `fastapi` >= 0.115, `uvicorn` >= 0.30, `pydantic` >= 2.7, `python-multipart` | JSON API and photograph upload |
+| Interface | plain HTML, CSS and JavaScript, inline SVG | one page, no build step, no framework, no CDN |
+
+Both models are loaded lazily, on first use. The service starts in about a
+second and only pays for a model when a photograph actually arrives.
+
+## Methodology
+
+End to end, from a folder of corridor walks to directions on a screen. The two
+stages that carry the work, localisation and routing, are set out in full in the
+sections that follow.
+
+1. **Capture.** Six corridor walks, three floors by two sides, one burst per
+   storefront, with written permission from mall management
+   (`tools/extract_zips.py`, `src/ingest.py`).
+2. **Segment.** Each walk is split into runs of consecutive frames showing the
+   same shopfront, using CLIP similarity between neighbours (`src/grouping.py`,
+   `src/pipeline.py`).
+3. **Name.** Each run is named from the tallest signage text its frames contain,
+   matched against a brand vocabulary drawn from the directory
+   (`tools/find_brands.py`).
+4. **Align.** Recovered stores are matched to the printed floor directory, which
+   is the authority on what exists and where (`src/frame_align.py`). A unit with
+   no photographs can still be routed to; it just cannot be recognised.
+5. **Index.** Gallery and query splits are embedded once and cached, as is the
+   OCR output (`tools/embed_all.py`, `tools/ocr_all.py`).
+6. **Localise.** A query photograph is embedded and scored against every unit's
+   gallery; OCR tokens are fuzzy-matched to unit names and aliases, weighted by
+   cap height; the two scores are fused 0.7 visual to 0.3 text, with legible
+   signage allowed to override (`src/localizer.py`).
+7. **Route.** The directory becomes a graph of 268 nodes and Dijkstra runs over
+   walking-equivalent metres, producing steps, floor changes, distance and time
+   (`src/mall_graph.py`).
+8. **Serve.** FastAPI answers the JSON calls; the page draws each floor of the
+   route as SVG and reads the directions aloud (`api.py`, `web/index.html`).
+
 ## Localisation, in detail
 
 `src/localizer.py` scores every directory unit and fuses two channels.
@@ -104,33 +169,35 @@ frames two shopfronts at once, and the result is reported as a close call.
 Every threshold in that description is a named constant at the top of the module,
 not a number buried in an expression.
 
-## Results
+## Dataset used
 
-Measured on the held-out query split, 55 images over 83 recognisable units, with
-all 104 directory units as candidates:
+Captured for this project rather than downloaded: there is no public dataset of
+one building's shopfronts aligned to its floor directory. Six corridor walks,
+three floors by two sides, one photo burst per storefront, no labels beyond a
+folder name and a capture timestamp.
 
-| Configuration | top-1 | top-3 | top-5 | correct floor |
-|---|---|---|---|---|
-| Visual only (CLIP) | 58.2% | 74.5% | 80.0% | 83.6% |
-| Text only (OCR) | 58.2% | 63.6% | 65.5% | 74.5% |
-| Fusion 0.5 / 0.5 | 60.0% | 72.7% | 76.4% | 78.2% |
-| **Fusion 0.7 / 0.3** | **67.3%** | **80.0%** | **87.3%** | **87.3%** |
-| Fusion 0.85 / 0.15 | 65.5% | 80.0% | 83.6% | 89.1% |
+| | |
+|---|---|
+| Frames ingested | 289 |
+| Frames with legible signage text | 288 |
+| Stores recovered from the walks | 83 |
+| Directory units in total | 104, over 5 floors |
+| Images per store | 1 minimum, 3 median, 3.48 mean, 14 maximum |
+| Stores resting on a single image | 8 |
+| Gallery split | 234 embeddings |
+| Held-out query split | 55 embeddings |
+| Embedding dimension | 512 |
 
-```bash
-python evaluate.py
-```
+The floor directory itself (`data/mall_directory.json`) is a separate,
+hand-entered artefact: 104 units in row order per floor, with the alternate
+spellings that let "M&S" and "marks and spencer" reach the same unit. It is the
+authority on what exists; the photographs only say what can be recognised.
 
-**These numbers are optimistic and the evaluation says so before it prints
-them.** Every held-out image was captured seconds from its own gallery images, at
-nearly the same angle and under the same lighting. A fair figure needs
-photographs taken on a different day, ideally in different light and with the
-crowd that a real shopper photographs through. Treat the ablation as the finding
-here, not the absolute accuracy: the text channel is worth nine points of top-1
-and seven points of correct-floor, and it is worth most where the visual channel
-is weakest.
+`data/dataset/DATASET_CARD.md` documents the format, the splits and the known
+failure modes. `data/derived/report.json` carries the counts above, written by
+the reconstruction run itself.
 
-## The dataset, and why it is not published
+### Why the photographs are not published
 
 **The photographs in this project were captured with the written permission of
 mall management, and that permission is why the imagery is not distributed.**
@@ -176,10 +243,9 @@ first.** `tools/` contains the whole pipeline that turns a folder of corridor
 walks into the derived artefacts, and `data/dataset/DATASET_CARD.md` documents
 the format it expects.
 
-## How the dataset was reconstructed
+### How the labels were reconstructed
 
-The source photographs carry no labels. Six corridor walks, three floors by two
-sides, one burst per storefront, with nothing but a folder name and a capture
+The source photographs carry no labels: nothing but a folder name and a capture
 timestamp. Store identity was recovered rather than recorded:
 
 1. **Segment each walk** into runs of consecutive frames showing the same
@@ -197,6 +263,32 @@ The failure modes are documented in the dataset card rather than smoothed over:
 leading characters absorbed by a logo mark (`ESTSIDE` for Westside, `DASICS` for
 Asics), visually similar food-court stalls merged, and generic facade words
 beating the brand name.
+
+## Results
+
+Measured on the held-out query split, 55 images over 83 recognisable units, with
+all 104 directory units as candidates:
+
+| Configuration | top-1 | top-3 | top-5 | correct floor |
+|---|---|---|---|---|
+| Visual only (CLIP) | 58.2% | 74.5% | 80.0% | 83.6% |
+| Text only (OCR) | 58.2% | 63.6% | 65.5% | 74.5% |
+| Fusion 0.5 / 0.5 | 60.0% | 72.7% | 76.4% | 78.2% |
+| **Fusion 0.7 / 0.3** | **67.3%** | **80.0%** | **87.3%** | **87.3%** |
+| Fusion 0.85 / 0.15 | 65.5% | 80.0% | 83.6% | 89.1% |
+
+```bash
+python evaluate.py
+```
+
+**These numbers are optimistic and the evaluation says so before it prints
+them.** Every held-out image was captured seconds from its own gallery images, at
+nearly the same angle and under the same lighting. A fair figure needs
+photographs taken on a different day, ideally in different light and with the
+crowd that a real shopper photographs through. Treat the ablation as the finding
+here, not the absolute accuracy: the text channel is worth nine points of top-1
+and seven points of correct-floor, and it is worth most where the visual channel
+is weakest.
 
 ## Routing
 
@@ -305,25 +397,37 @@ CV_Project/
     └── mall_directory.json
 ```
 
-## Running it
+## Steps to execute the project
 
-You need Python 3.11 or newer.
+You need Python 3.11 or newer. Nothing else has to be installed or surveyed:
+the embeddings the localiser needs are already in the repository.
+
+**1. Install the dependencies.**
 
 ```bash
 pip install -r requirements.txt
 # torch is a large download; the CPU wheel is enough:
 pip install torch --index-url https://download.pytorch.org/whl/cpu
-
-python api.py
 ```
 
-Open <http://127.0.0.1:8000>. Drop a photograph of a shopfront onto the sighting
-panel, or paste one from the clipboard. The header lights up with the unit it
-recognised and how confident it was. Choose a destination, or add several to the
-list, and the plan and directions appear.
+**2. Start the service.**
 
-`/review` is the label review interface: every captured frame in walk order, with
-its current unit assignment and the OCR tokens that produced it.
+```bash
+python api.py                                  # 127.0.0.1:8000
+# or: uvicorn api:app --reload --port 8000
+```
+
+**3. Open <http://127.0.0.1:8000> and give it a photograph.** Drop a shopfront
+photo onto the sighting panel, or paste one from the clipboard. The header
+lights up with the unit it recognised and how confident it was.
+
+**4. Choose a destination.** Search for it, or pick from what is near you, or add
+several stops to the list. The plan, the walking time and the directions appear,
+and the route can be reversed, read aloud, or taken away as a card or as text.
+
+**5. Optional: correct the labels.** `/review` is the label review interface:
+every captured frame in walk order, with its current unit assignment and the OCR
+tokens that produced it.
 
 **The command line does the same things** without the browser:
 
@@ -334,8 +438,9 @@ python route.py --from-store SWAROVSKI --to DECATHLON
 python route.py --from-photo shot.jpg --to DECATHLON
 ```
 
-**Rebuilding the dataset** from a folder of corridor walks, which needs the
-photographs and so is only useful on your own capture:
+**Rebuilding the dataset** from a folder of corridor walks. This needs the
+source photographs, which are not in the repository, so it is only useful on
+your own capture:
 
 ```bash
 python tools/extract_zips.py     # unpack the walks
