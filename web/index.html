@@ -19,6 +19,7 @@
     --you: #1f4a32;      /* forest: you, your route, the next action */
     --you-wash: #e9eee4; /* sage wash: icon discs, chips, highlights */
     --transit: #8a9584;  /* escalators and gates - sage grey */
+    --warn: #8c3b2e;     /* brick: the one control that erases something */
 
     --ui: "Segoe UI Variable Text", "Segoe UI", -apple-system, "SF Pro Text",
           Inter, system-ui, sans-serif;
@@ -175,6 +176,12 @@
   button.ghost:hover { border-color: var(--you); color: var(--you); }
   button.ghost:hover svg { color: var(--you); }
   #arrived { margin-top: 14px; }
+  /* Clearing is the only thing here that destroys anything, so the button
+     changes colour and wording once, and waits to be tapped again. */
+  #clearAll[data-armed="1"], #clearAll[data-armed="1"]:hover {
+    border-color: var(--warn); color: var(--warn);
+  }
+  #clearAll[data-armed="1"] svg, #clearAll[data-armed="1"]:hover svg { color: var(--warn); }
   .pair { display: grid; grid-template-columns: 1fr 1.15fr; gap: 10px; }
   .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 13px; }
   .chips:empty { margin-top: 0; }
@@ -607,6 +614,27 @@
         </h2>
         <p class="hint" id="tripSummary"></p>
         <ol class="itinerary" id="itinerary"></ol>
+      </section>
+
+      <section class="bay" id="clearCard">
+        <h2>
+          <span class="disc" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.5 5.5h13M7.6 5.5V3.6h4.8v1.9M5.4 5.5l.8 11h7.6l.8-11"/>
+              <path d="M8.6 8.6v5M11.4 8.6v5"/>
+            </svg>
+          </span>Start over
+        </h2>
+        <p class="hint">Erases the sighting, the route, the shopping list, the
+          places looked up before and anything else this board kept on the
+          phone, and returns it to how it opened.</p>
+        <button class="ghost" id="clearAll" type="button" data-armed="0">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 5h12M6.8 5V3.4h4.4V5M4.8 5l.7 10h6.9l.7-10"/>
+          </svg><span id="clearText">Clear everything</span>
+        </button>
       </section>
     </div>
 
@@ -2105,6 +2133,41 @@ function renderRoute(r, opts = {}) {
   }
   $('trackCard').classList.remove('hidden');
 }
+
+/* ---------- start over ---------- */
+// Everything this board remembers between visits lives under one storage
+// prefix, so clearing is: drop those keys, drop the destination the URL may be
+// carrying, and reload into the opening state rather than unpicking the page
+// panel by panel.
+const CLEAR_ARM_MS = 6000;
+let clearArmedAt = 0;
+
+function disarmClear() {
+  clearArmedAt = 0;
+  $('clearAll').dataset.armed = '0';
+  $('clearText').textContent = 'Clear everything';
+}
+
+$('clearAll').addEventListener('click', () => {
+  const armed = clearArmedAt && Date.now() - clearArmedAt <= CLEAR_ARM_MS;
+  if (!armed) {
+    clearArmedAt = Date.now();
+    $('clearAll').dataset.armed = '1';
+    $('clearText').textContent = 'Tap again to erase';
+    setTimeout(() => {
+      if (clearArmedAt && Date.now() - clearArmedAt >= CLEAR_ARM_MS) disarmClear();
+    }, CLEAR_ARM_MS);
+    return;
+  }
+  stopSpeaking();
+  try {
+    Object.keys(localStorage)
+      .filter(key => key.startsWith('invision.'))
+      .forEach(key => localStorage.removeItem(key));
+  } catch { /* nothing was kept to remove */ }
+  $('clearText').textContent = 'Cleared';
+  location.replace(location.pathname);
+});
 
 (async function init() {
   try {
