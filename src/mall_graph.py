@@ -34,12 +34,34 @@ from pathlib import Path
 import networkx as nx
 
 from . import config
-from .directory import load_directory
+from .directory import load_directory, normalise
 
 STORE_SPACING_M = 8.0     # average storefront frontage
 STORE_STUB_M = 2.0        # walkway centreline to shop entrance
 CORRIDOR_WIDTH_M = 34.0   # across the atrium, top row to bottom row
 ESCALATOR_COST_M = 25.0   # walking-equivalent cost of one level
+
+# How far off the planned line a shopper can be found and still be considered
+# on it. One storefront either side plus the stub back out to the walkway: far
+# enough to absorb a misread shopfront, tight enough to catch a wrong turn.
+ON_ROUTE_TOLERANCE_M = 12.0
+
+# Below this the shopper is close enough that the walk is effectively over.
+ARRIVAL_RADIUS_M = 6.0
+
+WALKING_SPEED_M_PER_MIN = 55.0  # unhurried indoor pace
+
+# What counts as "near me". Roughly five storefronts of frontage, which on a
+# two-row floor also reaches across the walkway to the shops opposite. The
+# radius is walking distance, not straight-line, so an escalator level spends
+# most of the allowance and the floor above only shows up at wider settings.
+NEARBY_RADIUS_M = 45.0
+NEARBY_MAX_RADIUS_M = 300.0
+NEARBY_LIMIT = 8
+
+# Held-Karp is exact but costs 2^n * n^2. Eight stops is instant and already
+# more than anyone walks in one trip.
+MAX_TOUR_STOPS = 8
 
 GATE_WEST_X, GATE_EAST_X = 0.0, 1.0
 ESC_WEST_X, ESC_EAST_X = 0.28, 0.72
@@ -69,6 +91,53 @@ class Route:
     floors_traversed: list[int]
     caveats: list[str]
     map_legs: list[dict] = field(default_factory=list)
+    # Walking time at an unhurried pace. Derived from the distance, and so as
+    # approximate as the distance is: it is offered as "about", never as an
+    # arrival time, because escalator queues and shop windows are not modelled.
+    minutes: float = 0.0
+
+
+@dataclass
+class Tour:
+    """A shopping list walked in the cheapest order.
+
+    Open ended: it starts where the shopper is and finishes at whichever stop
+    falls last, since nobody wants to be walked back to where they began.
+    """
+    order: list[str]            # unit ids, in visiting order
+    legs: list[Route]           # one per hop, order[i-1] to order[i]
+    total_distance_m: float
+    minutes: float
+    naive_distance_m: float     # the list walked in the order it was written
+    saved_m: float
+
+
+@dataclass
+class Nearby:
+    """A unit within walking reach of where the shopper is standing."""
+    unit_id: str
+    name: str
+    floor: int
+    floor_name: str
+    row: str
+    distance_m: float
+    minutes: float
+    same_floor: bool
+
+
+@dataclass
+class Progress:
+    """Where a shopper turned out to be, measured against where they were sent.
+
+    `state` is what the interface reacts to; the rest explains the verdict.
+    """
+    state: str                # arrived | on_route | off_route
+    deviation_m: float        # walking distance from the planned line
+    remaining_m: float        # from here to the destination
+    original_m: float         # the whole walk, as first planned
+    done_fraction: float      # 0 at the start, 1 on arrival
+    minutes_left: float
+    route: Route              # from here onward, rerouted if it had to be
 
 
 def unit_node(unit_id: str) -> str:
@@ -81,6 +150,11 @@ def walk_node(floor: int, row: str, x: float) -> str:
 
 def cross_node(floor: int, name: str) -> str:
     return f"cross:{floor}:{name}"
+
+
+def walking_minutes(distance_m: float) -> float:
+    """Walking time for a distance, rounded the way the interface shows it."""
+    return round(max(0.0, distance_m) / WALKING_SPEED_M_PER_MIN, 1)
 
 
 def _slug(text: str) -> str:
@@ -110,6 +184,10 @@ class MallGraph:
     # ---------- units ----------
 
     def _build_units(self) -> None:
+        # The directory's alias table is what the localiser reads signage
+        # against. Search should see the same names: a shopper typing what is
+        # on the bag rather than what is on the map is not a failed query.
+        aliases = self.directory.get("aliases", {})
         for entry in self.directory["floors"]:
             floor = entry["floor"]
             rows = entry["rows"]
@@ -137,6 +215,7 @@ class MallGraph:
                         "y": 0.0 if row == "top" else 1.0,
                         "image_count": 0,
                         "store_ids": [],
+                        "aliases": list(aliases.get(name, [])),
                     }
 
     def _attach_stores(self, stores: list[dict]) -> None:
@@ -237,6 +316,185 @@ class MallGraph:
         )
         return self._describe(path, distance, a, b)
 
+    def nearby(self, origin: str, radius_m: float = NEARBY_RADIUS_M,
+               limit: int = NEARBY_LIMIT) -> list[Nearby]:
+        """What is within walking reach of a unit, nearest first.
+
+        One capped sweep out from the origin answers the whole question: the
+        cutoff prunes the search rather than filtering afterwards, so a small
+        radius costs a small walk of the graph however large the mall gets.
+
+        Distances are the same walking-equivalent metres the router quotes, so
+        a shop across the walkway is further than the one next door and the
+        floor above only appears once the radius covers an escalator.
+        """
+        start = self.resolve(origin)
+        if start is None:
+            raise KeyError(f"unknown origin: {origin}")
+
+        here = self.units[start]
+        reach = nx.single_source_dijkstra_path_length(
+            self.graph, unit_node(start), cutoff=max(0.0, radius_m), weight="weight")
+
+        found: list[Nearby] = []
+        for node, distance in reach.items():
+            data = self.graph.nodes[node]
+            if data.get("kind") != "unit" or data["unit_id"] == start:
+                continue
+            found.append(Nearby(
+                unit_id=data["unit_id"],
+                name=data["name"],
+                floor=data["floor"],
+                floor_name=data["floor_name"],
+                row=data["row"],
+                distance_m=round(distance, 1),
+                minutes=walking_minutes(distance),
+                same_floor=data["floor"] == here["floor"],
+            ))
+
+        found.sort(key=lambda n: (n.distance_m, n.name))
+        return found[:max(0, limit)]
+
+    def tour(self, origin: str, stops: list[str]) -> Tour:
+        """Order a shopping list so the walk is as short as it can be.
+
+        Exact rather than greedy: with a handful of stops the optimal order is
+        cheap to find, and "nearest next" gets it wrong often enough on a
+        two-row floor plan to be worth avoiding.
+        """
+        start = self.resolve(origin)
+        if start is None:
+            raise KeyError(f"unknown origin: {origin}")
+
+        targets: list[str] = []
+        for stop in stops:
+            unit = self.resolve(stop)
+            if unit is None:
+                raise KeyError(f"unknown stop: {stop}")
+            if unit != start and unit not in targets:
+                targets.append(unit)
+
+        if not targets:
+            raise ValueError("no stops to visit")
+        if len(targets) > MAX_TOUR_STOPS:
+            raise ValueError(f"at most {MAX_TOUR_STOPS} stops per trip")
+
+        order = ([start] + targets if len(targets) == 1
+                 else [start] + self._cheapest_order(start, targets))
+
+        legs = [self.route(a, b) for a, b in zip(order, order[1:])]
+        total = sum(leg.total_distance_m for leg in legs)
+
+        as_written = [start] + targets
+        naive = sum(self._walk_length(a, b)
+                    for a, b in zip(as_written, as_written[1:]))
+
+        return Tour(
+            order=order,
+            legs=legs,
+            total_distance_m=round(total, 1),
+            minutes=walking_minutes(total),
+            naive_distance_m=round(naive, 1),
+            saved_m=round(max(0.0, naive - total), 1),
+        )
+
+    def _walk_length(self, a: str, b: str) -> float:
+        return nx.shortest_path_length(
+            self.graph, unit_node(a), unit_node(b), weight="weight")
+
+    def _cheapest_order(self, start: str, targets: list[str]) -> list[str]:
+        """Held-Karp over an open path: fixed start, free finish."""
+        points = [start] + targets
+        cost = [[0.0] * len(points) for _ in points]
+        for i, unit in enumerate(points):
+            reach = nx.single_source_dijkstra_path_length(
+                self.graph, unit_node(unit), weight="weight")
+            for j, other in enumerate(points):
+                cost[i][j] = reach.get(unit_node(other), float("inf"))
+
+        n = len(targets)
+        full = (1 << n) - 1
+        # best[mask][j]: cheapest walk covering `mask`, standing at targets[j].
+        best = [[float("inf")] * n for _ in range(1 << n)]
+        came_from = [[-1] * n for _ in range(1 << n)]
+
+        for j in range(n):
+            best[1 << j][j] = cost[0][j + 1]
+
+        for mask in range(1 << n):
+            for j in range(n):
+                if not mask & (1 << j) or best[mask][j] == float("inf"):
+                    continue
+                for k in range(n):
+                    if mask & (1 << k):
+                        continue
+                    nxt = mask | (1 << k)
+                    through = best[mask][j] + cost[j + 1][k + 1]
+                    if through < best[nxt][k]:
+                        best[nxt][k] = through
+                        came_from[nxt][k] = j
+
+        last = min(range(n), key=lambda j: best[full][j])
+        sequence, mask, j = [], full, last
+        while j != -1:
+            sequence.append(targets[j])
+            previous = came_from[mask][j]
+            mask ^= 1 << j
+            j = previous
+        sequence.reverse()
+        return sequence
+
+    def progress(self, origin: str, current: str, destination: str) -> Progress:
+        """Judge a mid-walk sighting against the route the shopper was given.
+
+        The plan is recomputed rather than carried around by the client, so a
+        stale or tampered payload cannot move the line being measured against.
+        """
+        a, c, b = (self.resolve(origin), self.resolve(current),
+                   self.resolve(destination))
+        if a is None:
+            raise KeyError(f"unknown origin: {origin}")
+        if c is None:
+            raise KeyError(f"unknown current position: {current}")
+        if b is None:
+            raise KeyError(f"unknown destination: {destination}")
+
+        planned = set(nx.shortest_path(
+            self.graph, unit_node(a), unit_node(b), weight="weight"))
+        original = nx.shortest_path_length(
+            self.graph, unit_node(a), unit_node(b), weight="weight")
+
+        # One sweep out from where the shopper is: it answers both how far the
+        # destination still is and how far the planned line is.
+        reach = nx.single_source_dijkstra_path_length(
+            self.graph, unit_node(c), weight="weight")
+        remaining = reach.get(unit_node(b), float("inf"))
+        deviation = min((reach[n] for n in planned if n in reach), default=float("inf"))
+
+        if c == b or remaining <= ARRIVAL_RADIUS_M:
+            state = "arrived"
+        elif deviation <= ON_ROUTE_TOLERANCE_M and remaining <= original:
+            state = "on_route"
+        else:
+            # Either off the line, or on it but facing the wrong way round the
+            # walkway; both are answered the same way, with a fresh route.
+            state = "off_route"
+
+        route = (Route([Step("arrive", f"You have arrived at {self.units[b]['name']}.",
+                             floor=self.units[b]["floor"])], 0.0, [], [])
+                 if state == "arrived" else self.route(c, b))
+
+        done = 0.0 if original <= 0 else max(0.0, min(1.0, 1 - remaining / original))
+        return Progress(
+            state=state,
+            deviation_m=round(deviation, 1),
+            remaining_m=round(0.0 if state == "arrived" else remaining, 1),
+            original_m=round(original, 1),
+            done_fraction=round(1.0 if state == "arrived" else done, 3),
+            minutes_left=0.0 if state == "arrived" else walking_minutes(remaining),
+            route=route,
+        )
+
     def _describe(self, path, distance, origin_id, destination_id) -> Route:
         origin, destination = self.units[origin_id], self.units[destination_id]
         nodes = [self.graph.nodes[n] for n in path]
@@ -324,7 +582,7 @@ class MallGraph:
             d["floor"] for d in nodes if d.get("floor") is not None
         ))
         return Route(steps, round(distance, 1), floors_traversed, caveats,
-                     self._map_legs(nodes))
+                     self._map_legs(nodes), walking_minutes(distance))
 
     def _map_legs(self, nodes: list[dict]) -> list[dict]:
         legs: list[dict] = []
@@ -381,11 +639,27 @@ class MallGraph:
         return out
 
     def find_units(self, query: str) -> list[dict]:
-        q = query.strip().lower()
-        return sorted(
-            (u for u in self.units.values() if q in u["name"].lower()),
-            key=lambda u: (len(u["name"]), u["floor"], u["index"]),
-        )
+        """Search by the name on the map or by any spelling listed for it.
+
+        Punctuation and spacing are dropped from both sides, so 'm & s' finds
+        M&S and 'marks and spencer' finds it through the alias table. A unit
+        whose own name matches ranks above one matched only by an alias, since
+        `resolve` takes the first answer.
+        """
+        q = normalise(query)
+        if not q:
+            return []
+
+        matched: list[tuple[int, dict]] = []
+        for unit in self.units.values():
+            if q in normalise(unit["name"]):
+                matched.append((0, unit))
+            elif any(q in normalise(alt) for alt in unit.get("aliases", [])):
+                matched.append((1, unit))
+
+        matched.sort(key=lambda pair: (pair[0], len(pair[1]["name"]),
+                                       pair[1]["floor"], pair[1]["index"]))
+        return [unit for _, unit in matched]
 
     # Backwards-compatible aliases used by the CLI.
     find_stores = find_units

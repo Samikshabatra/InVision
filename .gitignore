@@ -1,19 +1,23 @@
-# Raw capture set — ~730MB of corridor-walk photographs.
-# Available on request; not tracked in git.
+# Raw corridor captures (732 MB). The pipeline reads these to build
+# data/derived; the running app only needs the derived artefacts.
 data/Images/
-data/Videos/
 
-# Python
+# Generated thumbnails
+data/derived/thumbs/
+
 __pycache__/
 *.py[cod]
-*.egg-info/
 .venv/
 venv/
-env/
-.ipynb_checkpoints/
-
-# OS / editor
+.env
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/
+
+# Reference screenshots dropped in the working directory
+/image*.png
+/ChatGPT Image*.png
+
+# Storefront photographs. Captured under written permission from mall
+# management for this project; that permission does not extend to
+# redistribution, so only the derived vectors are published.
+data/dataset/gallery/
+data/dataset/query/

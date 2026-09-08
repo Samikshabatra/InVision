@@ -19,13 +19,18 @@ from contextlib import asynccontextmanager
 from dataclasses import asdict
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 from pydantic import BaseModel
 
-from src.mall_graph import MallGraph
+from src.mall_graph import (
+    NEARBY_LIMIT,
+    NEARBY_MAX_RADIUS_M,
+    NEARBY_RADIUS_M,
+    MallGraph,
+)
 
 WEB_DIR = Path(__file__).parent / "web"
 MAX_UPLOAD_BYTES = 12 * 1024 * 1024
@@ -53,6 +58,11 @@ class RouteRequest(BaseModel):
     destination_id: str
 
 
+class TourRequest(BaseModel):
+    origin_id: str
+    stops: list[str]
+
+
 @app.get("/api/stores")
 def list_stores():
     """Every unit on the floor directory. All of them are routable."""
@@ -62,6 +72,9 @@ def list_stores():
         key=lambda u: (u["floor"], u["row"], u["index"]),
     )
     return {
+        # Named so a card saved out of the interface says which building it is
+        # a plan of, rather than being a floor of anywhere.
+        "mall": graph.directory.get("mall", ""),
         "stores": [
             {
                 "store_id": u["unit_id"],
@@ -71,6 +84,9 @@ def list_stores():
                 "row": u["row"],
                 "index": u["index"],
                 "has_images": u["image_count"] > 0,
+                # Alternate spellings, so the search box finds what is on the
+                # shopping bag rather than only what is printed on the map.
+                "aliases": u["aliases"],
                 "routable": True,
             }
             for u in units
@@ -83,8 +99,12 @@ def layout():
     return state["graph"].layout()
 
 
-@app.post("/api/locate")
-async def locate(photo: UploadFile = File(...)):
+async def _localise(photo: UploadFile) -> dict:
+    """Decode an upload and run it through the localiser.
+
+    Shared by the opening "where am I" question and the progress checks that
+    follow it, which ask the same thing of the same model.
+    """
     raw = await photo.read()
     if not raw:
         raise HTTPException(400, "empty upload")
@@ -130,6 +150,50 @@ async def locate(photo: UploadFile = File(...)):
     }
 
 
+@app.post("/api/locate")
+async def locate(photo: UploadFile = File(...)):
+    return await _localise(photo)
+
+
+@app.post("/api/progress")
+async def progress(
+    photo: UploadFile = File(...),
+    origin_id: str = Form(...),
+    destination_id: str = Form(...),
+):
+    """Mid-walk check: a second photo, judged against the route already given.
+
+    Answers whether the shopper is still on the line, and hands back a route
+    from wherever they actually are - the same one if they are on track, a
+    fresh one if they wandered.
+    """
+    found = await _localise(photo)
+    here = found["predictions"][0]["unit_id"]
+
+    graph: MallGraph = state["graph"]
+    try:
+        result = graph.progress(origin_id, here, destination_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+
+    route = asdict(result.route)
+    route["origin_id"] = here
+    route["destination_id"] = destination_id
+
+    return {
+        "state": result.state,
+        "current": found["predictions"][0],
+        "confident": found["confident"],
+        "alternatives": found["predictions"][1:4],
+        "deviation_m": result.deviation_m,
+        "remaining_m": result.remaining_m,
+        "original_m": result.original_m,
+        "done_fraction": result.done_fraction,
+        "minutes_left": result.minutes_left,
+        "route": route,
+    }
+
+
 @app.post("/api/route")
 def route(request: RouteRequest):
     graph: MallGraph = state["graph"]
@@ -141,11 +205,76 @@ def route(request: RouteRequest):
     return {
         "steps": [asdict(s) for s in result.steps],
         "total_distance_m": result.total_distance_m,
+        "minutes": result.minutes,
         "floors_traversed": result.floors_traversed,
         "caveats": result.caveats,
         "map_legs": result.map_legs,
         "origin_id": request.origin_id,
         "destination_id": request.destination_id,
+    }
+
+
+@app.get("/api/nearby")
+def nearby(
+    unit_id: str,
+    radius_m: float = NEARBY_RADIUS_M,
+    limit: int = NEARBY_LIMIT,
+):
+    """What a shopper can reach on foot from where they are standing.
+
+    The radius and the count are clamped rather than rejected: this is asked
+    on every recognised sighting, and a silly query should still answer.
+    """
+    graph: MallGraph = state["graph"]
+    radius = min(max(float(radius_m), 0.0), NEARBY_MAX_RADIUS_M)
+    count = min(max(int(limit), 1), 50)
+
+    try:
+        found = graph.nearby(unit_id, radius_m=radius, limit=count)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+
+    return {
+        "origin_id": graph.resolve(unit_id),
+        "radius_m": radius,
+        "nearby": [asdict(n) for n in found],
+    }
+
+
+@app.post("/api/tour")
+def tour(request: TourRequest):
+    """A shopping list, ordered so the walk is as short as it can be."""
+    graph: MallGraph = state["graph"]
+    try:
+        result = graph.tour(request.origin_id, request.stops)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc))
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+
+    legs = []
+    for start, end, leg in zip(result.order, result.order[1:], result.legs):
+        row = asdict(leg)
+        row["origin_id"] = start
+        row["destination_id"] = end
+        row["destination_name"] = graph.units[end]["name"]
+        legs.append(row)
+
+    return {
+        "order": [
+            {
+                "unit_id": unit_id,
+                "name": graph.units[unit_id]["name"],
+                "floor": graph.units[unit_id]["floor"],
+                "floor_name": graph.units[unit_id]["floor_name"],
+            }
+            for unit_id in result.order
+        ],
+        "legs": legs,
+        "total_distance_m": result.total_distance_m,
+        "minutes": result.minutes,
+        "naive_distance_m": result.naive_distance_m,
+        "saved_m": result.saved_m,
     }
 
 
